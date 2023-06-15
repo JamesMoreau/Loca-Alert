@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:get/get.dart';
 
 class Alarm {
   String name;
   Color color;
   LatLng position;
   double radius;
+  bool active;
 
-  Alarm({required this.name, required this.position, required this.radius, this.color = Colors.red});
+  Alarm({required this.name, required this.position, required this.radius, this.color = Colors.redAccent, this.active = true});
 }
 
 Map<String, dynamic> alarmToJson(Alarm alarm) {
@@ -26,10 +28,7 @@ Alarm alarmFromJson(Map<String, dynamic> alarmJson) {
   return Alarm(
     name: alarmJson['name'],
     color: Color(alarmJson['color']),
-    position: LatLng(
-      alarmJson['position']['latitude'],
-      alarmJson['position']['longitude']
-    ),
+    position: LatLng(alarmJson['position']['latitude'], alarmJson['position']['longitude']),
     radius: alarmJson['radius'],
   );
 }

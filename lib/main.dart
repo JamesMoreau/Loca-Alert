@@ -3,12 +3,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:proxalarm/alarm.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:proxalarm/constants.dart';
 import 'package:proxalarm/proxalarm_state.dart';
 
 /* 
   TODO:
     add theme (material3)
-    figure out pages (routes or enum or index ?)
     round navigation bar 
     simplify map options view
 */
@@ -16,6 +16,7 @@ import 'package:proxalarm/proxalarm_state.dart';
 enum Views { map, alarms }
 
 void main() {
+  final ProxalarmState ps = Get.put(ProxalarmState());
   runApp(const MainApp());
 }
 
@@ -26,6 +27,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: HomeScreen(),
+      theme: proxalarmTheme,
     );
   }
 }
@@ -33,20 +35,19 @@ class MainApp extends StatelessWidget {
 enum View { alarms, map }
 
 class HomeScreen extends StatelessWidget {
-  final ProxalarmState ps = Get.put(ProxalarmState());
-
   HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Scaffold(
-        body: getView(ps.currentView.value),
+    return GetBuilder<ProxalarmState>(
+      builder: (state) => Scaffold(
+        body: getView(state.currentView, state),
         bottomNavigationBar: NavigationBar(
             onDestinationSelected: (int index) {
-              ps.currentView.value = View.values[index];
+              state.currentView = View.values[index];
+              state.update();
             },
-            selectedIndex: ps.currentView.value.index,
+            selectedIndex: state.currentView.index,
             destinations: const [
               NavigationDestination(
                 icon: Icon(Icons.pin_drop_rounded),
@@ -61,16 +62,14 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget getView(View v) {
+  Widget getView(View v, ProxalarmState state) {
     switch (v) {
       case View.alarms:
         return Center(child: AlarmsView());
       case View.map:
         return FlutterMap(
-          options: MapOptions(
-            center: LatLng(51.509364, -0.128928),
-            zoom: 9.2,
-          ),
+          mapController: state.mapController,
+          options: MapOptions(center: LatLng(51.509364, -0.128928), zoom: 9.2, interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate),
           children: [
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -83,19 +82,32 @@ class HomeScreen extends StatelessWidget {
 }
 
 class AlarmsView extends StatelessWidget {
-  final ProxalarmState ps = Get.find<ProxalarmState>();
-
   AlarmsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => ListView.builder(
-          itemCount: ps.alarms.length,
+    return GetBuilder<ProxalarmState>(builder: (state) {
+      return ListView.builder(
+          itemCount: state.alarms.length,
           itemBuilder: (context, index) {
-            var alarm = ps.alarms.elementAt(index);
-            return ListTile(title: Text(alarm.name), trailing: Icon(Icons.pin_drop_rounded, color: alarm.color));
-          }),
-    );
+            var alarm = state.alarms[index];
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListTile(
+                title: Text(alarm.name),
+                leading: Icon(Icons.pin_drop_rounded, color: alarm.color),
+                trailing: Switch(
+                  value: alarm.active,
+                  onChanged: (value) {
+                    print('alarm.active is ${alarm.active}. value is $value');
+                    alarm.active = value;
+                    print('alarm.active is now ${alarm.active}');
+                    state.update();
+                  },
+                ),
+              ),
+            );
+          });
+    });
   }
 }
