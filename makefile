@@ -1,3 +1,3 @@
 
 run:
-	flutter run -d ios
+	flutter run
