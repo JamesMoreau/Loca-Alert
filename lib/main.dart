@@ -5,11 +5,26 @@ import 'package:proxalarm/alarm.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:proxalarm/constants.dart';
 import 'package:proxalarm/proxalarm_state.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /* 
   TODO:
+    short term:
+    Show alarms on map
+    Edit alarm ui pull up / delete alarm
+    save alarms to file
+    place alarm manually (ui plus icon at the top)
+    settings: alarm sound, vibration?, location settings
+    show user's current location on map.
+
+    long term:
+    switch map tile provider (mapbox, thunderforest, etc)
     checkout mapbox: https://docs.fleaflet.dev/tile-servers/using-mapbox
-    add settings: alarm sound, vibration?, location settings
+    go alarm on map. using MapController
+    tile chaching
+    go to user location on map if offscreen.
+    show some sort icon on map for alarm if too zoomed out to see the circle. (could use current zoom level to determine this).
+    Logo
 */
 
 enum Views { map, alarms }
@@ -85,20 +100,31 @@ class MapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ProxalarmState>(
-      builder: (state) {
-        return FlutterMap(
-          mapController: state.mapController,
-          options: MapOptions(center: LatLng(51.509364, -0.128928), zoom: 9.2, interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate),
-          children: [
-            TileLayer(
-              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'com.example.app',
-            ),
-          ],
-        );
+    return GetBuilder<ProxalarmState>(builder: (state) {
+      var circles = <CircleMarker>[];
+      for (var alarm in state.alarms) {
+        var marker = CircleMarker(
+            point: alarm.position,
+            color: alarm.color.withOpacity(alarmColorOpacity),
+            borderColor: alarmBorderColor,
+            borderStrokeWidth: alarmBorderWidth,
+            radius: alarm.radius,
+            useRadiusInMeter: true);
+        circles.add(marker);
       }
-    );
+
+      return FlutterMap(
+        mapController: state.mapController,
+        options: MapOptions(center: LatLng(51.509364, -0.128928), zoom: 9.2, interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName: 'com.example.app',
+          ),
+          CircleLayer(circles: circles),
+        ],
+      );
+    });
   }
 }
 
