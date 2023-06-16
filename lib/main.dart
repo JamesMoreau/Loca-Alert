@@ -10,7 +10,6 @@ import 'package:url_launcher/url_launcher.dart';
 /* 
   TODO:
     short term:
-    Show alarms on map
     Edit alarm ui pull up / delete alarm
     save alarms to file
     place alarm manually (ui plus icon at the top)
@@ -25,6 +24,7 @@ import 'package:url_launcher/url_launcher.dart';
     go to user location on map if offscreen.
     show some sort icon on map for alarm if too zoomed out to see the circle. (could use current zoom level to determine this).
     Logo
+    show something when user is too zoomed in. Use current zoom level to determine this.
     get distance to closest alarm. have some sort of ui layer that points towards the alarm from current location if it is offscreen.
 */
 
@@ -87,7 +87,7 @@ class HomeScreen extends StatelessWidget {
   Widget getView(ProxalarmView v, ProxalarmState state) {
     switch (v) {
       case ProxalarmView.alarms:
-        return Center(child: AlarmsView());
+        return AlarmsView();
       case ProxalarmView.map:
         return MapView();
     }
@@ -132,6 +132,17 @@ class MapView extends StatelessWidget {
 class AlarmsView extends StatelessWidget {
   const AlarmsView({super.key});
 
+  void openAlarmEdit(BuildContext context, Alarm alarm) {
+    debugPrint('Editing alarm ${alarm.name}');
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return EditAlarmDialog(alarmId: alarm.id);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProxalarmState>(builder: (state) {
@@ -145,6 +156,9 @@ class AlarmsView extends StatelessWidget {
                 title: Text(alarm.name),
                 leading: Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
                 subtitle: Text(alarm.position.toSexagesimal(), style: TextStyle(fontSize: 9, color: Colors.grey[700])),
+                enabled: alarm.active,
+                onLongPress: () => openAlarmEdit(context, alarm),
+                onTap: () => openAlarmEdit(context, alarm),
                 trailing: Switch(
                   value: alarm.active,
                   activeColor: alarm.color,
@@ -157,5 +171,77 @@ class AlarmsView extends StatelessWidget {
             );
           });
     });
+  }
+}
+
+class EditAlarmDialog extends StatefulWidget {
+  final String alarmId;
+
+  const EditAlarmDialog({super.key, required this.alarmId});
+
+  @override
+  State<EditAlarmDialog> createState() => _EditAlarmDialogState();
+}
+
+class _EditAlarmDialogState extends State<EditAlarmDialog> {
+  Alarm? bufferAlarm;
+
+  @override
+  void initState() {
+    bufferAlarm = getAlarmById(widget.alarmId);
+    super.initState();
+  }
+
+  void saveBufferAlarm() {
+    // Needs to replace the actual alarm with buffer
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (bufferAlarm == null) {
+      return Text('Error: Unable to retrieve alarm');
+    }
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.9,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(child: const Text('Cancel'), onPressed: () => Navigator.pop(context)),
+                Text(
+                  'Edit Alarm',
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                ),
+                TextButton(
+                  child: const Text('Save'),
+                  onPressed: () {
+                    saveBufferAlarm();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 16.0),
+            TextFormField(
+              initialValue: bufferAlarm!.name,
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                labelText: 'Name',
+              ),
+              onChanged: (value) {
+                bufferAlarm!.name = value;
+              },
+            ),
+            SizedBox(height: 16.0),
+          ],
+        ),
+      ),
+    );
   }
 }
