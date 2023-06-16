@@ -6,7 +6,7 @@ class Alarm {
   String name;
   Color color;
   LatLng position;
-  double radius;
+  meter radius; // in meters
   bool active;
 
   Alarm({required this.name, required this.position, required this.radius, this.color = Colors.redAccent, this.active = true});

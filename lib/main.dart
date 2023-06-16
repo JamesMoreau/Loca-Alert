@@ -25,6 +25,7 @@ import 'package:url_launcher/url_launcher.dart';
     go to user location on map if offscreen.
     show some sort icon on map for alarm if too zoomed out to see the circle. (could use current zoom level to determine this).
     Logo
+    get distance to closest alarm. have some sort of ui layer that points towards the alarm from current location if it is offscreen.
 */
 
 enum Views { map, alarms }
