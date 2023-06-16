@@ -1,3 +1,4 @@
+import 'package:fast_color_picker/fast_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
@@ -156,7 +157,6 @@ class AlarmsView extends StatelessWidget {
                 title: Text(alarm.name),
                 leading: Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
                 subtitle: Text(alarm.position.toSexagesimal(), style: TextStyle(fontSize: 9, color: Colors.grey[700])),
-                enabled: alarm.active,
                 onLongPress: () => openAlarmEdit(context, alarm),
                 onTap: () => openAlarmEdit(context, alarm),
                 trailing: Switch(
@@ -184,16 +184,44 @@ class EditAlarmDialog extends StatefulWidget {
 }
 
 class _EditAlarmDialogState extends State<EditAlarmDialog> {
+  ProxalarmState ps = Get.find<ProxalarmState>();
+  TextEditingController nameInputController = TextEditingController();
   Alarm? bufferAlarm;
 
   @override
   void initState() {
-    bufferAlarm = getAlarmById(widget.alarmId);
+    var alarm = getAlarmById(widget.alarmId);
+    if (alarm == null) {
+      print('Unable to retrieve alarm.');
+      return;
+    }
+
+    bufferAlarm = createAlarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: alarm.active);
     super.initState();
   }
 
-  void saveBufferAlarm() {
-    // Needs to replace the actual alarm with buffer
+  @override
+  void dispose() {
+    nameInputController.dispose();
+    super.dispose();
+  }
+
+  void saveBufferToAlarm() {
+    // Needs to replace the actual alarm data with the buffer alarm.
+    var alarm = getAlarmById(widget.alarmId);
+    if (alarm == null) {
+      print('Unable to save alarm changes');
+      return;
+    }
+
+    var ba = bufferAlarm!; // null check
+    alarm.name = nameInputController.text.trim();
+    alarm.position = ba.position;
+    alarm.radius = ba.radius;
+    alarm.color = ba.color;
+    alarm.active = ba.active;
+
+    ps.update();
   }
 
   @override
@@ -208,6 +236,7 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
@@ -221,24 +250,58 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
                 TextButton(
                   child: const Text('Save'),
                   onPressed: () {
-                    saveBufferAlarm();
+                    saveBufferToAlarm();
                     Navigator.pop(context);
                   },
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
+            SizedBox(height: 30),
+            Text('Name', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
             TextFormField(
               initialValue: bufferAlarm!.name,
               textAlign: TextAlign.center,
               decoration: InputDecoration(
-                labelText: 'Name',
-              ),
-              onChanged: (value) {
-                bufferAlarm!.name = value;
-              },
+                  suffixIcon: IconButton(
+                      icon: Icon(Icons.clear_rounded),
+                      onPressed: () {
+                        nameInputController.clear();
+                        setState(() {});
+                        ps.update();
+                      })),
             ),
-            SizedBox(height: 16.0),
+            SizedBox(height: 30),
+            Text('Color', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
+            SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: FastColorPicker(
+                    icon: Icons.pin_drop_rounded,
+                    selectedColor: bufferAlarm!.color,
+                    onColorSelected: (newColor) => setState(() => bufferAlarm!.color = newColor))),
+            SizedBox(height: 30),
+            Text('Position', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
+            Text(bufferAlarm!.position.toSexagesimal(), style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 30),
+            Text('Radius / Size', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
+            Text(bufferAlarm!.radius.toInt().toString(), style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: BorderSide(color: Colors.redAccent, width: 2),
+                      ),
+                    ),
+                    onPressed: () {
+                      deleteAlarmById(widget.alarmId);
+                      ps.update();
+                    },
+                    child: Text('Delete Alarm', style: TextStyle(color: Colors.redAccent))),
+              ],
+            )
           ],
         ),
       ),
