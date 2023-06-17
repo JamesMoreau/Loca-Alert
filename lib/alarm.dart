@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:get/get.dart';
 import 'package:proxalarm/proxalarm_state.dart';
-import 'package:uuid/uuid.dart';
-
 
 class Alarm {
   String id = '';
@@ -44,4 +41,9 @@ Alarm alarmFromJson(Map<String, dynamic> alarmJson) {
     position: LatLng(alarmJson['position']['latitude'], alarmJson['position']['longitude']),
     radius: alarmJson['radius'],
   );
+}
+
+//This function returns the alarms that the user's position is currently intersected with.
+List<Alarm> checkIfUserIsInAlarms() {
+  return [];
 }

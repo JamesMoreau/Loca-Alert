@@ -6,18 +6,18 @@ import 'package:proxalarm/alarm.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:proxalarm/constants.dart';
 import 'package:proxalarm/proxalarm_state.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /* 
   TODO:
     short term:
-    Edit alarm ui pull up / delete alarm
     save alarms to file
     place alarm manually (ui plus icon at the top)
-    settings: alarm sound, vibration?, location settings
     show user's current location on map.
+    calculate if user is inside an alarm.
+    settings: alarm sound, vibration?, location settings
 
     long term:
+    smooth transition between app views
     switch map tile provider (mapbox, thunderforest, etc)
     checkout mapbox: https://docs.fleaflet.dev/tile-servers/using-mapbox
     go alarm on map. using MapController
@@ -134,7 +134,7 @@ class AlarmsView extends StatelessWidget {
   const AlarmsView({super.key});
 
   void openAlarmEdit(BuildContext context, Alarm alarm) {
-    debugPrint('Editing alarm ${alarm.name}');
+    debugPrint('Editing alarm: ${alarm.name}, id: ${alarm.id}');
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -185,7 +185,7 @@ class EditAlarmDialog extends StatefulWidget {
 
 class _EditAlarmDialogState extends State<EditAlarmDialog> {
   ProxalarmState ps = Get.find<ProxalarmState>();
-  TextEditingController nameInputController = TextEditingController();
+  late TextEditingController nameInputController;
   Alarm? bufferAlarm;
 
   @override
@@ -197,6 +197,9 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
     }
 
     bufferAlarm = createAlarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: alarm.active);
+
+    nameInputController = TextEditingController(text: bufferAlarm!.name);
+
     super.initState();
   }
 
@@ -207,7 +210,7 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
   }
 
   void saveBufferToAlarm() {
-    // Needs to replace the actual alarm data with the buffer alarm.
+    // Replace the actual alarm data with the buffer alarm.
     var alarm = getAlarmById(widget.alarmId);
     if (alarm == null) {
       print('Unable to save alarm changes');
@@ -221,7 +224,7 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
     alarm.color = ba.color;
     alarm.active = ba.active;
 
-    ps.update();
+    ps.update(); // update the getX framework
   }
 
   @override
@@ -259,8 +262,8 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
             SizedBox(height: 30),
             Text('Name', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
             TextFormField(
-              initialValue: bufferAlarm!.name,
               textAlign: TextAlign.center,
+              controller: nameInputController,
               decoration: InputDecoration(
                   suffixIcon: IconButton(
                       icon: Icon(Icons.clear_rounded),
@@ -290,6 +293,7 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
               children: [
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                         side: BorderSide(color: Colors.redAccent, width: 2),
@@ -297,6 +301,7 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
                     ),
                     onPressed: () {
                       deleteAlarmById(widget.alarmId);
+                      Navigator.of(context).pop();
                       ps.update();
                     },
                     child: Text('Delete Alarm', style: TextStyle(color: Colors.redAccent))),

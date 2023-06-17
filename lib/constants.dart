@@ -29,10 +29,4 @@ var proxalarmTheme = ThemeData(
       borderRadius: BorderRadius.circular(8.0),
     ),
   ),
-  // switchTheme: SwitchThemeData(
-  //   trackColor: MaterialStateProperty.all<Color>(Colors.grey), // Set the track color
-  //   thumbColor: MaterialStateProperty.all<Color>(Colors.blue), // Set the thumb color
-  //   overlayColor: MaterialStateProperty.all<Color>(Colors.blue.withOpacity(0.4)), // Set the overlay color
-  //   splashRadius: 16.0, // Set the splash radius
-  // ),
 );
