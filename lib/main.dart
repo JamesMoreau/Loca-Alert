@@ -10,14 +10,12 @@ import 'package:proxalarm/proxalarm_state.dart';
 /* 
   TODO:
     short term:
-    save alarms to file
     place alarm manually (ui plus icon at the top)
     show user's current location on map.
     calculate if user is inside an alarm.
     settings: alarm sound, vibration?, location settings
 
     long term:
-    smooth transition between app views
     switch map tile provider (mapbox, thunderforest, etc)
     checkout mapbox: https://docs.fleaflet.dev/tile-servers/using-mapbox
     go alarm on map. using MapController
@@ -33,6 +31,7 @@ enum Views { map, alarms }
 
 void main() {
   final ProxalarmState ps = Get.put(ProxalarmState()); // Inject the global app state into memory.
+  loadAlarmsFromSharedPreferences();
   runApp(const MainApp());
 }
 
@@ -51,13 +50,21 @@ class MainApp extends StatelessWidget {
 enum ProxalarmView { alarms, map }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final pageController = PageController(initialPage: Get.find<ProxalarmState>().currentView.index);
+
+  HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ProxalarmState>(
-      builder: (state) => Scaffold(
-        body: getView(state.currentView, state),
+    return GetBuilder<ProxalarmState>(builder: (state) {
+      return Scaffold(
+        body: PageView(
+            controller: pageController,
+            physics: NeverScrollableScrollPhysics(), // Disable swipe gesture to change pages
+            children: [
+              AlarmsView(),
+              MapView(),
+            ]),
         extendBody: true,
         bottomNavigationBar: ClipRRect(
           borderRadius: BorderRadius.only(
@@ -68,6 +75,12 @@ class HomeScreen extends StatelessWidget {
               onDestinationSelected: (int index) {
                 state.currentView = ProxalarmView.values[index];
                 state.update();
+
+                pageController.animateToPage(
+                  index,
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.easeInOut
+                );
               },
               selectedIndex: state.currentView.index,
               destinations: const [
@@ -81,18 +94,18 @@ class HomeScreen extends StatelessWidget {
                 ),
               ]),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  Widget getView(ProxalarmView v, ProxalarmState state) {
-    switch (v) {
-      case ProxalarmView.alarms:
-        return AlarmsView();
-      case ProxalarmView.map:
-        return MapView();
-    }
-  }
+  // Widget getView(ProxalarmView v) {
+  //   switch (v) {
+  //     case ProxalarmView.alarms:
+  //       return AlarmsView();
+  //     case ProxalarmView.map:
+  //       return MapView();
+  //   }
+  // }
 }
 
 class MapView extends StatelessWidget {
@@ -134,7 +147,7 @@ class AlarmsView extends StatelessWidget {
   const AlarmsView({super.key});
 
   void openAlarmEdit(BuildContext context, Alarm alarm) {
-    debugPrint('Editing alarm: ${alarm.name}, id: ${alarm.id}');
+    debugPrint('Editing alarm: ${alarm.name}, id: ${alarm.id}.');
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -148,7 +161,20 @@ class AlarmsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<ProxalarmState>(builder: (state) {
       if (state.alarms.isEmpty) {
-        return Center(child: Text('No alarms.'));
+        return Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text('No alarms.'),
+            ElevatedButton(
+              child: Text('Add mock alarms'),
+              onPressed: () {
+                addAlarm(createAlarm(name: 'London', position: London, radius: 1000));
+                addAlarm(createAlarm(name: 'Dublin', position: Dublin, radius: 2000, color: Colors.blue));
+                addAlarm(createAlarm(name: 'Toronto', position: Toronto, radius: 3000, color: Colors.lightGreen));
+                addAlarm(createAlarm(name: 'Belfast', position: Belfast, radius: 1000, color: Colors.purple));
+              },
+            )
+          ]),
+        );
       }
 
       return ListView.builder(
@@ -196,7 +222,7 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
   void initState() {
     var alarm = getAlarmById(widget.alarmId);
     if (alarm == null) {
-      print('Unable to retrieve alarm.');
+      debugPrint('Error: Unable to retrieve alarm.');
       return;
     }
 
@@ -217,18 +243,12 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
     // Replace the actual alarm data with the buffer alarm.
     var alarm = getAlarmById(widget.alarmId);
     if (alarm == null) {
-      print('Unable to save alarm changes');
+      debugPrint('Error: Unable to save alarm changes.');
       return;
     }
 
-    var ba = bufferAlarm!; // null check
-    alarm.name = nameInputController.text.trim();
-    alarm.position = ba.position;
-    alarm.radius = ba.radius;
-    alarm.color = ba.color;
-    alarm.active = ba.active;
-
-    ps.update(); // update the getX framework
+    bufferAlarm!.name = nameInputController.text.trim();
+    updateAlarmById(widget.alarmId, bufferAlarm!);
   }
 
   @override
@@ -240,7 +260,7 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,7 +294,6 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
                       onPressed: () {
                         nameInputController.clear();
                         setState(() {});
-                        ps.update();
                       })),
             ),
             SizedBox(height: 30),
@@ -306,7 +325,6 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
                     onPressed: () {
                       deleteAlarmById(widget.alarmId);
                       Navigator.of(context).pop();
-                      ps.update();
                     },
                     child: Text('Delete Alarm', style: TextStyle(color: Colors.redAccent))),
               ],

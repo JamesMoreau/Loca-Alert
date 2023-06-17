@@ -1,5 +1,4 @@
 // ignore_for_file: constant_identifier_names
-
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -18,6 +17,8 @@ const Edinburgh = LatLng(55.9533, -3.1883);
 const alarmBorderColor = Color(0xff2b2b2b);
 const alarmBorderWidth = 2.0;
 const alarmColorOpacity = 0.5;
+
+const sharedPreferencesAlarmKey = 'alarms';
 
 var proxalarmTheme = ThemeData(
   useMaterial3: true,
