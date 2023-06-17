@@ -147,6 +147,10 @@ class AlarmsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProxalarmState>(builder: (state) {
+      if (state.alarms.isEmpty) {
+        return Center(child: Text('No alarms.'));
+      }
+
       return ListView.builder(
           itemCount: state.alarms.length,
           itemBuilder: (context, index) {

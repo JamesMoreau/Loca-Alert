@@ -44,6 +44,6 @@ Alarm alarmFromJson(Map<String, dynamic> alarmJson) {
 }
 
 //This function returns the alarms that the user's position is currently intersected with.
-List<Alarm> checkIfUserIsInAlarms() {
+List<Alarm> checkIfUserTriggersAlarms() {
   return [];
 }
