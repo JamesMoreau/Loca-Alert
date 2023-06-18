@@ -76,11 +76,7 @@ class HomeScreen extends StatelessWidget {
                 state.currentView = ProxalarmView.values[index];
                 state.update();
 
-                pageController.animateToPage(
-                  index,
-                  duration: Duration(milliseconds: 300),
-                  curve: Curves.easeInOut
-                );
+                pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
               },
               selectedIndex: state.currentView.index,
               destinations: const [
@@ -115,6 +111,8 @@ class MapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      final statusBarHeight = MediaQuery.of(context).padding.top;
+
     return GetBuilder<ProxalarmState>(builder: (state) {
       var circles = <CircleMarker>[];
       for (var alarm in state.alarms) {
@@ -128,15 +126,31 @@ class MapView extends StatelessWidget {
         circles.add(marker);
       }
 
-      return FlutterMap(
-        mapController: state.mapController,
-        options: MapOptions(center: LatLng(51.509364, -0.128928), zoom: 9.2, interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate),
+      return Stack(
         children: [
-          TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'com.example.app',
+          FlutterMap(
+            mapController: state.mapController,
+            options: MapOptions(center: LatLng(51.509364, -0.128928), zoom: 9.2, interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate, maxZoom: maxZoomSupported),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.example.app',
+              ),
+              CircleLayer(circles: circles),
+            ],
           ),
-          CircleLayer(circles: circles),
+          Positioned(
+            top: statusBarHeight + 16.0,
+            right: 16.0,
+            child: FloatingActionButton(
+              // backgroundColor: Theme.of(context).,
+              onPressed: () {
+                // Handle the tap on the floating button here
+                // For example, open a dialog or navigate to a new screen
+              },
+              child: Icon(Icons.add),
+            ),
+          ),
         ],
       );
     });
