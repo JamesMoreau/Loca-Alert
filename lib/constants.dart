@@ -46,7 +46,7 @@ var proxalarmTheme = ThemeData(
       // onSurface: Color(0xff2b2b2b)),
       listTileTheme: ListTileThemeData(
         contentPadding: const EdgeInsets.all(25),
-        tileColor: Color.fromARGB(255, 229, 240, 255), // Background color of the ListTile
+        tileColor: Color.fromARGB(255, 234, 239, 246), // Background color of the ListTile
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
