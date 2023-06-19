@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:get/get.dart';
 import 'package:proxalarm/alarms_view.dart';
-import 'package:proxalarm/constants.dart';
 import 'package:proxalarm/map_view.dart';
 import 'package:proxalarm/proxalarm_state.dart';
 

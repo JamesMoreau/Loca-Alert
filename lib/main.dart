@@ -7,7 +7,6 @@ import 'package:proxalarm/proxalarm_state.dart';
 /* 
   TODO:
     short term:
-    place alarm manually (ui plus icon at the top)
     show user's current location on map.
     always navigate to user's location on map load.
     calculate if user is inside an alarm.

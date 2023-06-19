@@ -59,7 +59,7 @@ var scheme = ColorScheme(
     brightness: Brightness.light,
     primary: Color(0xff006493),
     onPrimary: Colors.white,
-    primaryContainer: Color(0xffcae6ff),
+    primaryContainer: Color.fromARGB(255, 216, 237, 255),
     onPrimaryContainer: Color(0xff001e30),
     secondary: Color(0xff50606e),
     onSecondary: Color(0xffffffff),

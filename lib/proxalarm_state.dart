@@ -12,7 +12,7 @@ class ProxalarmState extends GetxController {
   ProxalarmView currentView = ProxalarmView.alarms;
   List<Alarm> alarms = <Alarm>[];
 
-  // Map stuff
+  // MapView stuff
   MapController mapController = MapController();
   bool isPlacingAlarm = false;
   double alarmPlacementRadius = 100;
@@ -115,4 +115,10 @@ Future<void> clearAlarmsFromSharedPreferences() async {
   var preferences = await SharedPreferences.getInstance();
   await preferences.remove(sharedPreferencesAlarmKey);
   debugPrint('Cleared alarms from shared preferences.');
+}
+
+void resetAlarmPlacementUIState() {
+  ProxalarmState ps = Get.find<ProxalarmState>();
+  ps.isPlacingAlarm = false;
+  ps.alarmPlacementRadius = 100;
 }
