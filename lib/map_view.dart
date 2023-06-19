@@ -13,14 +13,13 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
-  bool isPlacingAlarm = false;
-
   @override
   Widget build(BuildContext context) {
-    var statusBarHeight = MediaQuery.of(context).padding.top;
-    var alarmPlacementIcon = isPlacingAlarm ? Icons.check : Icons.pin_drop_rounded;
-
     return GetBuilder<ProxalarmState>(builder: (state) {
+      var alarmPlacementIcon = state.isPlacingAlarm ? Icons.check : Icons.pin_drop_rounded;
+
+      var statusBarHeight = MediaQuery.of(context).padding.top;
+
       var circles = <CircleMarker>[];
       for (var alarm in state.alarms) {
         var marker = CircleMarker(
@@ -33,7 +32,14 @@ class _MapViewState extends State<MapView> {
         circles.add(marker);
       }
 
+      if (state.isPlacingAlarm) {
+        var alarmPlacementPosition = state.mapController.center;
+        var alarmPlacementMarker = CircleMarker(point: alarmPlacementPosition, radius: state.alarmPlacementRadius, useRadiusInMeter: true);
+        circles.add(alarmPlacementMarker);
+      }
+
       return Stack(
+        alignment: Alignment.center,
         children: [
           FlutterMap(
             // Map
@@ -62,14 +68,28 @@ class _MapViewState extends State<MapView> {
                 SizedBox(height: 10),
                 FloatingActionButton(
                     onPressed: () {
-                      isPlacingAlarm = !isPlacingAlarm;
-                      setState(() {});
+                      state.isPlacingAlarm = !(state.isPlacingAlarm);
+                      state.update();
                     },
                     elevation: 4,
                     child: Icon(alarmPlacementIcon)),
               ],
             ),
           ),
+          (state.isPlacingAlarm) // Display the slider only if we are placing an alarm
+              ? Positioned(
+                  bottom: 150,
+                  child: Slider(
+                    value: state.alarmPlacementRadius,
+                    onChanged: (value) {
+                      state.alarmPlacementRadius = value;
+                      state.update();
+                    },
+                    min: 100,
+                    max: 3000,
+                    divisions: 100,
+                  ))
+              : SizedBox.shrink(),
         ],
       );
     });

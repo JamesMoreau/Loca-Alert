@@ -11,7 +11,11 @@ import 'package:uuid/uuid.dart';
 class ProxalarmState extends GetxController {
   ProxalarmView currentView = ProxalarmView.alarms;
   List<Alarm> alarms = <Alarm>[];
+
+  // Map stuff
   MapController mapController = MapController();
+  bool isPlacingAlarm = false;
+  double alarmPlacementRadius = 100;
 }
 
 // This is used to produce unique ids. Only one instantiation is needed.
