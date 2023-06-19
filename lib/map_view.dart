@@ -13,10 +13,12 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
+  bool isPlacingAlarm = false;
 
   @override
   Widget build(BuildContext context) {
-    final statusBarHeight = MediaQuery.of(context).padding.top;
+    var statusBarHeight = MediaQuery.of(context).padding.top;
+    var alarmPlacementIcon = isPlacingAlarm ? Icons.check : Icons.pin_drop_rounded;
 
     return GetBuilder<ProxalarmState>(builder: (state) {
       var circles = <CircleMarker>[];
@@ -50,13 +52,32 @@ class _MapViewState extends State<MapView> {
             ],
           ),
           Positioned(
-            top: statusBarHeight + 25,
+            top: statusBarHeight + 10,
             right: 25,
-            child: Text('hello')
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                FloatingActionButton(onPressed: () {}, elevation: 4, child: Icon(Icons.my_location_rounded)),
+                SizedBox(height: 10),
+                FloatingActionButton(
+                    onPressed: () {
+                      isPlacingAlarm = !isPlacingAlarm;
+                      setState(() {});
+                    },
+                    elevation: 4,
+                    child: Icon(alarmPlacementIcon)),
+              ],
+            ),
           ),
         ],
       );
     });
   }
+}
 
+void placeNewAlarm() {
+  ProxalarmState ps = Get.find<ProxalarmState>();
+
+  // var center ps.mapController.center
 }

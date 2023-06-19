@@ -48,24 +48,6 @@ class Home extends StatelessWidget {
                 ),
               ]),
         ),
-        floatingActionButtonLocation: ExpandableFab.location,
-        floatingActionButton: ExpandableFab(
-          backgroundColor: paleBlue,
-          child: Icon(Icons.keyboard_arrow_up_rounded),
-
-          children: [
-            FloatingActionButton.small(
-              heroTag: null,
-              child: const Icon(Icons.edit),
-              onPressed: () {},
-            ),
-            FloatingActionButton.small(
-              heroTag: null,
-              child: const Icon(Icons.search),
-              onPressed: () {},
-            ),
-          ],
-        ),
       );
     });
   }
