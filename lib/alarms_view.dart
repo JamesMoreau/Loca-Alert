@@ -172,7 +172,7 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
             Text('Position', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
             Text(bufferAlarm!.position.toSexagesimal(), style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 30),
-            Text('Radius / Size', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
+            Text('Radius / Size (in meters)', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
             Text(bufferAlarm!.radius.toInt().toString(), style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 30),
             Row(

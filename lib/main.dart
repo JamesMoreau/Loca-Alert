@@ -10,6 +10,7 @@ import 'package:proxalarm/proxalarm_state.dart';
     short term:
     place alarm manually (ui plus icon at the top)
     show user's current location on map.
+    always navigate to user's location on map load.
     calculate if user is inside an alarm.
     settings: alarm sound, vibration?, location settings
 
@@ -73,7 +74,6 @@ class HomeScreen extends StatelessWidget {
               onDestinationSelected: (int index) {
                 state.currentView = ProxalarmView.values[index];
                 state.update();
-
                 pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
               },
               selectedIndex: state.currentView.index,
@@ -101,6 +101,3 @@ class HomeScreen extends StatelessWidget {
   //   }
   // }
 }
-
-
-
