@@ -13,7 +13,6 @@ import 'alarm.dart';
 /* 
   TODO:
     short term:
-    always navigate to user's location on map load.
     settings: alarm sound, vibration?, location settings
 
     long term:
@@ -35,7 +34,7 @@ void main() {
   loadAlarmsFromSharedPreferences();
 
   // Set off periodic alarm checks.
-  Timer.periodic(Duration(seconds: 5), periodicAlarmCheck);
+  Timer.periodic(Duration(seconds: 5), (timer) => periodicAlarmCheck());
 
   runApp(const MainApp());
 }
@@ -52,7 +51,7 @@ class MainApp extends StatelessWidget {
   }
 }
 
-void periodicAlarmCheck(Timer timer) async {
+void periodicAlarmCheck() async {
   ProxalarmState ps = Get.find<ProxalarmState>();
 
     var activeAlarms = ps.alarms.where((alarm) => alarm.active).toList();
