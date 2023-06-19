@@ -2,10 +2,8 @@ import 'package:fast_color_picker/fast_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:proxalarm/alarm.dart';
-import 'package:proxalarm/main.dart';
 import 'package:proxalarm/proxalarm_state.dart';
-
-import 'constants.dart';
+import 'package:proxalarm/constants.dart';
 
 class AlarmsView extends StatelessWidget {
   const AlarmsView({super.key});
