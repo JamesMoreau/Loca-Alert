@@ -24,40 +24,39 @@ const alarmColorOpacity = 0.5;
 const sharedPreferencesAlarmKey = 'alarms';
 
 var proxalarmTheme = ThemeData(
-  useMaterial3: true,
-  // colorSchemeSeed: const Color(0xfff1f3e0),
-  // colorSchemeSeed: Colors.lightBlue,
-  // colorSchemeSeed: Color(0xffb2d2de),
-  // colorSchemeSeed: Color.fromARGB(255, 201, 225, 233),
+    useMaterial3: true,
+    // colorSchemeSeed: const Color(0xfff1f3e0),
+    // colorSchemeSeed: Colors.lightBlue,
+    // colorSchemeSeed: Color(0xffb2d2de),
+    // colorSchemeSeed: Color.fromARGB(255, 201, 225, 233),
 
-  colorScheme: scheme,
+    colorScheme: scheme,
 
-  // colorScheme: Airb
-  // colorScheme: const ColorScheme(
-  //     brightness: Brightness.light,
-  // primary: Color(0xff2b2b2b),
-  //     onPrimary: Colors.white,
-  //     secondary: Colors.white,
-  // onSecondary: Color(0xff2b2b2b),
-  //     error: Colors.red,
-  //     onError: Colors.white,
-  //     // background: Color(0xffe6e6e6),
-  //     background: Colors.white,
-  //     onBackground: Color(0xff2b2b2b),
-  // surface: Color(0xffe6e6e6),
-  // onSurface: Color(0xff2b2b2b)),
-  listTileTheme: ListTileThemeData(
-    contentPadding: const EdgeInsets.all(25),
-    tileColor: Color.fromARGB(255, 234, 239, 246), // Background color of the ListTile
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8.0),
+    // colorScheme: Airb
+    // colorScheme: const ColorScheme(
+    //     brightness: Brightness.light,
+    // primary: Color(0xff2b2b2b),
+    //     onPrimary: Colors.white,
+    //     secondary: Colors.white,
+    // onSecondary: Color(0xff2b2b2b),
+    //     error: Colors.red,
+    //     onError: Colors.white,
+    //     // background: Color(0xffe6e6e6),
+    //     background: Colors.white,
+    //     onBackground: Color(0xff2b2b2b),
+    // surface: Color(0xffe6e6e6),
+    // onSurface: Color(0xff2b2b2b)),
+    listTileTheme: ListTileThemeData(
+      contentPadding: const EdgeInsets.all(25),
+      tileColor: Color.fromARGB(255, 234, 239, 246), // Background color of the ListTile
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
     ),
-  ),
-  iconTheme: IconThemeData(color: Color(0xff50606e))
-);
+    iconTheme: IconThemeData(color: Color(0xff50606e)));
 
 var scheme = ColorScheme(
-  brightness: Brightness.light,
+    brightness: Brightness.light,
     primary: Color(0xff006493),
     onPrimary: Colors.white,
     primaryContainer: Color(0xffcae6ff),
@@ -88,3 +87,5 @@ var scheme = ColorScheme(
     primaryVariant: Color(0xff006493),
     secondaryVariant: Color(0xff50606e),
     surfaceTint: Color(0xff006493));
+
+const paleBlue = Color(0xffeaf0f5);
