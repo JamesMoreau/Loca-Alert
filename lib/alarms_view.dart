@@ -52,6 +52,7 @@ class AlarmsView extends StatelessWidget {
                 onLongPress: () => openAlarmEdit(context, alarm),
                 onTap: () => openAlarmEdit(context, alarm),
                 trailing: Switch(
+                  
                   value: alarm.active,
                   activeColor: alarm.color,
                   onChanged: (value) {
