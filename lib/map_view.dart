@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:proxalarm/alarm.dart';
@@ -54,7 +57,7 @@ class _MapViewState extends State<MapView> {
             // Map
             mapController: state.mapController,
             options: MapOptions(
-                center: LatLng(51.509364, -0.128928),
+                center: London,
                 zoom: initialZoom,
                 interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate,
                 maxZoom: maxZoomSupported,
@@ -66,6 +69,7 @@ class _MapViewState extends State<MapView> {
                 userAgentPackageName: 'com.example.app',
               ),
               CircleLayer(circles: circles),
+              CurrentLocationLayer(),
             ],
           ),
           Positioned(
@@ -75,7 +79,7 @@ class _MapViewState extends State<MapView> {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                FloatingActionButton(onPressed: () {}, elevation: 4, child: Icon(Icons.my_location_rounded)),
+                FloatingActionButton(onPressed: () => navigateMapToUserLocation(), elevation: 4, child: Icon(CupertinoIcons.location_fill)),
                 SizedBox(height: 10),
                 FloatingActionButton(
                     onPressed: () {
@@ -153,14 +157,24 @@ class _MapViewState extends State<MapView> {
   }
 
   @override
+  void initState() {
+    navigateMapToUserLocation();
+
+    super.initState();
+  }
+
+  @override
   void dispose() {
     resetAlarmPlacementUIState();
     super.dispose();
   }
 }
 
-void placeNewAlarm() {
+void navigateMapToUserLocation() async {
   ProxalarmState ps = Get.find<ProxalarmState>();
 
-  // var center ps.mapController.center
+  var userPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
+  var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
+
+  ps.mapController.move(userLocation, initialZoom);
 }

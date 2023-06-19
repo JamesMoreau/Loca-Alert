@@ -43,7 +43,14 @@ Alarm alarmFromJson(Map<String, dynamic> alarmJson) {
   );
 }
 
-//This function returns the alarms that the user's position is currently intersected with.
-List<Alarm> checkIfUserTriggersAlarms() {
-  return [];
+// This function returns the alarms that the user's position is currently intersected with.
+List<Alarm> checkIfUserTriggersAlarms(LatLng userPosition, List<Alarm> alarms) {
+  var triggeredAlarms = <Alarm>[];
+
+  for (var alarm in alarms) {
+    double distance = Distance().as(LengthUnit.Meter, userPosition, alarm.position);
+    if (distance <= alarm.radius) triggeredAlarms.add(alarm);
+  }
+
+  return triggeredAlarms;
 }

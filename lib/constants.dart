@@ -14,7 +14,7 @@ const Dublin = LatLng(53.3498, -6.2603);
 const Belfast = LatLng(54.5973, -5.9301);
 const Edinburgh = LatLng(55.9533, -3.1883);
 
-const initialZoom = 9.0;
+const initialZoom = 12.0;
 const maxZoomSupported = 18.0;
 
 const alarmBorderColor = Color(0xff2b2b2b);

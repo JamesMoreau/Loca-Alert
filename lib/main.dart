@@ -1,15 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:proxalarm/constants.dart';
 import 'package:proxalarm/home.dart';
 import 'package:proxalarm/proxalarm_state.dart';
 
+import 'alarm.dart';
+
 /* 
   TODO:
     short term:
-    show user's current location on map.
     always navigate to user's location on map load.
-    calculate if user is inside an alarm.
     settings: alarm sound, vibration?, location settings
 
     long term:
@@ -27,8 +31,12 @@ import 'package:proxalarm/proxalarm_state.dart';
 enum Views { map, alarms }
 
 void main() {
-  final ProxalarmState ps = Get.put(ProxalarmState()); // Inject the global app state into memory.
+  Get.put(ProxalarmState()); // Inject the global app state into memory.
   loadAlarmsFromSharedPreferences();
+
+  // Set off periodic alarm checks.
+  Timer.periodic(Duration(seconds: 5), periodicAlarmCheck);
+
   runApp(const MainApp());
 }
 
@@ -44,4 +52,20 @@ class MainApp extends StatelessWidget {
   }
 }
 
+void periodicAlarmCheck(Timer timer) async {
+  ProxalarmState ps = Get.find<ProxalarmState>();
 
+    var activeAlarms = ps.alarms.where((alarm) => alarm.active).toList();
+
+    var userPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
+    var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
+
+    var triggeredAlarms = checkIfUserTriggersAlarms(userLocation, activeAlarms);
+
+    if (triggeredAlarms.isEmpty) {
+      debugPrint('No alarms triggered.');
+      return;
+    }
+
+    for (var alarm in triggeredAlarms) debugPrint('Triggered alarm: ${alarm.name}');
+}
