@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -7,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:proxalarm/constants.dart';
 import 'package:proxalarm/home.dart';
 import 'package:proxalarm/proxalarm_state.dart';
-
+import 'package:intl/intl.dart';
 import 'alarm.dart';
 
 /* 
@@ -27,14 +26,14 @@ import 'alarm.dart';
     get distance to closest alarm. have some sort of ui layer that points towards the alarm from current location if it is offscreen.
 */
 
-enum Views { map, alarms }
-
 void main() {
   Get.put(ProxalarmState()); // Inject the global app state into memory.
+  
   loadAlarmsFromSharedPreferences();
+  loadSettingsFromSharedPreferences();
 
   // Set off periodic alarm checks.
-  Timer.periodic(Duration(seconds: 5), (timer) => periodicAlarmCheck());
+  Timer.periodic(alarmCheckPeriod, (timer) => periodicAlarmCheck());
 
   runApp(const MainApp());
 }
@@ -52,19 +51,25 @@ class MainApp extends StatelessWidget {
 }
 
 void periodicAlarmCheck() async {
+  // debugPrint('Should see me every 5 seconds. ${DateFormat('HH:mm:ss').format(DateTime.now())}');
   ProxalarmState ps = Get.find<ProxalarmState>();
 
-    var activeAlarms = ps.alarms.where((alarm) => alarm.active).toList();
+  var activeAlarms = ps.alarms.where((alarm) => alarm.active).toList();
 
-    var userPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
-    var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
+  var userPosition = await Geolocator.getLastKnownPosition();
+  if (userPosition == null) {
+    debugPrint('No user position found.');
+    return;
+  }
 
-    var triggeredAlarms = checkIfUserTriggersAlarms(userLocation, activeAlarms);
+  var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
 
-    if (triggeredAlarms.isEmpty) {
-      debugPrint('No alarms triggered.');
-      return;
-    }
+  var triggeredAlarms = checkIfUserTriggersAlarms(userLocation, activeAlarms);
 
-    for (var alarm in triggeredAlarms) debugPrint('Triggered alarm: ${alarm.name}');
+  if (triggeredAlarms.isEmpty) {
+    debugPrint('No alarms triggered.');
+    return;
+  }
+
+  for (var alarm in triggeredAlarms) debugPrint('Triggered alarm: ${alarm.name}');
 }

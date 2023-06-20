@@ -9,13 +9,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class ProxalarmState extends GetxController {
-  ProxalarmView currentView = ProxalarmView.alarms;
+  ProxalarmViews currentView = ProxalarmViews.alarms;
   List<Alarm> alarms = <Alarm>[];
 
   // MapView stuff
   MapController mapController = MapController();
   bool isPlacingAlarm = false;
   double alarmPlacementRadius = 100;
+
+  // Settings
+  bool alarmSound = true;
+  bool vibration = true;
 }
 
 // This is used to produce unique ids. Only one instantiation is needed.
@@ -70,6 +74,7 @@ void addAlarm(Alarm alarm) {
 
   ps.alarms.add(alarm);
   ps.update();
+  saveAlarmsToSharedPreferences();
 }
 
 // This saves all current alarms to shared preferences. Should be called everytime the alarms state is changed.
@@ -121,4 +126,37 @@ void resetAlarmPlacementUIState() {
   ProxalarmState ps = Get.find<ProxalarmState>();
   ps.isPlacingAlarm = false;
   ps.alarmPlacementRadius = 100;
+}
+
+void changeAlarmSound({required bool newValue}) {
+  var ps = Get.find<ProxalarmState>();
+  ps.alarmSound = newValue;
+  ps.update();
+  saveSettingsToSharedPreferences();
+}
+
+void changeVibration({required bool newValue}) {
+  var ps = Get.find<ProxalarmState>();
+  ps.vibration = newValue;
+  ps.update();
+  saveSettingsToSharedPreferences();
+}
+
+Future<void> saveSettingsToSharedPreferences() async {
+  debugPrint('Saving settings to SharedPreferences');
+
+  var ps = Get.find<ProxalarmState>();
+  var preferences = await SharedPreferences.getInstance();
+
+  await preferences.setBool(sharedPreferencesAlarmSoundKey, ps.alarmSound);
+  await preferences.setBool(sharedPreferencesAlarmVibrationKey, ps.vibration);
+}
+
+Future<void> loadSettingsFromSharedPreferences() async {
+  var ps = Get.find<ProxalarmState>();
+  var preferences = await SharedPreferences.getInstance();
+
+  ps.alarmSound = preferences.getBool(sharedPreferencesAlarmSoundKey) ?? true;
+  ps.vibration = preferences.getBool(sharedPreferencesAlarmVibrationKey) ?? true;
+  ps.update();
 }

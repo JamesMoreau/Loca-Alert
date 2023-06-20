@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:proxalarm/alarms_view.dart';
 import 'package:proxalarm/map_view.dart';
 import 'package:proxalarm/proxalarm_state.dart';
+import 'package:proxalarm/settings_view.dart';
 
-enum ProxalarmView { alarms, map }
+enum ProxalarmViews { alarms, map, settings }
 
 class Home extends StatelessWidget {
   final pageController = PageController(initialPage: Get.find<ProxalarmState>().currentView.index);
@@ -21,6 +22,7 @@ class Home extends StatelessWidget {
             children: [
               AlarmsView(),
               MapView(),
+              SettingsView(),
             ]),
         extendBody: true,
         bottomNavigationBar: ClipRRect(
@@ -30,7 +32,7 @@ class Home extends StatelessWidget {
           ),
           child: NavigationBar(
               onDestinationSelected: (int index) {
-                state.currentView = ProxalarmView.values[index];
+                state.currentView = ProxalarmViews.values[index];
                 state.update();
                 pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
               },
@@ -43,6 +45,10 @@ class Home extends StatelessWidget {
                 NavigationDestination(
                   icon: Icon(Icons.map_rounded),
                   label: 'Map',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.settings_rounded),
+                  label: 'Settings',
                 ),
               ]),
         ),

@@ -21,7 +21,11 @@ const alarmBorderColor = Color(0xff2b2b2b);
 const alarmBorderWidth = 2.0;
 const alarmColorOpacity = 0.5;
 
+const alarmCheckPeriod = Duration(seconds: 5);
+
 const sharedPreferencesAlarmKey = 'alarms';
+const sharedPreferencesAlarmSoundKey = 'alarmSound';
+const sharedPreferencesAlarmVibrationKey = 'alarmVibration';
 
 var proxalarmTheme = ThemeData(
     useMaterial3: true,
