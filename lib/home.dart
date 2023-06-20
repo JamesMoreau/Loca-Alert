@@ -8,8 +8,7 @@ import 'package:proxalarm/settings_view.dart';
 enum ProxalarmViews { alarms, map, settings }
 
 class Home extends StatelessWidget {
-  final pageController = PageController(initialPage: Get.find<ProxalarmState>().currentView.index);
-
+  ProxalarmState ps = Get.find<ProxalarmState>();
   Home({super.key});
 
   @override
@@ -17,7 +16,7 @@ class Home extends StatelessWidget {
     return GetBuilder<ProxalarmState>(builder: (state) {
       return Scaffold(
         body: PageView(
-            controller: pageController,
+            controller: ps.pageController,
             physics: NeverScrollableScrollPhysics(), // Disable swipe gesture to change pages
             children: [
               AlarmsView(),
@@ -31,10 +30,11 @@ class Home extends StatelessWidget {
             topRight: Radius.circular(50),
           ),
           child: NavigationBar(
+              elevation: 3,
               onDestinationSelected: (int index) {
                 state.currentView = ProxalarmViews.values[index];
                 state.update();
-                pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+                ps.pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
               },
               selectedIndex: state.currentView.index,
               destinations: const [

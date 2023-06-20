@@ -11,19 +11,13 @@ import 'alarm.dart';
 
 /* 
   TODO:
-    short term:
-    settings: alarm sound, vibration?, location settings
-
-    long term:
-    switch map tile provider (mapbox, thunderforest, etc)
-    checkout mapbox: https://docs.fleaflet.dev/tile-servers/using-mapbox
-    go alarm on map. using MapController
-    tile chaching
-    go to user location on map if offscreen.
-    show some sort icon on map for alarm if too zoomed out to see the circle. (could use current zoom level to determine this).
-    Logo
-    show something when user is too zoomed in. Use current zoom level to determine this.
-    get distance to closest alarm. have some sort of ui layer that points towards the alarm from current location if it is offscreen.
+  switch map tile provider (mapbox, thunderforest, etc)
+  checkout mapbox: https://docs.fleaflet.dev/tile-servers/using-mapbox
+  tile chaching
+  show some sort icon on map for alarm if too zoomed out to see the circle. (could use current zoom level to determine this).
+  Logo
+  show something when user is too zoomed in. Use current zoom level to determine this.
+  get distance to closest alarm. have some sort of ui layer that points towards the alarm from current location if it is offscreen.
 */
 
 void main() {
@@ -62,9 +56,9 @@ void periodicAlarmCheck() async {
     return;
   }
 
-  var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
+  var userLatLng = LatLng(userPosition.latitude, userPosition.longitude);
 
-  var triggeredAlarms = checkIfUserTriggersAlarms(userLocation, activeAlarms);
+  var triggeredAlarms = checkIfUserTriggersAlarms(userLatLng, activeAlarms);
 
   if (triggeredAlarms.isEmpty) {
     debugPrint('No alarms triggered.');

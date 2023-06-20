@@ -9,8 +9,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class ProxalarmState extends GetxController {
-  ProxalarmViews currentView = ProxalarmViews.alarms;
   List<Alarm> alarms = <Alarm>[];
+
+  // View Stuff
+  ProxalarmViews currentView = ProxalarmViews.alarms;
+  late PageController pageController;
 
   // MapView stuff
   MapController mapController = MapController();
@@ -20,6 +23,12 @@ class ProxalarmState extends GetxController {
   // Settings
   bool alarmSound = true;
   bool vibration = true;
+
+  @override
+  void onInit() {
+    pageController = PageController(initialPage: currentView.index);
+    super.onInit();
+  }
 }
 
 // This is used to produce unique ids. Only one instantiation is needed.
@@ -159,4 +168,12 @@ Future<void> loadSettingsFromSharedPreferences() async {
   ps.alarmSound = preferences.getBool(sharedPreferencesAlarmSoundKey) ?? true;
   ps.vibration = preferences.getBool(sharedPreferencesAlarmVibrationKey) ?? true;
   ps.update();
+}
+
+void navigateToAlarm(Alarm alarm) async {
+  var ps = Get.find<ProxalarmState>();
+  ps.currentView = ProxalarmViews.map;
+  ps.update();
+  await ps.pageController.animateToPage(ps.currentView.index, duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+  ps.mapController.move(alarm.position, initialZoom);
 }

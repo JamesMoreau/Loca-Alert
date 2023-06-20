@@ -52,7 +52,6 @@ class AlarmsView extends StatelessWidget {
                 onLongPress: () => openAlarmEdit(context, alarm),
                 onTap: () => openAlarmEdit(context, alarm),
                 trailing: Switch(
-                  
                   value: alarm.active,
                   activeColor: alarm.color,
                   onChanged: (value) {
@@ -79,7 +78,7 @@ class EditAlarmDialog extends StatefulWidget {
 class _EditAlarmDialogState extends State<EditAlarmDialog> {
   ProxalarmState ps = Get.find<ProxalarmState>();
   late TextEditingController nameInputController;
-  Alarm? bufferAlarm;
+  late Alarm bufferAlarm;
 
   @override
   void initState() {
@@ -91,7 +90,7 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
 
     bufferAlarm = createAlarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: alarm.active);
 
-    nameInputController = TextEditingController(text: bufferAlarm!.name);
+    nameInputController = TextEditingController(text: bufferAlarm.name);
 
     super.initState();
   }
@@ -110,15 +109,15 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
       return;
     }
 
-    bufferAlarm!.name = nameInputController.text.trim();
-    updateAlarmById(widget.alarmId, bufferAlarm!);
+    bufferAlarm.name = nameInputController.text.trim();
+    updateAlarmById(widget.alarmId, bufferAlarm);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (bufferAlarm == null) {
-      return Text('Error: Unable to retrieve alarm');
-    }
+    // if (bufferAlarm == null) {
+    //   return Text('Error: Unable to retrieve alarm');
+    // }
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
@@ -165,14 +164,27 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
                 scrollDirection: Axis.horizontal,
                 child: FastColorPicker(
                     icon: Icons.pin_drop_rounded,
-                    selectedColor: bufferAlarm!.color,
-                    onColorSelected: (newColor) => setState(() => bufferAlarm!.color = newColor))),
+                    selectedColor: bufferAlarm.color,
+                    onColorSelected: (newColor) => setState(() => bufferAlarm.color = newColor))),
             SizedBox(height: 30),
             Text('Position', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
-            Text(bufferAlarm!.position.toSexagesimal(), style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(bufferAlarm.position.toSexagesimal(), style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      navigateToAlarm(bufferAlarm);
+                    },
+                    icon: Icon(Icons.navigate_next_rounded),
+                    label: Text('Go To Alarm')),
+              ],
+            ),
             SizedBox(height: 30),
             Text('Radius / Size (in meters)', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
-            Text(bufferAlarm!.radius.toInt().toString(), style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(bufferAlarm.radius.toInt().toString(), style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

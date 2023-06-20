@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:proxalarm/proxalarm_state.dart';
 
 class SettingsView extends StatelessWidget {
-  SettingsView({super.key});
-
-
+  const SettingsView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +39,7 @@ class SettingsView extends StatelessWidget {
             child: ListTile(
               title: Text('Location Settings'),
               trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () {
-                // Navigate to location settings page
-                // You can use Navigator.push() to navigate to the desired page
-              },
+              onTap: () => Geolocator.openLocationSettings(),
             ),
           ),
         ]),
@@ -53,10 +49,8 @@ class SettingsView extends StatelessWidget {
 }
 
 // for switch icons.
-final MaterialStateProperty<Icon?> thumbIcon =
-    MaterialStateProperty.resolveWith<Icon?>((states) {
-  if (states.contains(MaterialState.selected)) {
-    return const Icon(Icons.check_rounded);
-  }
+final MaterialStateProperty<Icon?> thumbIcon = MaterialStateProperty.resolveWith<Icon?>((states) {
+  if (states.contains(MaterialState.selected)) return const Icon(Icons.check_rounded);
+  
   return const Icon(Icons.close_rounded);
 });

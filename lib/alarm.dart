@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:proxalarm/proxalarm_state.dart';
 
@@ -7,7 +8,7 @@ class Alarm {
   String name = '';
   Color color = Colors.redAccent;
   LatLng position = LatLng(0, 0);
-  double radius = 0; // in meters
+  double radius = 0; // Meters
   bool active = true;
 }
 
@@ -48,7 +49,8 @@ List<Alarm> checkIfUserTriggersAlarms(LatLng userPosition, List<Alarm> alarms) {
   var triggeredAlarms = <Alarm>[];
 
   for (var alarm in alarms) {
-    double distance = Distance().as(LengthUnit.Meter, userPosition, alarm.position);
+    // var distance = Distance().as(LengthUnit.Meter, userPosition, alarm.position);
+    var distance = Geolocator.distanceBetween(alarm.position.latitude, alarm.position.longitude, userPosition.latitude, userPosition.longitude);
     if (distance <= alarm.radius) triggeredAlarms.add(alarm);
   }
 
