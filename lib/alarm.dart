@@ -13,7 +13,7 @@ class Alarm {
 }
 
 Alarm createAlarm({required String name, required LatLng position, required double radius, Color? color, bool? active}) {
-  Alarm alarm = Alarm();
+  var alarm = Alarm();
   alarm.id = idGenerator.v1();
   alarm.name = name;
   alarm.color = color ?? Colors.redAccent;
@@ -37,10 +37,11 @@ Map<String, dynamic> alarmToJson(Alarm alarm) {
 
 Alarm alarmFromJson(Map<String, dynamic> alarmJson) {
   return createAlarm(
-    name: alarmJson['name'],
-    color: Color(alarmJson['color']),
-    position: LatLng(alarmJson['position']['latitude'], alarmJson['position']['longitude']),
-    radius: alarmJson['radius'],
+    name: alarmJson['name'] as String,
+    color: Color(alarmJson['color'] as int),
+    position: LatLng((alarmJson['position'] as Map<String, dynamic>)['latitude'] as double,
+        (alarmJson['position'] as Map<String, dynamic>)['longitude'] as double),
+    radius: alarmJson['radius'] as double,
   );
 }
 

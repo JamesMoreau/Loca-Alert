@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
-const appName = "Proxalarm";
-const author = "James Rush";
+const appName = 'Proxalarm';
+const author = 'James Rush';
 const myEmail = 'jmorea03@uoguelph.ca';
-const githubLink = "www.github.com/jamesmoreau";
+const githubLink = 'www.github.com/jamesmoreau';
 
 const London = LatLng(51.5074, -0.1278);
 const Toronto = LatLng(43.6532, -79.3832);
@@ -26,70 +26,73 @@ const alarmCheckPeriod = Duration(seconds: 5);
 const sharedPreferencesAlarmKey = 'alarms';
 const sharedPreferencesAlarmSoundKey = 'alarmSound';
 const sharedPreferencesAlarmVibrationKey = 'alarmVibration';
+const sharedPreferencesAlarmNotificationKey = 'alarmNotification';
 
-var proxalarmTheme = ThemeData(
-    useMaterial3: true,
-    // colorSchemeSeed: const Color(0xfff1f3e0),
-    // colorSchemeSeed: Colors.lightBlue,
-    // colorSchemeSeed: Color(0xffb2d2de),
-    // colorSchemeSeed: Color.fromARGB(255, 201, 225, 233),
+ThemeData proxalarmTheme = ThemeData(
+  useMaterial3: true,
+  // colorSchemeSeed: const Color(0xfff1f3e0),
+  // colorSchemeSeed: Colors.lightBlue,
+  // colorSchemeSeed: Color(0xffb2d2de),
+  // colorSchemeSeed: Color.fromARGB(255, 201, 225, 233),
 
-    colorScheme: scheme,
+  colorScheme: scheme,
 
-    // colorScheme: Airb
-    // colorScheme: const ColorScheme(
-    //     brightness: Brightness.light,
-    // primary: Color(0xff2b2b2b),
-    //     onPrimary: Colors.white,
-    //     secondary: Colors.white,
-    // onSecondary: Color(0xff2b2b2b),
-    //     error: Colors.red,
-    //     onError: Colors.white,
-    //     // background: Color(0xffe6e6e6),
-    //     background: Colors.white,
-    //     onBackground: Color(0xff2b2b2b),
-    // surface: Color(0xffe6e6e6),
-    // onSurface: Color(0xff2b2b2b)),
-    listTileTheme: ListTileThemeData(
-      contentPadding: const EdgeInsets.all(25),
-      tileColor: Color.fromARGB(255, 234, 239, 246), // Background color of the ListTile
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
+  // colorScheme: Airb
+  // colorScheme: const ColorScheme(
+  //     brightness: Brightness.light,
+  // primary: Color(0xff2b2b2b),
+  //     onPrimary: Colors.white,
+  //     secondary: Colors.white,
+  // onSecondary: Color(0xff2b2b2b),
+  //     error: Colors.red,
+  //     onError: Colors.white,
+  //     // background: Color(0xffe6e6e6),
+  //     background: Colors.white,
+  //     onBackground: Color(0xff2b2b2b),
+  // surface: Color(0xffe6e6e6),
+  // onSurface: Color(0xff2b2b2b)),
+  listTileTheme: ListTileThemeData(
+    contentPadding: const EdgeInsets.all(25),
+    tileColor: Color.fromARGB(255, 234, 239, 246), // Background color of the ListTile
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8),
     ),
-    iconTheme: IconThemeData(color: Color(0xff50606e)));
+  ),
+  iconTheme: IconThemeData(color: Color(0xff50606e)),
+);
 
-var scheme = ColorScheme(
-    brightness: Brightness.light,
-    primary: Color(0xff006493),
-    onPrimary: Colors.white,
-    primaryContainer: Color.fromARGB(255, 216, 237, 255),
-    onPrimaryContainer: Color(0xff001e30),
-    secondary: Color(0xff50606e),
-    onSecondary: Color(0xffffffff),
-    secondaryContainer: Color(0xffd3e5f5),
-    onSecondaryContainer: Color(0xff0c1d29),
-    tertiary: Color(0xff65587b),
-    onTertiary: Color(0xffffffff),
-    tertiaryContainer: Color(0xffebddff),
-    onTertiaryContainer: Color(0xff201634),
-    error: Color(0xffba1a1a),
-    onError: Colors.white,
-    errorContainer: Color(0xffffdad6),
-    onErrorContainer: Color(0xff410002),
-    background: Color(0xfffcfcff),
-    onBackground: Color(0xff1a1c1e),
-    surface: Color(0xfffcfcff),
-    onSurface: Color(0xff1a1c1e),
-    surfaceVariant: Color(0xffdde3ea),
-    onSurfaceVariant: Color(0xff41474d),
-    outline: Color(0xff72787e),
-    outlineVariant: Color(0xffc1c7ce),
-    inverseSurface: Color(0xff2e3133),
-    onInverseSurface: Color(0xfff0f0f3),
-    inversePrimary: Color(0xff8dcdff),
-    primaryVariant: Color(0xff006493),
-    secondaryVariant: Color(0xff50606e),
-    surfaceTint: Color(0xff006493));
+ColorScheme scheme = ColorScheme(
+  brightness: Brightness.light,
+  primary: Color(0xff006493),
+  onPrimary: Colors.white,
+  primaryContainer: Color.fromARGB(255, 216, 237, 255),
+  onPrimaryContainer: Color(0xff001e30),
+  secondary: Color(0xff50606e),
+  onSecondary: Color(0xffffffff),
+  secondaryContainer: Color(0xffd3e5f5),
+  onSecondaryContainer: Color(0xff0c1d29),
+  tertiary: Color(0xff65587b),
+  onTertiary: Color(0xffffffff),
+  tertiaryContainer: Color(0xffebddff),
+  onTertiaryContainer: Color(0xff201634),
+  error: Color(0xffba1a1a),
+  onError: Colors.white,
+  errorContainer: Color(0xffffdad6),
+  onErrorContainer: Color(0xff410002),
+  background: Color(0xfffcfcff),
+  onBackground: Color(0xff1a1c1e),
+  surface: Color(0xfffcfcff),
+  onSurface: Color(0xff1a1c1e),
+  surfaceVariant: Color(0xffdde3ea),
+  onSurfaceVariant: Color(0xff41474d),
+  outline: Color(0xff72787e),
+  outlineVariant: Color(0xffc1c7ce),
+  inverseSurface: Color(0xff2e3133),
+  onInverseSurface: Color(0xfff0f0f3),
+  inversePrimary: Color(0xff8dcdff),
+  primaryVariant: Color(0xff006493),
+  secondaryVariant: Color(0xff50606e),
+  surfaceTint: Color(0xff006493),
+);
 
 const paleBlue = Color(0xffeaf0f5);

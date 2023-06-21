@@ -7,7 +7,9 @@
 
 # The following line activates a set of recommended lints for Flutter apps,
 # packages, and plugins designed to encourage good coding practices.
-include: package:flutter_lints/flutter.yaml
+# include: package:flutter_lints/flutter.yaml
+# include: package:lints/recommended.yaml
+include: package:very_good_analysis/analysis_options.yaml
 
 linter:
   # The lint rules applied to this project can be customized in the
@@ -29,6 +31,14 @@ linter:
     prefer_const_constructors: false
     prefer_const_literals_to_create_immutables: false
     curly_braces_in_flow_control_structures: false
+    
+    # very goo analysis options
+    public_member_api_docs: false
+    prefer_final_fields: false
+    sort_constructors_first: false
+    cascade_invocations: false
+    prefer_final_in_for_each: false
+    prefer_final_locals: false
 
 
 # Additional information about this file can be found at

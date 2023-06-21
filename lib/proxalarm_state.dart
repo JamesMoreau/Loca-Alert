@@ -23,6 +23,7 @@ class ProxalarmState extends GetxController {
   // Settings
   bool alarmSound = true;
   bool vibration = true;
+  bool notification = true;
 
   @override
   void onInit() {
@@ -36,7 +37,7 @@ final Uuid idGenerator = Uuid();
 
 bool deleteAlarmById(String id) {
   var ps = Get.find<ProxalarmState>();
-  for (int i = 0; i < ps.alarms.length; i++) {
+  for (var i = 0; i < ps.alarms.length; i++) {
     if (ps.alarms[i].id == id) {
       ps.alarms.removeAt(i);
       ps.update();
@@ -59,7 +60,7 @@ Alarm? getAlarmById(String id) {
   return null;
 }
 
-// pass your new alarm data here to update proxalarm state. The id field in newAlarmData is ignored.
+// pass your new alarm data here to update proxalarm state. The id field in newAlarmData is ignored. returns success.
 bool updateAlarmById(String id, Alarm newAlarmData) {
   var ps = Get.find<ProxalarmState>();
 
@@ -72,6 +73,7 @@ bool updateAlarmById(String id, Alarm newAlarmData) {
       alarm.active = newAlarmData.active;
       ps.update();
       saveAlarmsToSharedPreferences();
+      return true;
     }
   }
 
@@ -99,7 +101,7 @@ Future<void> saveAlarmsToSharedPreferences() async {
     alarmsJsonStrings.add(alarmJsonString);
   }
 
-  debugPrint('Saving alarms to shared preferences: ${alarmsJsonStrings.toString()}.');
+  debugPrint('Saving alarms to shared preferences: $alarmsJsonStrings.');
   await preferences.setStringList(sharedPreferencesAlarmKey, alarmsJsonStrings);
 }
 
@@ -116,7 +118,7 @@ Future<void> loadAlarmsFromSharedPreferences() async {
 
   for (var alarmJsonString in alarmsJsonStrings) {
     var alarmJson = jsonDecode(alarmJsonString);
-    var alarm = alarmFromJson(alarmJson);
+    var alarm = alarmFromJson(alarmJson as Map<String, dynamic>);
     debugPrint(alarmJsonString);
 
     ps.alarms.add(alarm);
@@ -132,7 +134,7 @@ Future<void> clearAlarmsFromSharedPreferences() async {
 }
 
 void resetAlarmPlacementUIState() {
-  ProxalarmState ps = Get.find<ProxalarmState>();
+  var ps = Get.find<ProxalarmState>();
   ps.isPlacingAlarm = false;
   ps.alarmPlacementRadius = 100;
 }
@@ -151,6 +153,13 @@ void changeVibration({required bool newValue}) {
   saveSettingsToSharedPreferences();
 }
 
+void changeAlarmNotification({required bool newValue}) {
+  var ps = Get.find<ProxalarmState>();
+  ps.notification = newValue;
+  ps.update();
+  saveSettingsToSharedPreferences();
+}
+
 Future<void> saveSettingsToSharedPreferences() async {
   debugPrint('Saving settings to SharedPreferences');
 
@@ -159,6 +168,7 @@ Future<void> saveSettingsToSharedPreferences() async {
 
   await preferences.setBool(sharedPreferencesAlarmSoundKey, ps.alarmSound);
   await preferences.setBool(sharedPreferencesAlarmVibrationKey, ps.vibration);
+  await preferences.setBool(sharedPreferencesAlarmNotificationKey, ps.notification);
 }
 
 Future<void> loadSettingsFromSharedPreferences() async {
@@ -167,10 +177,11 @@ Future<void> loadSettingsFromSharedPreferences() async {
 
   ps.alarmSound = preferences.getBool(sharedPreferencesAlarmSoundKey) ?? true;
   ps.vibration = preferences.getBool(sharedPreferencesAlarmVibrationKey) ?? true;
+  ps.notification = preferences.getBool(sharedPreferencesAlarmNotificationKey) ?? true;
   ps.update();
 }
 
-void navigateToAlarm(Alarm alarm) async {
+Future<void> navigateToAlarm(Alarm alarm) async {
   var ps = Get.find<ProxalarmState>();
   ps.currentView = ProxalarmViews.map;
   ps.update();

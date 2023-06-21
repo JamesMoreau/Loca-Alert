@@ -2,8 +2,8 @@ import 'package:fast_color_picker/fast_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:proxalarm/alarm.dart';
-import 'package:proxalarm/proxalarm_state.dart';
 import 'package:proxalarm/constants.dart';
+import 'package:proxalarm/proxalarm_state.dart';
 
 class AlarmsView extends StatelessWidget {
   const AlarmsView({super.key});
@@ -21,30 +21,34 @@ class AlarmsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ProxalarmState>(builder: (state) {
-      if (state.alarms.isEmpty) {
-        return Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text('No alarms.'),
-            ElevatedButton(
-              child: Text('Add mock alarms'),
-              onPressed: () {
-                addAlarm(createAlarm(name: 'London', position: London, radius: 1000));
-                addAlarm(createAlarm(name: 'Dublin', position: Dublin, radius: 2000, color: Colors.blue));
-                addAlarm(createAlarm(name: 'Toronto', position: Toronto, radius: 3000, color: Colors.lightGreen));
-                addAlarm(createAlarm(name: 'Belfast', position: Belfast, radius: 1000, color: Colors.purple));
-              },
-            )
-          ]),
-        );
-      }
+    return GetBuilder<ProxalarmState>(
+      builder: (state) {
+        if (state.alarms.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('No alarms.'),
+                ElevatedButton(
+                  child: Text('Add mock alarms'),
+                  onPressed: () {
+                    addAlarm(createAlarm(name: 'London', position: London, radius: 1000));
+                    addAlarm(createAlarm(name: 'Dublin', position: Dublin, radius: 2000, color: Colors.blue));
+                    addAlarm(createAlarm(name: 'Toronto', position: Toronto, radius: 3000, color: Colors.lightGreen));
+                    addAlarm(createAlarm(name: 'Belfast', position: Belfast, radius: 1000, color: Colors.purple));
+                  },
+                )
+              ],
+            ),
+          );
+        }
 
-      return ListView.builder(
+        return ListView.builder(
           itemCount: state.alarms.length,
           itemBuilder: (context, index) {
             var alarm = state.alarms[index];
             return Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8),
               child: ListTile(
                 title: Text(alarm.name),
                 leading: Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
@@ -61,15 +65,17 @@ class AlarmsView extends StatelessWidget {
                 ),
               ),
             );
-          });
-    });
+          },
+        );
+      },
+    );
   }
 }
 
 class EditAlarmDialog extends StatefulWidget {
   final String alarmId;
 
-  const EditAlarmDialog({super.key, required this.alarmId});
+  const EditAlarmDialog({required this.alarmId, super.key});
 
   @override
   State<EditAlarmDialog> createState() => _EditAlarmDialogState();
@@ -119,12 +125,11 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
     //   return Text('Error: Unable to retrieve alarm');
     // }
 
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.9,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -134,7 +139,7 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
                 TextButton(child: const Text('Cancel'), onPressed: () => Navigator.pop(context)),
                 Text(
                   'Edit Alarm',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 TextButton(
                   child: const Text('Save'),
@@ -151,21 +156,25 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
               textAlign: TextAlign.center,
               controller: nameInputController,
               decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                      icon: Icon(Icons.clear_rounded),
-                      onPressed: () {
-                        nameInputController.clear();
-                        setState(() {});
-                      })),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.clear_rounded),
+                  onPressed: () {
+                    nameInputController.clear();
+                    setState(() {});
+                  },
+                ),
+              ),
             ),
             SizedBox(height: 30),
             Text('Color', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
             SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: FastColorPicker(
-                    icon: Icons.pin_drop_rounded,
-                    selectedColor: bufferAlarm.color,
-                    onColorSelected: (newColor) => setState(() => bufferAlarm.color = newColor))),
+              scrollDirection: Axis.horizontal,
+              child: FastColorPicker(
+                icon: Icons.pin_drop_rounded,
+                selectedColor: bufferAlarm.color,
+                onColorSelected: (newColor) => setState(() => bufferAlarm.color = newColor),
+              ),
+            ),
             SizedBox(height: 30),
             Text('Position', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
             Text(bufferAlarm.position.toSexagesimal(), style: TextStyle(fontWeight: FontWeight.bold)),
@@ -174,12 +183,13 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      navigateToAlarm(bufferAlarm);
-                    },
-                    icon: Icon(Icons.navigate_next_rounded),
-                    label: Text('Go To Alarm')),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    navigateToAlarm(bufferAlarm);
+                  },
+                  icon: Icon(Icons.navigate_next_rounded),
+                  label: Text('Go To Alarm'),
+                ),
               ],
             ),
             SizedBox(height: 30),
@@ -190,18 +200,19 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        side: BorderSide(color: Colors.redAccent, width: 2),
-                      ),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: Colors.redAccent, width: 2),
                     ),
-                    onPressed: () {
-                      deleteAlarmById(widget.alarmId);
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Delete Alarm', style: TextStyle(color: Colors.redAccent))),
+                  ),
+                  onPressed: () {
+                    deleteAlarmById(widget.alarmId);
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Delete Alarm', style: TextStyle(color: Colors.redAccent)),
+                ),
               ],
             )
           ],

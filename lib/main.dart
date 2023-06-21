@@ -6,11 +6,12 @@ import 'package:latlong2/latlong.dart';
 import 'package:proxalarm/constants.dart';
 import 'package:proxalarm/home.dart';
 import 'package:proxalarm/proxalarm_state.dart';
-import 'package:intl/intl.dart';
+import 'package:vibration/vibration.dart';
 import 'alarm.dart';
 
 /* 
   TODO:
+  actually make alarm work
   switch map tile provider (mapbox, thunderforest, etc)
   checkout mapbox: https://docs.fleaflet.dev/tile-servers/using-mapbox
   tile chaching
@@ -22,7 +23,7 @@ import 'alarm.dart';
 
 void main() {
   Get.put(ProxalarmState()); // Inject the global app state into memory.
-  
+
   loadAlarmsFromSharedPreferences();
   loadSettingsFromSharedPreferences();
 
@@ -44,9 +45,9 @@ class MainApp extends StatelessWidget {
   }
 }
 
-void periodicAlarmCheck() async {
+Future<void> periodicAlarmCheck() async {
   // debugPrint('Should see me every 5 seconds. ${DateFormat('HH:mm:ss').format(DateTime.now())}');
-  ProxalarmState ps = Get.find<ProxalarmState>();
+  var ps = Get.find<ProxalarmState>();
 
   var activeAlarms = ps.alarms.where((alarm) => alarm.active).toList();
 
@@ -62,8 +63,25 @@ void periodicAlarmCheck() async {
 
   if (triggeredAlarms.isEmpty) {
     debugPrint('No alarms triggered.');
+    await Vibration.cancel();
     return;
   }
 
   for (var alarm in triggeredAlarms) debugPrint('Triggered alarm: ${alarm.name}');
+
+  for (var alarm in triggeredAlarms) {
+    if (ps.vibration) {
+      debugPrint('Vibrating.');
+      await Vibration.vibrate();
+    }
+
+    // if (ps.settings.sound) {d
+    //   debugPrint('Playing sound.');
+    //   await AudioCache().play('alarm.mp3');
+    // }
+
+    // if (ps.showNotification) {
+    //   debugPrint('Showing notification.');
+    // }
+  }
 }
