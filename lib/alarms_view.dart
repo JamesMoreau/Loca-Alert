@@ -10,7 +10,7 @@ class AlarmsView extends StatelessWidget {
 
   void openAlarmEdit(BuildContext context, Alarm alarm) {
     debugPrint('Editing alarm: ${alarm.name}, id: ${alarm.id}.');
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (context) {

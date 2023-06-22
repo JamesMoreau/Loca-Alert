@@ -39,8 +39,10 @@ Alarm alarmFromJson(Map<String, dynamic> alarmJson) {
   return createAlarm(
     name: alarmJson['name'] as String,
     color: Color(alarmJson['color'] as int),
-    position: LatLng((alarmJson['position'] as Map<String, dynamic>)['latitude'] as double,
-        (alarmJson['position'] as Map<String, dynamic>)['longitude'] as double),
+    position: LatLng(
+      (alarmJson['position'] as Map<String, dynamic>)['latitude'] as double,
+      (alarmJson['position'] as Map<String, dynamic>)['longitude'] as double,
+    ),
     radius: alarmJson['radius'] as double,
   );
 }

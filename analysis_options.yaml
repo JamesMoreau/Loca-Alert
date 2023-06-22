@@ -10,6 +10,7 @@
 # include: package:flutter_lints/flutter.yaml
 # include: package:lints/recommended.yaml
 include: package:very_good_analysis/analysis_options.yaml
+# include: package:lint/strict.yaml
 
 linter:
   # The lint rules applied to this project can be customized in the

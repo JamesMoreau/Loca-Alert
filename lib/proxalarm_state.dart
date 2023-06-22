@@ -15,6 +15,8 @@ class ProxalarmState extends GetxController {
   ProxalarmViews currentView = ProxalarmViews.alarms;
   late PageController pageController;
 
+  bool alarmIsCurrentlyTriggered = false;
+
   // MapView stuff
   MapController mapController = MapController();
   bool isPlacingAlarm = false;

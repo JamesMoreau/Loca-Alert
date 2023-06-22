@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:proxalarm/alarm.dart';
 import 'package:proxalarm/constants.dart';
 import 'package:proxalarm/home.dart';
 import 'package:proxalarm/proxalarm_state.dart';
+import 'package:proxalarm/triggered_alarm_dialog.dart';
 import 'package:vibration/vibration.dart';
-import 'alarm.dart';
 
 /* 
   TODO:
@@ -41,8 +42,13 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       home: Home(),
       theme: proxalarmTheme,
+      navigatorKey: NavigationService.navigatorKey,
     );
   }
+}
+
+class NavigationService {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
 
 Future<void> periodicAlarmCheck() async {
@@ -71,8 +77,13 @@ Future<void> periodicAlarmCheck() async {
 
   for (var alarm in triggeredAlarms) {
     if (ps.vibration) {
-      debugPrint('Vibrating.');
-      await Vibration.vibrate();
+      // debugPrint('Vibrating.');
+      // await Vibration.vibrate();
+    }
+
+    if (!ps.alarmIsCurrentlyTriggered) {
+      ps.alarmIsCurrentlyTriggered = true;
+      showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
     }
 
     // if (ps.settings.sound) {d
