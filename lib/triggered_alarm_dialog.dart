@@ -26,32 +26,45 @@ void showAlarmDialog(BuildContext context, String alarmId) {
         child: SafeArea(
           child: Column(
             children: [
-              Text(
-                'Alarm Triggered',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w300),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    Text(
+                      'Alarm Triggered',
+                      style: TextStyle(fontSize: 30, fontWeight: FontWeight.w300),
+                    ),
+                  ],
+                ),
               ),
-              // Text(alarm.name),
-              // SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    var dismissedAlarm = createAlarm(
-                      name: alarm.name,
-                      position: alarm.position,
-                      radius: alarm.radius,
-                      color: alarm.color,
-                      active: false, // deactivate the alarm
-                    );
-                    updateAlarmById(alarmId, dismissedAlarm);
-                    Navigator.pop(context);
-                    ps.alarmIsCurrentlyTriggered = false;
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey,
-                    foregroundColor: Colors.white,
-                    minimumSize: Size(200, 50),
-                  ),
-                  child: Text('Dismiss'),
+              Expanded(
+                flex: 3,
+                child: Column(
+                  children: [
+                    Text(alarm.name, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        var dismissedAlarm = createAlarm(
+                          name: alarm.name,
+                          position: alarm.position,
+                          radius: alarm.radius,
+                          color: alarm.color,
+                          active: false, // deactivate the alarm
+                        );
+                        updateAlarmById(alarmId, dismissedAlarm);
+                        Navigator.pop(context);
+                        ps.alarmIsCurrentlyTriggered = false;
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueGrey,
+                        foregroundColor: Colors.white,
+                        minimumSize: Size(225, 70),
+                        textStyle: TextStyle(fontSize: 25),
+                      ),
+                      child: Text('Dismiss'),
+                    ),
+                  ],
                 ),
               ),
             ],
