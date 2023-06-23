@@ -18,7 +18,7 @@ import 'package:vibration/vibration.dart';
   checkout mapbox: https://docs.fleaflet.dev/tile-servers/using-mapbox
   tile chaching
   show some sort icon on map for alarm if too zoomed out to see the circle. (could use current zoom level to determine this).
-  Logo
+  App Logo
   show something when user is too zoomed in. Use current zoom level to determine this.
   get distance to closest alarm. have some sort of ui layer that points towards the alarm from current location if it is offscreen.
 */

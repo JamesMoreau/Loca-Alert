@@ -1,14 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:proxalarm/constants.dart';
 import 'package:proxalarm/proxalarm_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'alarm.dart';
-import 'constants.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
