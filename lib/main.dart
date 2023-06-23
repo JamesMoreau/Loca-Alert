@@ -76,6 +76,7 @@ Future<void> periodicAlarmCheck() async {
 
   for (var alarm in triggeredAlarms) debugPrint('Periodic Alarm Check: Triggered alarm ${alarm.name}');
 
+  // If an alarm is already triggered, don't show another dialog.
   if (ps.alarmIsCurrentlyTriggered) return;
 
   for (var alarm in triggeredAlarms) {
