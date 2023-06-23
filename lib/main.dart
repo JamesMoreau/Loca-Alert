@@ -76,18 +76,14 @@ Future<void> periodicAlarmCheck() async {
 
   for (var alarm in triggeredAlarms) debugPrint('Periodic Alarm Check: Triggered alarm ${alarm.name}');
 
+  if (ps.alarmIsCurrentlyTriggered) return;
+
   for (var alarm in triggeredAlarms) {
+    
     if (ps.vibration) {
       await Vibration.vibrate();
     }
 
-    if (ps.alarmIsCurrentlyTriggered) return;
-
-    // No alarm is currently triggered, so we can show the dialog.
-    ps.alarmIsCurrentlyTriggered = true;
-    showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
-
-    
     // if (ps.settings.sound) {d
     //   debugPrint('Playing sound.');
     //   await AudioCache().play('alarm.mp3');
@@ -96,5 +92,9 @@ Future<void> periodicAlarmCheck() async {
     // if (ps.showNotification) {
     //   debugPrint('Showing notification.');
     // }
+
+    // No alarm is currently triggered, so we can show the dialog.
+    ps.alarmIsCurrentlyTriggered = true;
+    showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
   }
 }

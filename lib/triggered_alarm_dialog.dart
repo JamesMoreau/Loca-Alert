@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:proxalarm/alarm.dart';
 import 'package:proxalarm/constants.dart';
 import 'package:proxalarm/proxalarm_state.dart';
+import 'package:vibration/vibration.dart';
 
 
 void showAlarmDialog(BuildContext context, String alarmId) {
@@ -26,6 +27,7 @@ void showAlarmDialog(BuildContext context, String alarmId) {
       active: false, // deactivate the alarm
     );
     updateAlarmById(alarmId, dismissedAlarm);
+    if (ps.vibration) Vibration.cancel();
     Navigator.pop(context);
     ps.alarmIsCurrentlyTriggered = false;
   }
