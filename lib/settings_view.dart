@@ -1,7 +1,14 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:proxalarm/proxalarm_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'alarm.dart';
+import 'constants.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -55,6 +62,27 @@ class SettingsView extends StatelessWidget {
                   onTap: Geolocator.openLocationSettings,
                 ),
               ),
+              if (kDebugMode)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    title: Text('Print Alarms SP Data.'),
+                    trailing: Icon(Icons.alarm_rounded),
+                    onTap: () async {
+                      var preferences = await SharedPreferences.getInstance();
+
+                      final alarmsJsonStrings = preferences.getStringList(sharedPreferencesAlarmKey);
+                      if (alarmsJsonStrings == null) {
+                        debugPrint('No alarms found in shared preferences.');
+                        return;
+                      }
+
+                      for (var alarmJsonString in alarmsJsonStrings) {
+                        debugPrint(alarmJsonString);
+                      }
+                    },
+                  ),
+                ),
             ],
           ),
         );

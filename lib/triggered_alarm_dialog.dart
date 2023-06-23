@@ -1,9 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:proxalarm/alarm.dart';
+import 'package:proxalarm/constants.dart';
 import 'package:proxalarm/proxalarm_state.dart';
 
-import 'constants.dart';
 
 void showAlarmDialog(BuildContext context, String alarmId) {
   var ps = Get.find<ProxalarmState>();
@@ -14,6 +15,23 @@ void showAlarmDialog(BuildContext context, String alarmId) {
     ps.alarmIsCurrentlyTriggered = false;
     return;
   }
+
+  // Callback when the user presses the "Dismiss" button or alarm times out.
+  void deactivateAlarmAndCloseDialog(BuildContext context) {
+    var dismissedAlarm = createAlarm(
+      name: alarm.name,
+      position: alarm.position,
+      radius: alarm.radius,
+      color: alarm.color,
+      active: false, // deactivate the alarm
+    );
+    updateAlarmById(alarmId, dismissedAlarm);
+    Navigator.pop(context);
+    ps.alarmIsCurrentlyTriggered = false;
+  }
+
+  // Start a timer to automatically close the dialog after 5 minutes (300 seconds)
+  Timer(Duration(minutes: 1), () => deactivateAlarmAndCloseDialog(context) );
 
   showGeneralDialog<void>(
     context: context,
@@ -34,6 +52,17 @@ void showAlarmDialog(BuildContext context, String alarmId) {
                       'Alarm Triggered',
                       style: TextStyle(fontSize: 30, fontWeight: FontWeight.w300),
                     ),
+                    SizedBox(height: 16),
+                    Text(
+                      'You have entered the radius of an alarm.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Icon(Icons.alarm, size: 100, color: alarm.color),
                   ],
                 ),
               ),
@@ -44,18 +73,7 @@ void showAlarmDialog(BuildContext context, String alarmId) {
                     Text(alarm.name, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                     SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () {
-                        var dismissedAlarm = createAlarm(
-                          name: alarm.name,
-                          position: alarm.position,
-                          radius: alarm.radius,
-                          color: alarm.color,
-                          active: false, // deactivate the alarm
-                        );
-                        updateAlarmById(alarmId, dismissedAlarm);
-                        Navigator.pop(context);
-                        ps.alarmIsCurrentlyTriggered = false;
-                      },
+                      onPressed: () => deactivateAlarmAndCloseDialog(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueGrey,
                         foregroundColor: Colors.white,
@@ -74,24 +92,3 @@ void showAlarmDialog(BuildContext context, String alarmId) {
     ),
   );
 }
-
-  // showGeneralDialog(
-  //     context: context,
-  //     barrierDismissible: true,
-  //     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-  //     barrierColor: Colors.black45,
-  //     transitionDuration: const Duration(milliseconds: 200),
-  //     pageBuilder: (context, animation, secondaryAnimation) {
-  //       return Center(
-  //         child: Container(
-  //           width: MediaQuery.of(context).size.width,
-  //           height: MediaQuery.of(context).size.height,
-  //           padding: EdgeInsets.all(20),
-  //           color: Colors.white,
-  //           child: 
-  //         ),
-  //       );
-  //     });
-
-
-

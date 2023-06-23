@@ -16,6 +16,7 @@ class ProxalarmState extends GetxController {
   late PageController pageController;
 
   bool alarmIsCurrentlyTriggered = false;
+  double alarmTimer = 0;
 
   // MapView stuff
   MapController mapController = MapController();

@@ -32,6 +32,7 @@ Map<String, dynamic> alarmToJson(Alarm alarm) {
       'longitude': alarm.position.longitude,
     },
     'radius': alarm.radius,
+    'active': alarm.active,
   };
 }
 
@@ -44,6 +45,7 @@ Alarm alarmFromJson(Map<String, dynamic> alarmJson) {
       (alarmJson['position'] as Map<String, dynamic>)['longitude'] as double,
     ),
     radius: alarmJson['radius'] as double,
+    active: alarmJson['active'] as bool,
   );
 }
 

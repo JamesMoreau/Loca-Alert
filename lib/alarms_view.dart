@@ -59,8 +59,10 @@ class AlarmsView extends StatelessWidget {
                   value: alarm.active,
                   activeColor: alarm.color,
                   onChanged: (value) {
-                    alarm.active = value;
-                    state.update();
+                    // alarm.active = value;
+                    var updatedAlarmData =
+                        createAlarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: value);
+                    updateAlarmById(alarm.id, updatedAlarmData);
                   },
                 ),
               ),

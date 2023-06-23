@@ -13,6 +13,7 @@ import 'package:vibration/vibration.dart';
 /* 
   TODO:
   actually make alarm work
+  alarm notification
   switch map tile provider (mapbox, thunderforest, etc)
   checkout mapbox: https://docs.fleaflet.dev/tile-servers/using-mapbox
   tile chaching
@@ -59,7 +60,7 @@ Future<void> periodicAlarmCheck() async {
 
   var userPosition = await Geolocator.getLastKnownPosition();
   if (userPosition == null) {
-    debugPrint('No user position found.');
+    debugPrint('Periodic Alarm Check: No user position found.');
     return;
   }
 
@@ -68,24 +69,25 @@ Future<void> periodicAlarmCheck() async {
   var triggeredAlarms = checkIfUserTriggersAlarms(userLatLng, activeAlarms);
 
   if (triggeredAlarms.isEmpty) {
-    debugPrint('No alarms triggered.');
+    debugPrint('Periodic Alarm Check: No alarms triggered.');
     await Vibration.cancel();
     return;
   }
 
-  for (var alarm in triggeredAlarms) debugPrint('Triggered alarm: ${alarm.name}');
+  for (var alarm in triggeredAlarms) debugPrint('Periodic Alarm Check: Triggered alarm ${alarm.name}');
 
   for (var alarm in triggeredAlarms) {
     if (ps.vibration) {
-      // debugPrint('Vibrating.');
-      // await Vibration.vibrate();
+      await Vibration.vibrate();
     }
 
-    if (!ps.alarmIsCurrentlyTriggered) {
-      ps.alarmIsCurrentlyTriggered = true;
-      showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
-    }
+    if (ps.alarmIsCurrentlyTriggered) return;
 
+    // No alarm is currently triggered, so we can show the dialog.
+    ps.alarmIsCurrentlyTriggered = true;
+    showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
+
+    
     // if (ps.settings.sound) {d
     //   debugPrint('Playing sound.');
     //   await AudioCache().play('alarm.mp3');
