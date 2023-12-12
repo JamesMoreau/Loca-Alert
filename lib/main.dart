@@ -1,12 +1,15 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:proximityalarm/alarm.dart';
+import 'package:proximityalarm/alarms_view.dart';
 import 'package:proximityalarm/constants.dart';
-import 'package:proximityalarm/home.dart';
+import 'package:proximityalarm/map_view.dart';
 import 'package:proximityalarm/proximity_alarm_state.dart';
+import 'package:proximityalarm/settings_view.dart';
 import 'package:proximityalarm/triggered_alarm_dialog.dart';
 import 'package:vibration/vibration.dart';
 
@@ -37,6 +40,8 @@ void main() {
   runApp(const MainApp());
 }
 
+enum ProximityAlarmViews { alarms, map, settings }
+
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
@@ -44,7 +49,51 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: GetBuilder<ProximityAlarmState>(
+      builder: (state) {
+        return Scaffold(
+          body: PageView(
+            controller: state.pageController,
+            physics: NeverScrollableScrollPhysics(), // Disable swipe gesture to change pages
+            children: [
+              AlarmsView(),
+              MapView(),
+              SettingsView(),
+            ],
+          ),
+          extendBody: true,
+          bottomNavigationBar: ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(50),
+              topRight: Radius.circular(50),
+            ),
+            child: NavigationBar(
+              elevation: 3,
+              onDestinationSelected: (int index) {
+                state.currentView = ProximityAlarmViews.values[index];
+                state.update();
+                state.pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+              },
+              selectedIndex: state.currentView.index,
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.pin_drop_rounded),
+                  label: 'Alarms',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.map_rounded),
+                  label: 'Map',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.settings_rounded),
+                  label: 'Settings',
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
       theme: ProximityAlarmTheme,
       navigatorKey: NavigationService.navigatorKey,
     );

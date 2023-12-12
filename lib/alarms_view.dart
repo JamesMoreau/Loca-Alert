@@ -1,4 +1,5 @@
 import 'package:fast_color_picker/fast_color_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:proximityalarm/alarm.dart';
@@ -29,15 +30,16 @@ class AlarmsView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('No alarms.'),
-                ElevatedButton(
-                  child: Text('Add mock alarms'),
-                  onPressed: () {
-                    addAlarm(createAlarm(name: 'London', position: London, radius: 1000));
-                    addAlarm(createAlarm(name: 'Dublin', position: Dublin, radius: 2000, color: Colors.blue));
-                    addAlarm(createAlarm(name: 'Toronto', position: Toronto, radius: 3000, color: Colors.lightGreen));
-                    addAlarm(createAlarm(name: 'Belfast', position: Belfast, radius: 1000, color: Colors.purple));
-                  },
-                )
+                if (kDebugMode)
+                  ElevatedButton(
+                    child: Text('Add mock alarms'),
+                    onPressed: () {
+                      addAlarm(createAlarm(name: 'London', position: London, radius: 1000));
+                      addAlarm(createAlarm(name: 'Dublin', position: Dublin, radius: 2000, color: Colors.blue));
+                      addAlarm(createAlarm(name: 'Toronto', position: Toronto, radius: 3000, color: Colors.lightGreen));
+                      addAlarm(createAlarm(name: 'Belfast', position: Belfast, radius: 1000, color: Colors.purple));
+                    },
+                  )
               ],
             ),
           );

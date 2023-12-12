@@ -4,7 +4,7 @@ import 'package:flutter_map/plugin_api.dart';
 import 'package:get/get.dart';
 import 'package:proximityalarm/alarm.dart';
 import 'package:proximityalarm/constants.dart';
-import 'package:proximityalarm/home.dart';
+import 'package:proximityalarm/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
