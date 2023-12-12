@@ -2,9 +2,9 @@ import 'package:fast_color_picker/fast_color_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:proximityalarm/alarm.dart';
-import 'package:proximityalarm/constants.dart';
-import 'package:proximityalarm/proximity_alarm_state.dart';
+import 'package:proxmity_alarm/alarm.dart';
+import 'package:proxmity_alarm/constants.dart';
+import 'package:proxmity_alarm/proximity_alarm_state.dart';
 
 class AlarmsView extends StatelessWidget {
   const AlarmsView({super.key});
@@ -39,7 +39,7 @@ class AlarmsView extends StatelessWidget {
                       addAlarm(createAlarm(name: 'Toronto', position: Toronto, radius: 3000, color: Colors.lightGreen));
                       addAlarm(createAlarm(name: 'Belfast', position: Belfast, radius: 1000, color: Colors.purple));
                     },
-                  )
+                  ),
               ],
             ),
           );
@@ -218,7 +218,7 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
                   child: Text('Delete Alarm', style: TextStyle(color: Colors.redAccent)),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

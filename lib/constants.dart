@@ -28,8 +28,7 @@ const sharedPreferencesAlarmSoundKey = 'alarmSound';
 const sharedPreferencesAlarmVibrationKey = 'alarmVibration';
 const sharedPreferencesAlarmNotificationKey = 'alarmNotification';
 
-ThemeData ProximityAlarmTheme = ThemeData(
-  useMaterial3: true,
+ThemeData proximityAlarmTheme = ThemeData(
   // colorSchemeSeed: const Color(0xfff1f3e0),
   // colorSchemeSeed: Colors.lightBlue,
   // colorSchemeSeed: Color(0xffb2d2de),
@@ -90,8 +89,8 @@ ColorScheme scheme = ColorScheme(
   inverseSurface: Color(0xff2e3133),
   onInverseSurface: Color(0xfff0f0f3),
   inversePrimary: Color(0xff8dcdff),
-  primaryVariant: Color(0xff006493),
-  secondaryVariant: Color(0xff50606e),
+  // primaryVariant: Color(0xff006493),
+  // secondaryVariant: Color(0xff50606e),
   surfaceTint: Color(0xff006493),
 );
 

@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:get/get.dart';
-import 'package:proximityalarm/alarm.dart';
-import 'package:proximityalarm/constants.dart';
-import 'package:proximityalarm/main.dart';
+import 'package:proxmity_alarm/alarm.dart';
+import 'package:proxmity_alarm/constants.dart';
+import 'package:proxmity_alarm/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
