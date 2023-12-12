@@ -180,10 +180,10 @@ class _MapViewState extends State<MapView> {
 }
 
 Future<void> navigateMapToUserLocation() async {
-  var ps = Get.find<ProximityAlarmState>();
+  var pas = Get.find<ProximityAlarmState>();
 
   var userPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
   var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
 
-  ps.mapController.move(userLocation, initialZoom);
+  pas.mapController.move(userLocation, initialZoom);
 }

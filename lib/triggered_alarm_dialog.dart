@@ -7,12 +7,12 @@ import 'package:proximityalarm/proximity_alarm_state.dart';
 import 'package:vibration/vibration.dart';
 
 void showAlarmDialog(BuildContext context, String alarmId) {
-  var ps = Get.find<ProximityAlarmState>();
+  var pas = Get.find<ProximityAlarmState>();
   var alarm = getAlarmById(alarmId);
 
   if (alarm == null) {
     debugPrint('Error: Unable to retrieve triggered alarm.');
-    ps.alarmIsCurrentlyTriggered = false;
+    pas.alarmIsCurrentlyTriggered = false;
     return;
   }
 
@@ -26,9 +26,9 @@ void showAlarmDialog(BuildContext context, String alarmId) {
       active: false, // deactivate the alarm
     );
     updateAlarmById(alarmId, dismissedAlarm);
-    if (ps.vibration) Vibration.cancel();
+    if (pas.vibration) Vibration.cancel();
     Navigator.pop(context);
-    ps.alarmIsCurrentlyTriggered = false;
+    pas.alarmIsCurrentlyTriggered = false;
   }
 
   // Start a timer to automatically close the dialog after 5 minutes (300 seconds)
