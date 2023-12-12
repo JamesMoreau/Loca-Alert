@@ -12,6 +12,7 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
+  move main into home.dart
   change name to proximity alarm
   actually make alarm work
   alarm notification
