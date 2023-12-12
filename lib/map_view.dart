@@ -5,9 +5,9 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:proxalarm/alarm.dart';
-import 'package:proxalarm/constants.dart';
-import 'package:proxalarm/proxalarm_state.dart';
+import 'package:proximityalarm/alarm.dart';
+import 'package:proximityalarm/constants.dart';
+import 'package:proximityalarm/proximity_alarm_state.dart';
 
 class MapView extends StatefulWidget {
   const MapView({super.key});
@@ -19,7 +19,7 @@ class MapView extends StatefulWidget {
 class _MapViewState extends State<MapView> {
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ProxalarmState>(
+    return GetBuilder<ProximityAlarmState>(
       builder: (state) {
         var alarmPlacementIcon = state.isPlacingAlarm ? Icons.check : Icons.pin_drop_rounded;
 
@@ -180,7 +180,7 @@ class _MapViewState extends State<MapView> {
 }
 
 Future<void> navigateMapToUserLocation() async {
-  var ps = Get.find<ProxalarmState>();
+  var ps = Get.find<ProximityAlarmState>();
 
   var userPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
   var userLocation = LatLng(userPosition.latitude, userPosition.longitude);

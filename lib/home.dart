@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:proxalarm/alarms_view.dart';
-import 'package:proxalarm/map_view.dart';
-import 'package:proxalarm/proxalarm_state.dart';
-import 'package:proxalarm/settings_view.dart';
+import 'package:proximityalarm/alarms_view.dart';
+import 'package:proximityalarm/map_view.dart';
+import 'package:proximityalarm/proximity_alarm_state.dart';
+import 'package:proximityalarm/settings_view.dart';
 
-enum ProxalarmViews { alarms, map, settings }
+enum ProximityAlarmViews { alarms, map, settings }
 
 class Home extends StatelessWidget {
   const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ProxalarmState>(
+    return GetBuilder<ProximityAlarmState>(
       builder: (state) {
         return Scaffold(
           body: PageView(
@@ -33,7 +33,7 @@ class Home extends StatelessWidget {
             child: NavigationBar(
               elevation: 3,
               onDestinationSelected: (int index) {
-                state.currentView = ProxalarmViews.values[index];
+                state.currentView = ProximityAlarmViews.values[index];
                 state.update();
                 state.pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
               },
@@ -59,11 +59,11 @@ class Home extends StatelessWidget {
     );
   }
 
-  // Widget getView(ProxalarmView v) {
+  // Widget getView(ProximityAlarmView v) {
   //   switch (v) {
-  //     case ProxalarmView.alarms:
+  //     case ProximityAlarmViews.alarms:
   //       return AlarmsView();
-  //     case ProxalarmView.map:
+  //     case ProximityAlarmViews.map:
   //       return MapView();
   //   }
   // }

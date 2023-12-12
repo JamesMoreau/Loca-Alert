@@ -1,9 +1,9 @@
 import 'package:fast_color_picker/fast_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:proxalarm/alarm.dart';
-import 'package:proxalarm/constants.dart';
-import 'package:proxalarm/proxalarm_state.dart';
+import 'package:proximityalarm/alarm.dart';
+import 'package:proximityalarm/constants.dart';
+import 'package:proximityalarm/proximity_alarm_state.dart';
 
 class AlarmsView extends StatelessWidget {
   const AlarmsView({super.key});
@@ -21,7 +21,7 @@ class AlarmsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ProxalarmState>(
+    return GetBuilder<ProximityAlarmState>(
       builder: (state) {
         if (state.alarms.isEmpty) {
           return Center(
@@ -84,7 +84,7 @@ class EditAlarmDialog extends StatefulWidget {
 }
 
 class _EditAlarmDialogState extends State<EditAlarmDialog> {
-  ProxalarmState ps = Get.find<ProxalarmState>();
+  ProximityAlarmState ps = Get.find<ProximityAlarmState>();
   late TextEditingController nameInputController;
   late Alarm bufferAlarm;
 

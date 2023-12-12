@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:proxalarm/proxalarm_state.dart';
+import 'package:proximityalarm/proximity_alarm_state.dart';
 
 class Alarm {
   String id = '';

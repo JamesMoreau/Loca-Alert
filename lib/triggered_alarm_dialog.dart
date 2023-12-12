@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:proxalarm/alarm.dart';
-import 'package:proxalarm/constants.dart';
-import 'package:proxalarm/proxalarm_state.dart';
+import 'package:proximityalarm/alarm.dart';
+import 'package:proximityalarm/constants.dart';
+import 'package:proximityalarm/proximity_alarm_state.dart';
 import 'package:vibration/vibration.dart';
 
-
 void showAlarmDialog(BuildContext context, String alarmId) {
-  var ps = Get.find<ProxalarmState>();
+  var ps = Get.find<ProximityAlarmState>();
   var alarm = getAlarmById(alarmId);
 
   if (alarm == null) {
@@ -33,7 +32,7 @@ void showAlarmDialog(BuildContext context, String alarmId) {
   }
 
   // Start a timer to automatically close the dialog after 5 minutes (300 seconds)
-  Timer(Duration(minutes: 1), () => deactivateAlarmAndCloseDialog(context) );
+  Timer(Duration(minutes: 1), () => deactivateAlarmAndCloseDialog(context));
 
   showGeneralDialog<void>(
     context: context,

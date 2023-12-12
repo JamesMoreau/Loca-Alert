@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:proxalarm/alarm.dart';
-import 'package:proxalarm/constants.dart';
-import 'package:proxalarm/home.dart';
-import 'package:proxalarm/proxalarm_state.dart';
-import 'package:proxalarm/triggered_alarm_dialog.dart';
+import 'package:proximityalarm/alarm.dart';
+import 'package:proximityalarm/constants.dart';
+import 'package:proximityalarm/home.dart';
+import 'package:proximityalarm/proximity_alarm_state.dart';
+import 'package:proximityalarm/triggered_alarm_dialog.dart';
 import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
+  change name to proximity alarm
   actually make alarm work
   alarm notification
   switch map tile provider (mapbox, thunderforest, etc)
@@ -24,7 +25,7 @@ import 'package:vibration/vibration.dart';
 */
 
 void main() {
-  Get.put(ProxalarmState()); // Inject the global app state into memory.
+  Get.put(ProximityAlarmState()); // Inject the global app state into memory.
 
   loadAlarmsFromSharedPreferences();
   loadSettingsFromSharedPreferences();
@@ -43,7 +44,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Home(),
-      theme: proxalarmTheme,
+      theme: ProximityAlarmTheme,
       navigatorKey: NavigationService.navigatorKey,
     );
   }
@@ -55,7 +56,7 @@ class NavigationService {
 
 Future<void> periodicAlarmCheck() async {
   // debugPrint('Should see me every 5 seconds. ${DateFormat('HH:mm:ss').format(DateTime.now())}');
-  var ps = Get.find<ProxalarmState>();
+  var ps = Get.find<ProximityAlarmState>();
 
   var activeAlarms = ps.alarms.where((alarm) => alarm.active).toList();
 
@@ -81,7 +82,6 @@ Future<void> periodicAlarmCheck() async {
   if (ps.alarmIsCurrentlyTriggered) return;
 
   for (var alarm in triggeredAlarms) {
-    
     if (ps.vibration) {
       await Vibration.vibrate();
     }

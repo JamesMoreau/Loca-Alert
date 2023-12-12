@@ -1,4 +1,4 @@
-# Proxalarm
+# Proximity Alarm
 
 A proximity based alarm mobile app for travel. Set alarms at desired locations to never miss a train stop or attraction.
 Built in Flutter using geolocation, mapping, notification, and storage libraries.

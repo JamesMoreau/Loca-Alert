@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:proxalarm/constants.dart';
-import 'package:proxalarm/proxalarm_state.dart';
+import 'package:proximityalarm/constants.dart';
+import 'package:proximityalarm/proximity_alarm_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsView extends StatelessWidget {
@@ -11,7 +11,7 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ProxalarmState>(
+    return GetBuilder<ProximityAlarmState>(
       builder: (state) {
         return SafeArea(
           child: ListView(

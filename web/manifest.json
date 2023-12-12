@@ -1,6 +1,6 @@
 {
-    "name": "proxalarm",
-    "short_name": "proxalarm",
+    "name": "Proximity Alarm",
+    "short_name": "Proximity Alarm",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

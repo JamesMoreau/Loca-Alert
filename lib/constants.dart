@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
-const appName = 'Proxalarm';
-const author = 'James Rush';
+const appName = 'Proximity Alarm';
+const author = 'James Moreau';
 const myEmail = 'jmorea03@uoguelph.ca';
 const githubLink = 'www.github.com/jamesmoreau';
 
@@ -28,7 +28,7 @@ const sharedPreferencesAlarmSoundKey = 'alarmSound';
 const sharedPreferencesAlarmVibrationKey = 'alarmVibration';
 const sharedPreferencesAlarmNotificationKey = 'alarmNotification';
 
-ThemeData proxalarmTheme = ThemeData(
+ThemeData ProximityAlarmTheme = ThemeData(
   useMaterial3: true,
   // colorSchemeSeed: const Color(0xfff1f3e0),
   // colorSchemeSeed: Colors.lightBlue,
