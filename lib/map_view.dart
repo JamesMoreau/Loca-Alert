@@ -21,7 +21,7 @@ class _MapViewState extends State<MapView> {
   Widget build(BuildContext context) {
     return GetBuilder<ProximityAlarmState>(
       builder: (state) {
-        var alarmPlacementIcon = state.isPlacingAlarm ? Icons.check : Icons.pin_drop_rounded;
+        // var alarmPlacementIcon = state.isPlacingAlarm ? Icons.check : Icons.pin_drop_rounded;
 
         var statusBarHeight = MediaQuery.of(context).padding.top;
 
@@ -57,7 +57,6 @@ class _MapViewState extends State<MapView> {
           alignment: Alignment.center,
           children: [
             FlutterMap(
-              // Map
               mapController: state.mapController,
               options: MapOptions(
                 center: London,
@@ -77,33 +76,40 @@ class _MapViewState extends State<MapView> {
             ),
             Positioned(
               top: statusBarHeight + 10,
-              right: 25,
+              right: 15,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   FloatingActionButton(onPressed: navigateMapToUserLocation, elevation: 4, child: Icon(CupertinoIcons.location_fill)),
                   SizedBox(height: 10),
-                  FloatingActionButton(
-                    onPressed: () {
-                      // start alarm placement ui
-                      if (!state.isPlacingAlarm) {
+                  if (!state.isPlacingAlarm)
+                    FloatingActionButton(
+                      onPressed: () {
                         state.isPlacingAlarm = true;
                         state.update();
-                        return;
-                      }
+                      },
+                      elevation: 4,
+                      child: Icon(Icons.pin_drop_rounded),
+                    ),
+                  
+                  if (state.isPlacingAlarm)
+                    FloatingActionButton(
+                      onPressed: () {
+                        // Save alarm
+                        var alarmPlacementPosition = state.mapController.center;
+                        var alarm = createAlarm(name: 'Alarm', position: alarmPlacementPosition, radius: state.alarmPlacementRadius);
+                        addAlarm(alarm);
+                        resetAlarmPlacementUIState();
+                        state.update();
+                      },
+                      elevation: 4,
+                      child: Icon(Icons.check),
+                    ),
+                  
+                  if (state.isPlacingAlarm)
+                    SizedBox(height: 10),
 
-                      // Save alarm
-                      var alarmPlacementPosition = state.mapController.center;
-                      var alarm = createAlarm(name: 'Alarm', position: alarmPlacementPosition, radius: state.alarmPlacementRadius);
-                      addAlarm(alarm);
-                      resetAlarmPlacementUIState();
-                      state.update();
-                    },
-                    elevation: 4,
-                    child: Icon(alarmPlacementIcon),
-                  ),
-                  SizedBox(height: 10),
                   if (state.isPlacingAlarm)
                     FloatingActionButton(
                       onPressed: () {
@@ -112,9 +118,9 @@ class _MapViewState extends State<MapView> {
                       },
                       elevation: 4,
                       child: Icon(Icons.cancel_rounded),
-                    )
-                  else
-                    SizedBox.shrink(),
+                    ),
+                  
+                  SizedBox.shrink(),
                 ],
               ),
             ),

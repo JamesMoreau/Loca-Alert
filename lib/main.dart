@@ -15,8 +15,6 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
-  move main into home.dart
-  change name to proximity alarm
   actually make alarm work
   alarm notification
   switch map tile provider (mapbox, thunderforest, etc)
@@ -71,6 +69,7 @@ class MainApp extends StatelessWidget {
                 elevation: 3,
                 onDestinationSelected: (int index) {
                   state.currentView = ProximityAlarmViews.values[index];
+                  debugPrint('Navigating to ${state.currentView}.');
                   state.update();
                   state.pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
                 },
@@ -122,7 +121,7 @@ Future<void> periodicAlarmCheck() async {
 
   if (triggeredAlarms.isEmpty) {
     debugPrint('Periodic Alarm Check: No alarms triggered.');
-    await Vibration.cancel();
+    // await Vibration.cancel();
     return;
   }
 
@@ -133,10 +132,10 @@ Future<void> periodicAlarmCheck() async {
 
   for (var alarm in triggeredAlarms) {
     if (pas.vibration) {
-      await Vibration.vibrate();
+      await Vibration.vibrate(duration: 5000);
     }
 
-    // if (pas.settings.sound) {d
+    // if (pas.settings.sound) {
     //   debugPrint('Playing sound.');
     //   await AudioCache().play('alarm.mp3');
     // }

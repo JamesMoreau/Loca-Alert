@@ -69,11 +69,11 @@ bool updateAlarmById(String id, Alarm newAlarmData) {
 
   for (var alarm in pas.alarms) {
     if (alarm.id == id) {
-      alarm.name = newAlarmData.name;
+      alarm.name     = newAlarmData.name;
       alarm.position = newAlarmData.position;
-      alarm.radius = newAlarmData.radius;
-      alarm.color = newAlarmData.color;
-      alarm.active = newAlarmData.active;
+      alarm.radius   = newAlarmData.radius;
+      alarm.color    = newAlarmData.color;
+      alarm.active   = newAlarmData.active;
       pas.update();
       saveAlarmsToSharedPreferences();
       return true;
