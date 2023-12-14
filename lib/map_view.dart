@@ -21,9 +21,49 @@ class _MapViewState extends State<MapView> {
   Widget build(BuildContext context) {
     return GetBuilder<ProximityAlarmState>(
       builder: (state) {
-        // var alarmPlacementIcon = state.isPlacingAlarm ? Icons.check : Icons.pin_drop_rounded;
-
         var statusBarHeight = MediaQuery.of(context).padding.top;
+
+        var alarmPlacementUI = <Widget>[
+          FloatingActionButton(onPressed: navigateMapToUserLocation, elevation: 4, child: Icon(CupertinoIcons.location_fill)),
+          SizedBox(height: 10),
+        ];
+        if (state.isPlacingAlarm) {
+          alarmPlacementUI.addAll([
+            FloatingActionButton(
+              onPressed: () {
+                // Save alarm
+                var alarmPlacementPosition = state.mapController.center;
+                var alarm = createAlarm(name: 'Alarm', position: alarmPlacementPosition, radius: state.alarmPlacementRadius);
+                addAlarm(alarm);
+                resetAlarmPlacementUIState();
+                state.update();
+              },
+              elevation: 4,
+              child: Icon(Icons.check),
+            ),
+            SizedBox(height: 10),
+            FloatingActionButton(
+              onPressed: () {
+                resetAlarmPlacementUIState();
+                state.update();
+              },
+              elevation: 4,
+              child: Icon(Icons.cancel_rounded),
+            ),
+          ]);
+        } else {
+          alarmPlacementUI.add(
+            FloatingActionButton(
+              onPressed: () {
+                state.isPlacingAlarm = true;
+                state.update();
+              },
+              elevation: 4,
+              child: Icon(Icons.pin_drop_rounded),
+            ),
+          );
+        }
+        alarmPlacementUI.add(SizedBox.shrink());
 
         // Place all the alarms on the map.
         var circles = <CircleMarker>[];
@@ -39,7 +79,7 @@ class _MapViewState extends State<MapView> {
           circles.add(marker);
         }
 
-        // Placing alarm UI
+        // Overlay the alarm placement marker on top of the map. This is only visible when the user is placing an alarm.
         if (state.isPlacingAlarm) {
           var alarmPlacementPosition = state.mapController.center;
           var alarmPlacementMarker = CircleMarker(
@@ -80,51 +120,10 @@ class _MapViewState extends State<MapView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  FloatingActionButton(onPressed: navigateMapToUserLocation, elevation: 4, child: Icon(CupertinoIcons.location_fill)),
-                  SizedBox(height: 10),
-                  if (!state.isPlacingAlarm)
-                    FloatingActionButton(
-                      onPressed: () {
-                        state.isPlacingAlarm = true;
-                        state.update();
-                      },
-                      elevation: 4,
-                      child: Icon(Icons.pin_drop_rounded),
-                    ),
-                  
-                  if (state.isPlacingAlarm)
-                    FloatingActionButton(
-                      onPressed: () {
-                        // Save alarm
-                        var alarmPlacementPosition = state.mapController.center;
-                        var alarm = createAlarm(name: 'Alarm', position: alarmPlacementPosition, radius: state.alarmPlacementRadius);
-                        addAlarm(alarm);
-                        resetAlarmPlacementUIState();
-                        state.update();
-                      },
-                      elevation: 4,
-                      child: Icon(Icons.check),
-                    ),
-                  
-                  if (state.isPlacingAlarm)
-                    SizedBox(height: 10),
-
-                  if (state.isPlacingAlarm)
-                    FloatingActionButton(
-                      onPressed: () {
-                        resetAlarmPlacementUIState();
-                        state.update();
-                      },
-                      elevation: 4,
-                      child: Icon(Icons.cancel_rounded),
-                    ),
-                  
-                  SizedBox.shrink(),
-                ],
+                children: alarmPlacementUI,
               ),
             ),
-            if (state.isPlacingAlarm)
+            if (state.isPlacingAlarm) // Show the slider to adjust the new alarm's radius.
               Positioned(
                 bottom: 150,
                 child: Container(
@@ -174,7 +173,6 @@ class _MapViewState extends State<MapView> {
   @override
   void initState() {
     navigateMapToUserLocation();
-
     super.initState();
   }
 
@@ -188,8 +186,11 @@ class _MapViewState extends State<MapView> {
 Future<void> navigateMapToUserLocation() async {
   var pas = Get.find<ProximityAlarmState>();
 
-  var userPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
-  var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
-
-  pas.mapController.move(userLocation, initialZoom);
+  try {
+    var userPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
+    var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
+    pas.mapController.move(userLocation, initialZoom);
+  } catch (e) {
+    debugPrint('Error: Unable to get user location.');
+  }
 }
