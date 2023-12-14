@@ -15,6 +15,7 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
+  fix black screen thing
   actually make alarm work
   alarm notification
   switch map tile provider (mapbox, thunderforest, etc)
