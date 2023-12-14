@@ -17,7 +17,7 @@ class SettingsView extends StatelessWidget {
           child: ListView(
             padding: EdgeInsets.all(16),
             children: [
-              Padding(
+              /*Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: SwitchListTile(
                   title: Text('Alarm Notification'),
@@ -27,7 +27,7 @@ class SettingsView extends StatelessWidget {
                   },
                   thumbIcon: thumbIcon,
                 ),
-              ),
+              ),*/
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: SwitchListTile(

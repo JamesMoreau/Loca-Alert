@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:proxmity_alarm/alarm.dart';
@@ -30,9 +29,6 @@ void showAlarmDialog(BuildContext context, String alarmId) {
     Navigator.pop(context);
     pas.alarmIsCurrentlyTriggered = false;
   }
-
-  // Start a timer to automatically close the dialog after 5 minutes (300 seconds)
-  Timer(Duration(minutes: 1), () => deactivateAlarmAndCloseDialog(context));
 
   showGeneralDialog<void>(
     context: context,

@@ -14,7 +14,7 @@ class Alarm {
 
 Alarm createAlarm({required String name, required LatLng position, required double radius, Color? color, bool? active}) {
   var alarm = Alarm();
-  alarm.id = idGenerator.v1();
+  alarm.id = idGenerator.v1(); // time-based unique id
   alarm.name = name;
   alarm.color = color ?? Colors.redAccent;
   alarm.position = position;
