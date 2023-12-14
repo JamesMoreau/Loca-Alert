@@ -23,48 +23,6 @@ class _MapViewState extends State<MapView> {
       builder: (state) {
         var statusBarHeight = MediaQuery.of(context).padding.top;
 
-        var alarmPlacementUI = <Widget>[
-          FloatingActionButton(onPressed: navigateMapToUserLocation, elevation: 4, child: Icon(CupertinoIcons.location_fill)),
-          SizedBox(height: 10),
-        ];
-        if (state.isPlacingAlarm) {
-          alarmPlacementUI.addAll([
-            FloatingActionButton(
-              onPressed: () {
-                // Save alarm
-                var alarmPlacementPosition = state.mapController.center;
-                var alarm = createAlarm(name: 'Alarm', position: alarmPlacementPosition, radius: state.alarmPlacementRadius);
-                addAlarm(alarm);
-                resetAlarmPlacementUIState();
-                state.update();
-              },
-              elevation: 4,
-              child: Icon(Icons.check),
-            ),
-            SizedBox(height: 10),
-            FloatingActionButton(
-              onPressed: () {
-                resetAlarmPlacementUIState();
-                state.update();
-              },
-              elevation: 4,
-              child: Icon(Icons.cancel_rounded),
-            ),
-          ]);
-        } else {
-          alarmPlacementUI.add(
-            FloatingActionButton(
-              onPressed: () {
-                state.isPlacingAlarm = true;
-                state.update();
-              },
-              elevation: 4,
-              child: Icon(Icons.pin_drop_rounded),
-            ),
-          );
-        }
-        alarmPlacementUI.add(SizedBox.shrink());
-
         // Place all the alarms on the map.
         var circles = <CircleMarker>[];
         for (var alarm in state.alarms) {
@@ -115,12 +73,48 @@ class _MapViewState extends State<MapView> {
               ],
             ),
             Positioned(
+              // Place the alarm placement buttons in the top right corner.
               top: statusBarHeight + 10,
               right: 15,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: alarmPlacementUI,
+                children: [
+                  FloatingActionButton(onPressed: navigateMapToUserLocation, elevation: 4, child: Icon(CupertinoIcons.location_fill)),
+                  SizedBox(height: 10),
+                  if (state.isPlacingAlarm) ...[ // Show the confirm and cancel buttons when the user is placing an alarm.
+                    FloatingActionButton(
+                      onPressed: () {
+                        // Save alarm
+                        var alarmPlacementPosition = state.mapController.center;
+                        var alarm = createAlarm(name: 'Alarm', position: alarmPlacementPosition, radius: state.alarmPlacementRadius);
+                        addAlarm(alarm);
+                        resetAlarmPlacementUIState();
+                        state.update();
+                      },
+                      elevation: 4,
+                      child: Icon(Icons.check),
+                    ),
+                    SizedBox(height: 10),
+                    FloatingActionButton(
+                      onPressed: () {
+                        resetAlarmPlacementUIState();
+                        state.update();
+                      },
+                      elevation: 4,
+                      child: Icon(Icons.cancel_rounded),
+                    ),
+                  ] else // Show the place alarm button when the user is not placing an alarm.
+                    FloatingActionButton(
+                      onPressed: () {
+                        state.isPlacingAlarm = true;
+                        state.update();
+                      },
+                      elevation: 4,
+                      child: Icon(Icons.pin_drop_rounded),
+                    ),
+                  SizedBox.shrink(),
+                ],
               ),
             ),
             if (state.isPlacingAlarm) // Show the slider to adjust the new alarm's radius.
