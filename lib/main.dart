@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
@@ -15,7 +17,6 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
-  actually make alarm work
   alarm notification
   switch map tile provider (mapbox, thunderforest, etc)
   checkout mapbox: https://docs.fleaflet.dev/tile-servers/using-mapbox
@@ -27,11 +28,22 @@ import 'package:vibration/vibration.dart';
   get distance to closest alarm. have some sort of ui layer that points towards the alarm from current location if it is offscreen.
 */
 
+// Notification stuff
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+int id = 0;
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   Get.put(ProximityAlarmState()); // Inject the global app state into memory.
 
+  // Load saved alarms and settings from shared preferences.
   loadAlarmsFromSharedPreferences();
   loadSettingsFromSharedPreferences();
+
+  // Set up local notifications.
+  var initializationSettings = InitializationSettings(iOS: DarwinInitializationSettings());
+  flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   // Set off periodic alarm checks.
   Timer.periodic(alarmCheckPeriod, (timer) => periodicAlarmCheck());
@@ -46,6 +58,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Set preferred orientation to portrait
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: GetBuilder<ProximityAlarmState>(
@@ -122,7 +136,6 @@ Future<void> periodicAlarmCheck() async {
 
   if (triggeredAlarms.isEmpty) {
     debugPrint('Periodic Alarm Check: No alarms triggered.');
-    // await Vibration.cancel();
     return;
   }
 
@@ -132,21 +145,30 @@ Future<void> periodicAlarmCheck() async {
   if (pas.alarmIsCurrentlyTriggered) return;
 
   for (var alarm in triggeredAlarms) {
-    if (pas.vibration) {
-      await Vibration.vibrate(duration: 5000);
-    }
-
     // if (pas.settings.sound) {
     //   debugPrint('Playing sound.');
     //   await AudioCache().play('alarm.mp3');
     // }
 
-    // if (pas.showNotification) {
-    //   debugPrint('Showing notification.');
-    // }
+    if (pas.notification) {
+      // the notification boolean is always set to true but we might want to add user control later.
+      debugPrint('Sending the user a notification for alarm ${alarm.name}.');
+      var notificationDetails = NotificationDetails(
+        iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentBanner: true, presentSound: true),
+      );
+      await flutterLocalNotificationsPlugin.show(id++, 'Alarm Triggered', 'You have entered the radius of alarm: ${alarm.name}.', notificationDetails);
+    }
 
     // No alarm is currently triggered, so we can show the dialog.
     pas.alarmIsCurrentlyTriggered = true;
     showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
+
+    if (pas.vibration) {
+      for (var i = 0; i < numberOfTriggeredAlarmVibrations; i++) {
+        await Vibration.vibrate(duration: 1000);
+        await Future<void>.delayed(Duration(milliseconds: 1000));
+      }
+    }
+    
   }
 }

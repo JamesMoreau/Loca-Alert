@@ -60,6 +60,7 @@ class AlarmsView extends StatelessWidget {
                 trailing: Switch(
                   value: alarm.active,
                   activeColor: alarm.color,
+                  thumbIcon: thumbIcon,
                   onChanged: (value) {
                     // alarm.active = value;
                     var updatedAlarmData =
@@ -225,3 +226,10 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
     );
   }
 }
+
+// for switch icons.
+final MaterialStateProperty<Icon?> thumbIcon = MaterialStateProperty.resolveWith<Icon?>((states) {
+  if (states.contains(MaterialState.selected)) return const Icon(Icons.check_rounded);
+
+  return const Icon(Icons.close_rounded);
+});

@@ -42,8 +42,9 @@ void showAlarmDialog(BuildContext context, String alarmId) {
           child: Column(
             children: [
               Expanded(
-                flex: 2,
+                flex: 3,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       'Alarm Triggered',
@@ -64,7 +65,7 @@ void showAlarmDialog(BuildContext context, String alarmId) {
                 ),
               ),
               Expanded(
-                flex: 3,
+                flex: 2,
                 child: Column(
                   children: [
                     Text(alarm.name, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),

@@ -57,7 +57,7 @@ class _MapViewState extends State<MapView> {
             FlutterMap(
               mapController: state.mapController,
               options: MapOptions(
-                center: London,
+                center: LatLng(0, 0),
                 zoom: initialZoom,
                 interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate,
                 maxZoom: maxZoomSupported,
@@ -104,7 +104,7 @@ class _MapViewState extends State<MapView> {
                       elevation: 4,
                       child: Icon(Icons.cancel_rounded),
                     ),
-                  ] else // Show the place alarm button when the user is not placing an alarm.
+                  ] else ...[ // Show the place alarm button when the user is not placing an alarm.
                     FloatingActionButton(
                       onPressed: () {
                         state.isPlacingAlarm = true;
@@ -113,6 +113,7 @@ class _MapViewState extends State<MapView> {
                       elevation: 4,
                       child: Icon(Icons.pin_drop_rounded),
                     ),
+                  ],
                   SizedBox.shrink(),
                 ],
               ),

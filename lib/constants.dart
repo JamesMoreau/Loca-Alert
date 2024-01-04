@@ -1,4 +1,3 @@
-// ignore_for_file: constant_identifier_names
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -22,6 +21,7 @@ const alarmBorderWidth = 2.0;
 const alarmColorOpacity = 0.5;
 
 const alarmCheckPeriod = Duration(seconds: 5);
+const numberOfTriggeredAlarmVibrations = 6;
 
 const sharedPreferencesAlarmKey = 'alarms';
 const sharedPreferencesAlarmSoundKey = 'alarmSound';
@@ -95,3 +95,5 @@ ColorScheme scheme = ColorScheme(
 );
 
 const paleBlue = Color(0xffeaf0f5);
+
+
