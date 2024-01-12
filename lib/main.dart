@@ -17,10 +17,8 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
-  alarm notification
   switch map tile provider (mapbox, thunderforest, etc)
   checkout mapbox: https://docs.fleaflet.dev/tile-servers/using-mapbox
-  some sort of ui warning if user location is disabled.
   tile chaching
   show some sort icon on map for alarm if too zoomed out to see the circle. (could use current zoom level to determine this).
   App Logo

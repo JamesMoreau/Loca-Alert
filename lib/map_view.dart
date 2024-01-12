@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:proxmity_alarm/alarm.dart';
 import 'package:proxmity_alarm/constants.dart';
+import 'package:proxmity_alarm/main.dart';
 import 'package:proxmity_alarm/proximity_alarm_state.dart';
 
 class MapView extends StatefulWidget {
@@ -82,7 +83,8 @@ class _MapViewState extends State<MapView> {
                 children: [
                   FloatingActionButton(onPressed: navigateMapToUserLocation, elevation: 4, child: Icon(CupertinoIcons.location_fill)),
                   SizedBox(height: 10),
-                  if (state.isPlacingAlarm) ...[ // Show the confirm and cancel buttons when the user is placing an alarm.
+                  if (state.isPlacingAlarm) ...[
+                    // Show the confirm and cancel buttons when the user is placing an alarm.
                     FloatingActionButton(
                       onPressed: () {
                         // Save alarm
@@ -104,7 +106,8 @@ class _MapViewState extends State<MapView> {
                       elevation: 4,
                       child: Icon(Icons.cancel_rounded),
                     ),
-                  ] else ...[ // Show the place alarm button when the user is not placing an alarm.
+                  ] else ...[
+                    // Show the place alarm button when the user is not placing an alarm.
                     FloatingActionButton(
                       onPressed: () {
                         state.isPlacingAlarm = true;
@@ -182,10 +185,28 @@ Future<void> navigateMapToUserLocation() async {
   var pas = Get.find<ProximityAlarmState>();
 
   try {
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      debugPrint('Warning: User has denied location permissions.');
+      ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Container(
+            padding: const EdgeInsets.all(8),
+            child: Text('Location permissions are required to use this app.'),
+          ),
+          action: SnackBarAction(label: 'Settings', onPressed: Geolocator.openAppSettings),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+      return;
+    }
+
     var userPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
     var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
+    
     pas.mapController.move(userLocation, initialZoom);
   } catch (e) {
-    debugPrint('Error: Unable to get user location.');
+    debugPrint('Error: Unable to navigate map to user location.');
   }
 }
