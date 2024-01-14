@@ -17,8 +17,6 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
-  switch map tile provider (mapbox, thunderforest, etc)
-  checkout mapbox: https://docs.fleaflet.dev/tile-servers/using-mapbox
   tile chaching
   show some sort icon on map for alarm if too zoomed out to see the circle. (could use current zoom level to determine this).
   App Logo
@@ -45,6 +43,9 @@ void main() {
 
   // Set off periodic alarm checks.
   Timer.periodic(alarmCheckPeriod, (timer) => periodicAlarmCheck());
+  
+  // Get location permission
+  Geolocator.requestPermission();
 
   runApp(const MainApp());
 }

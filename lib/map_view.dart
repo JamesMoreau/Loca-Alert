@@ -40,7 +40,7 @@ class _MapViewState extends State<MapView> {
 
         // Overlay the alarm placement marker on top of the map. This is only visible when the user is placing an alarm.
         if (state.isPlacingAlarm) {
-          var alarmPlacementPosition = state.mapController.center;
+          var alarmPlacementPosition = state.mapController.camera.center;
           var alarmPlacementMarker = CircleMarker(
             point: alarmPlacementPosition,
             radius: state.alarmPlacementRadius,
@@ -58,17 +58,19 @@ class _MapViewState extends State<MapView> {
             FlutterMap(
               mapController: state.mapController,
               options: MapOptions(
-                center: LatLng(0, 0),
-                zoom: initialZoom,
-                interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                initialCenter: LatLng(0, 0),
+                initialZoom: initialZoom,
+                interactionOptions: InteractionOptions(flags: InteractiveFlag.all & ~InteractiveFlag.rotate),
                 maxZoom: maxZoomSupported,
                 onMapEvent: (event) => state.update(), // @Speed Currently, we rebuild the MapView widget on every map event. Maybe this is slow.
               ),
               children: [
                 TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  urlTemplate: openStreetMapTemplateUrl,
                   userAgentPackageName: 'com.example.app',
                 ),
+                // SimpleAttributionWidget(source: Text('© OpenStreetMap contributors'), alignment: Alignment.topLeft),
+                Align(alignment: Alignment.bottomCenter, child: Container(padding: EdgeInsets.only(bottom: 120), color: Colors.white, child: Text('© OpenStreetMap contributors'))),
                 CircleLayer(circles: circles),
                 CurrentLocationLayer(),
               ],
@@ -88,7 +90,7 @@ class _MapViewState extends State<MapView> {
                     FloatingActionButton(
                       onPressed: () {
                         // Save alarm
-                        var alarmPlacementPosition = state.mapController.center;
+                        var alarmPlacementPosition = state.mapController.camera.center;
                         var alarm = createAlarm(name: 'Alarm', position: alarmPlacementPosition, radius: state.alarmPlacementRadius);
                         addAlarm(alarm);
                         resetAlarmPlacementUIState();
@@ -170,6 +172,7 @@ class _MapViewState extends State<MapView> {
 
   @override
   void initState() {
+    checkLocationPermissions();
     navigateMapToUserLocation();
     super.initState();
   }
@@ -181,32 +184,33 @@ class _MapViewState extends State<MapView> {
   }
 }
 
+Future<void> checkLocationPermissions() async {
+  var permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.deniedForever) {
+    debugPrint('Warning: User has denied location permissions.');
+    ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Container(
+          padding: const EdgeInsets.all(8),
+          child: Text('Location permissions are required to use this app.'),
+        ),
+        action: SnackBarAction(label: 'Settings', onPressed: Geolocator.openAppSettings),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+}
+
 Future<void> navigateMapToUserLocation() async {
   var pas = Get.find<ProximityAlarmState>();
 
-  try {
-    var permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-      debugPrint('Warning: User has denied location permissions.');
-      ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Container(
-            padding: const EdgeInsets.all(8),
-            child: Text('Location permissions are required to use this app.'),
-          ),
-          action: SnackBarAction(label: 'Settings', onPressed: Geolocator.openAppSettings),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-      );
-      return;
-    }
-
-    var userPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
-    var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
-    
-    pas.mapController.move(userLocation, initialZoom);
-  } catch (e) {
+  var userPosition = await Geolocator.getLastKnownPosition();
+  if (userPosition == null) {
     debugPrint('Error: Unable to navigate map to user location.');
+    return;
   }
+
+  var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
+  pas.mapController.move(userLocation, initialZoom);
 }
