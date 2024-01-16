@@ -62,18 +62,33 @@ class _MapViewState extends State<MapView> {
                 initialZoom: initialZoom,
                 interactionOptions: InteractionOptions(flags: InteractiveFlag.all & ~InteractiveFlag.rotate),
                 maxZoom: maxZoomSupported,
+                // keepAlive: true, // Keep the map alive when it is not visible.
                 onMapEvent: (event) => state.update(), // @Speed Currently, we rebuild the MapView widget on every map event. Maybe this is slow.
               ),
               children: [
                 TileLayer(
+                  // urlTemplate: openStreetMapTemplateUrl,
                   urlTemplate: openStreetMapTemplateUrl,
-                  userAgentPackageName: 'com.example.app',
+                  userAgentPackageName: 'com.proximityalarm.app',
                 ),
-                // SimpleAttributionWidget(source: Text('© OpenStreetMap contributors'), alignment: Alignment.topLeft),
-                Align(alignment: Alignment.bottomCenter, child: Container(padding: EdgeInsets.only(bottom: 120), color: Colors.white, child: Text('© OpenStreetMap contributors'))),
                 CircleLayer(circles: circles),
-                CurrentLocationLayer(),
+                // CurrentLocationLayer(),
               ],
+            ),
+            Positioned( // Attribution to OpenStreetMap
+              top: statusBarHeight + 5,
+              child: Align(
+                child: Container(
+                  padding: EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.7),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '© OpenStreetMap contributors',
+                  ),
+                ),
+              ),
             ),
             Positioned(
               // Place the alarm placement buttons in the top right corner.
@@ -127,7 +142,7 @@ class _MapViewState extends State<MapView> {
               Positioned(
                 bottom: 150,
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
+                  width: MediaQuery.of(context).size.width * 0.9,
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primaryContainer,
                     borderRadius: BorderRadius.all(Radius.circular(15)),

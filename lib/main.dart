@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +18,7 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
+  add user position marker to map by hand.
   tile chaching
   show some sort icon on map for alarm if too zoomed out to see the circle. (could use current zoom level to determine this).
   App Logo
@@ -43,9 +45,12 @@ void main() {
 
   // Set off periodic alarm checks.
   Timer.periodic(alarmCheckPeriod, (timer) => periodicAlarmCheck());
-  
+
   // Get location permission
   Geolocator.requestPermission();
+
+  // Set up http overrides. This is needed to increase the number of concurrent http requests allowed. This helps with the map tiles loading.
+  HttpOverrides.global = MyHttpOverrides();
 
   runApp(const MainApp());
 }
@@ -85,7 +90,8 @@ class MainApp extends StatelessWidget {
                   state.currentView = ProximityAlarmViews.values[index];
                   debugPrint('Navigating to ${state.currentView}.');
                   state.update();
-                  state.pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+                  // state.pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+                  state.pageController.jumpToPage(index);
                 },
                 selectedIndex: state.currentView.index,
                 destinations: const [
@@ -168,6 +174,16 @@ Future<void> periodicAlarmCheck() async {
         await Future<void>.delayed(Duration(milliseconds: 1000));
       }
     }
-    
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  final int maxConnections = 8;
+  
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    var client = super.createHttpClient(context);
+    client.maxConnectionsPerHost = maxConnections;
+    return client;
   }
 }
