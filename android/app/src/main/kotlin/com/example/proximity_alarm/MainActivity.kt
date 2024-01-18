@@ -1,4 +1,4 @@
-package com.example.proximity_alarm
+package com.example.location_alarm
 
 import io.flutter.embedding.android.FlutterActivity
 

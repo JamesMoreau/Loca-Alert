@@ -1,6 +1,6 @@
 {
-    "name": "proximity_alarm",
-    "short_name": "proximity_alarm",
+    "name": "location_alarm",
+    "short_name": "location_alarm",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

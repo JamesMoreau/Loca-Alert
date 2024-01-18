@@ -1,4 +1,4 @@
-name: proxmity_alarm
+name: location_alarm
 description: A new Flutter project.
 publish_to: 'none'
 version: 0.1.0
@@ -21,6 +21,7 @@ dependencies:
   url_launcher: ^6.1.11
   uuid: ^4.3.3
   vibration: ^1.8.1
+  flutter_map_cancellable_tile_provider: ^2.0.0
 
 dev_dependencies:
   flutter_test:

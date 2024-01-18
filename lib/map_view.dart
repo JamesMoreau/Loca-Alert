@@ -1,14 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:proxmity_alarm/alarm.dart';
-import 'package:proxmity_alarm/constants.dart';
-import 'package:proxmity_alarm/main.dart';
-import 'package:proxmity_alarm/proximity_alarm_state.dart';
+import 'package:location_alarm/alarm.dart';
+import 'package:location_alarm/constants.dart';
+import 'package:location_alarm/location_alarm_state.dart';
+import 'package:location_alarm/main.dart';
 
 class MapView extends StatefulWidget {
   const MapView({super.key});
@@ -62,17 +63,18 @@ class _MapViewState extends State<MapView> {
                 initialZoom: initialZoom,
                 interactionOptions: InteractionOptions(flags: InteractiveFlag.all & ~InteractiveFlag.rotate),
                 maxZoom: maxZoomSupported,
-                // keepAlive: true, // Keep the map alive when it is not visible.
+                keepAlive: true, // Keep the map alive when it is not visible.
                 onMapEvent: (event) => state.update(), // @Speed Currently, we rebuild the MapView widget on every map event. Maybe this is slow.
               ),
               children: [
                 TileLayer(
                   // urlTemplate: openStreetMapTemplateUrl,
                   urlTemplate: openStreetMapTemplateUrl,
-                  userAgentPackageName: 'com.proximityalarm.app',
+                  userAgentPackageName: 'com.location_alarm.app',
+                  tileProvider: CancellableNetworkTileProvider(),
                 ),
                 CircleLayer(circles: circles),
-                // CurrentLocationLayer(),
+                CurrentLocationLayer(),
               ],
             ),
             Positioned( // Attribution to OpenStreetMap

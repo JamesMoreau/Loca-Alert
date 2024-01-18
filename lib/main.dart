@@ -7,19 +7,20 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:proxmity_alarm/alarm.dart';
-import 'package:proxmity_alarm/alarms_view.dart';
-import 'package:proxmity_alarm/constants.dart';
-import 'package:proxmity_alarm/map_view.dart';
-import 'package:proxmity_alarm/proximity_alarm_state.dart';
-import 'package:proxmity_alarm/settings_view.dart';
-import 'package:proxmity_alarm/triggered_alarm_dialog.dart';
+import 'package:location_alarm/alarm.dart';
+import 'package:location_alarm/alarms_view.dart';
+import 'package:location_alarm/constants.dart';
+import 'package:location_alarm/location_alarm_state.dart';
+import 'package:location_alarm/map_view.dart';
+import 'package:location_alarm/settings_view.dart';
+import 'package:location_alarm/triggered_alarm_dialog.dart';
 import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
+  check if i need to handle getLastKnownPosition() exception.
   add user position marker to map by hand.
-  tile chaching
+  rename app to location alarm. 
   show some sort icon on map for alarm if too zoomed out to see the circle. (could use current zoom level to determine this).
   App Logo
   show something when user is too zoomed in. Use current zoom level to determine this.
@@ -113,7 +114,7 @@ class MainApp extends StatelessWidget {
           );
         },
       ),
-      theme: proximityAlarmTheme,
+      theme: locationAlarmTheme,
       navigatorKey: NavigationService.navigatorKey,
     );
   }
@@ -179,7 +180,7 @@ Future<void> periodicAlarmCheck() async {
 
 class MyHttpOverrides extends HttpOverrides {
   final int maxConnections = 8;
-  
+
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     var client = super.createHttpClient(context);
