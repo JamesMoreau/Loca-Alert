@@ -39,11 +39,11 @@ class ProximityAlarmState extends GetxController {
 final Uuid idGenerator = Uuid();
 
 bool deleteAlarmById(String id) {
-  var pas = Get.find<ProximityAlarmState>();
-  for (var i = 0; i < pas.alarms.length; i++) {
-    if (pas.alarms[i].id == id) {
-      pas.alarms.removeAt(i);
-      pas.update();
+  var las = Get.find<ProximityAlarmState>();
+  for (var i = 0; i < las.alarms.length; i++) {
+    if (las.alarms[i].id == id) {
+      las.alarms.removeAt(i);
+      las.update();
       saveAlarmsToSharedPreferences(); // update the storage
       return true;
     }
@@ -54,9 +54,9 @@ bool deleteAlarmById(String id) {
 }
 
 Alarm? getAlarmById(String id) {
-  var pas = Get.find<ProximityAlarmState>();
+  var las = Get.find<ProximityAlarmState>();
 
-  for (var alarm in pas.alarms) {
+  for (var alarm in las.alarms) {
     if (alarm.id == id) return alarm;
   }
 
@@ -65,16 +65,16 @@ Alarm? getAlarmById(String id) {
 
 // pass your new alarm data here to update proxalarm state. The id field in newAlarmData is ignored. returns success.
 bool updateAlarmById(String id, Alarm newAlarmData) {
-  var pas = Get.find<ProximityAlarmState>();
+  var las = Get.find<ProximityAlarmState>();
 
-  for (var alarm in pas.alarms) {
+  for (var alarm in las.alarms) {
     if (alarm.id == id) {
       alarm.name     = newAlarmData.name;
       alarm.position = newAlarmData.position;
       alarm.radius   = newAlarmData.radius;
       alarm.color    = newAlarmData.color;
       alarm.active   = newAlarmData.active;
-      pas.update();
+      las.update();
       saveAlarmsToSharedPreferences();
       return true;
     }
@@ -84,20 +84,20 @@ bool updateAlarmById(String id, Alarm newAlarmData) {
 }
 
 void addAlarm(Alarm alarm) {
-  var pas = Get.find<ProximityAlarmState>();
+  var las = Get.find<ProximityAlarmState>();
 
-  pas.alarms.add(alarm);
-  pas.update();
+  las.alarms.add(alarm);
+  las.update();
   saveAlarmsToSharedPreferences();
 }
 
 // This saves all current alarms to shared preferences. Should be called everytime the alarms state is changed.
 Future<void> saveAlarmsToSharedPreferences() async {
-  var pas = Get.find<ProximityAlarmState>();
+  var las = Get.find<ProximityAlarmState>();
   var preferences = await SharedPreferences.getInstance();
 
   var alarmsJsonStrings = <String>[];
-  for (var alarm in pas.alarms) {
+  for (var alarm in las.alarms) {
     var alarmJson = alarmToJson(alarm);
     var alarmJsonString = jsonEncode(alarmJson);
 
@@ -109,7 +109,7 @@ Future<void> saveAlarmsToSharedPreferences() async {
 }
 
 Future<void> loadAlarmsFromSharedPreferences() async {
-  var pas = Get.find<ProximityAlarmState>();
+  var las = Get.find<ProximityAlarmState>();
 
   var preferences = await SharedPreferences.getInstance();
 
@@ -124,10 +124,10 @@ Future<void> loadAlarmsFromSharedPreferences() async {
     var alarm = alarmFromJson(alarmJson as Map<String, dynamic>);
     debugPrint(alarmJsonString);
 
-    pas.alarms.add(alarm);
+    las.alarms.add(alarm);
   }
 
-  pas.update();
+  las.update();
 }
 
 Future<void> clearAlarmsFromSharedPreferences() async {
@@ -137,57 +137,57 @@ Future<void> clearAlarmsFromSharedPreferences() async {
 }
 
 void resetAlarmPlacementUIState() {
-  var pas = Get.find<ProximityAlarmState>();
-  pas.isPlacingAlarm = false;
-  pas.alarmPlacementRadius = 100;
+  var las = Get.find<ProximityAlarmState>();
+  las.isPlacingAlarm = false;
+  las.alarmPlacementRadius = 100;
 }
 
 void changeAlarmSound({required bool newValue}) {
-  var pas = Get.find<ProximityAlarmState>();
-  pas.alarmSound = newValue;
-  pas.update();
+  var las = Get.find<ProximityAlarmState>();
+  las.alarmSound = newValue;
+  las.update();
   saveSettingsToSharedPreferences();
 }
 
 void changeVibration({required bool newValue}) {
-  var pas = Get.find<ProximityAlarmState>();
-  pas.vibration = newValue;
-  pas.update();
+  var las = Get.find<ProximityAlarmState>();
+  las.vibration = newValue;
+  las.update();
   saveSettingsToSharedPreferences();
 }
 
 void changeAlarmNotification({required bool newValue}) {
-  var pas = Get.find<ProximityAlarmState>();
-  pas.notification = newValue;
-  pas.update();
+  var las = Get.find<ProximityAlarmState>();
+  las.notification = newValue;
+  las.update();
   saveSettingsToSharedPreferences();
 }
 
 Future<void> saveSettingsToSharedPreferences() async {
   debugPrint('Saving settings to SharedPreferences');
 
-  var pas = Get.find<ProximityAlarmState>();
+  var las = Get.find<ProximityAlarmState>();
   var preferences = await SharedPreferences.getInstance();
 
-  await preferences.setBool(sharedPreferencesAlarmSoundKey, pas.alarmSound);
-  await preferences.setBool(sharedPreferencesAlarmVibrationKey, pas.vibration);
-  await preferences.setBool(sharedPreferencesAlarmNotificationKey, pas.notification);
+  await preferences.setBool(sharedPreferencesAlarmSoundKey, las.alarmSound);
+  await preferences.setBool(sharedPreferencesAlarmVibrationKey, las.vibration);
+  await preferences.setBool(sharedPreferencesAlarmNotificationKey, las.notification);
 }
 
 Future<void> loadSettingsFromSharedPreferences() async {
-  var pas = Get.find<ProximityAlarmState>();
+  var las = Get.find<ProximityAlarmState>();
   var preferences = await SharedPreferences.getInstance();
 
-  pas.alarmSound = preferences.getBool(sharedPreferencesAlarmSoundKey) ?? true;
-  pas.vibration = preferences.getBool(sharedPreferencesAlarmVibrationKey) ?? true;
-  pas.notification = preferences.getBool(sharedPreferencesAlarmNotificationKey) ?? true;
-  pas.update();
+  las.alarmSound = preferences.getBool(sharedPreferencesAlarmSoundKey) ?? true;
+  las.vibration = preferences.getBool(sharedPreferencesAlarmVibrationKey) ?? true;
+  las.notification = preferences.getBool(sharedPreferencesAlarmNotificationKey) ?? true;
+  las.update();
 }
 
 Future<void> navigateToAlarm(Alarm alarm) async {
-  var pas = Get.find<ProximityAlarmState>();
-  pas.currentView = ProximityAlarmViews.map;
-  pas.update();
-  await pas.pageController.animateToPage(pas.currentView.index, duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
-  pas.mapController.move(alarm.position, initialZoom);
+  var las = Get.find<ProximityAlarmState>();
+  las.currentView = ProximityAlarmViews.map;
+  las.update();
+  await las.pageController.animateToPage(las.currentView.index, duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+  las.mapController.move(alarm.position, initialZoom);
 }

@@ -18,9 +18,7 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
-  check if i need to handle getLastKnownPosition() exception.
-  add user position marker to map by hand.
-  rename app to location alarm. 
+  change pas to las
   show some sort icon on map for alarm if too zoomed out to see the circle. (could use current zoom level to determine this).
   App Logo
   show something when user is too zoomed in. Use current zoom level to determine this.
@@ -126,9 +124,15 @@ class NavigationService {
 
 Future<void> periodicAlarmCheck() async {
   // debugPrint('Should see me every 5 seconds. ${DateFormat('HH:mm:ss').format(DateTime.now())}');
-  var pas = Get.find<ProximityAlarmState>();
+  var las = Get.find<ProximityAlarmState>();
 
-  var activeAlarms = pas.alarms.where((alarm) => alarm.active).toList();
+  var activeAlarms = las.alarms.where((alarm) => alarm.active).toList();
+
+  var permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    debugPrint('Periodic Alarm Check: Location permission denied. Cannot check for triggered alarms.');
+    return;
+  }
 
   var userPosition = await Geolocator.getLastKnownPosition();
   if (userPosition == null) {
@@ -148,15 +152,15 @@ Future<void> periodicAlarmCheck() async {
   for (var alarm in triggeredAlarms) debugPrint('Periodic Alarm Check: Triggered alarm ${alarm.name}');
 
   // If an alarm is already triggered, don't show another dialog.
-  if (pas.alarmIsCurrentlyTriggered) return;
+  if (las.alarmIsCurrentlyTriggered) return;
 
   for (var alarm in triggeredAlarms) {
-    // if (pas.settings.sound) {
+    // if (las.settings.sound) {
     //   debugPrint('Playing sound.');
     //   await AudioCache().play('alarm.mp3');
     // }
 
-    if (pas.notification) {
+    if (las.notification) {
       // the notification boolean is always set to true but we might want to add user control later.
       debugPrint('Sending the user a notification for alarm ${alarm.name}.');
       var notificationDetails = NotificationDetails(
@@ -166,10 +170,10 @@ Future<void> periodicAlarmCheck() async {
     }
 
     // No alarm is currently triggered, so we can show the dialog.
-    pas.alarmIsCurrentlyTriggered = true;
+    las.alarmIsCurrentlyTriggered = true;
     showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
 
-    if (pas.vibration) {
+    if (las.vibration) {
       for (var i = 0; i < numberOfTriggeredAlarmVibrations; i++) {
         await Vibration.vibrate(duration: 1000);
         await Future<void>.delayed(Duration(milliseconds: 1000));

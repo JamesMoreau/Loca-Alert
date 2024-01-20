@@ -39,6 +39,17 @@ class _MapViewState extends State<MapView> {
           circles.add(marker);
         }
 
+        // These are the same alarms as above, but as markers instead of circles. These are only visible when the user is zoomed out.
+        var markers = <Marker>[];
+        for (var alarm in state.alarms) {
+          var marker = Marker(
+            point: alarm.position,
+            // child: Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
+            child: FlutterLogo(),
+          );
+          markers.add(marker);
+        }
+
         // Overlay the alarm placement marker on top of the map. This is only visible when the user is placing an alarm.
         if (state.isPlacingAlarm) {
           var alarmPlacementPosition = state.mapController.camera.center;
@@ -73,7 +84,10 @@ class _MapViewState extends State<MapView> {
                   userAgentPackageName: 'com.location_alarm.app',
                   tileProvider: CancellableNetworkTileProvider(),
                 ),
-                CircleLayer(circles: circles),
+                // if (state.mapController.camera.zoom < circleToMarkerZoomThreshold) 
+                  CircleLayer(circles: circles),
+                // else 
+                //   MarkerLayer(markers: markers),
                 CurrentLocationLayer(),
               ],
             ),
@@ -220,7 +234,7 @@ Future<void> checkLocationPermissions() async {
 }
 
 Future<void> navigateMapToUserLocation() async {
-  var pas = Get.find<ProximityAlarmState>();
+  var las = Get.find<ProximityAlarmState>();
 
   var userPosition = await Geolocator.getLastKnownPosition();
   if (userPosition == null) {
@@ -229,5 +243,5 @@ Future<void> navigateMapToUserLocation() async {
   }
 
   var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
-  pas.mapController.move(userLocation, initialZoom);
+  las.mapController.move(userLocation, initialZoom);
 }
