@@ -6,9 +6,7 @@ const author = 'James Moreau';
 const myEmail = 'jmorea03@uoguelph.ca';
 const githubLink = 'www.github.com/jamesmoreau';
 
-// const MapBoxTemplateUrl = 'https://api.mapbox.com/styles/v1/jamesm1/clraaajoh004t01piepmw4igo/tiles/512/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamFtZXNtMSIsImEiOiJjbHJhYTc4NWYwYndiMmtqcXVoM2l4cGJ1In0.7dpOEpBRw55hQF8USd8Qrg';
 const openStreetMapTemplateUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-// const mapboxurl = 'https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png';
 
 const London = LatLng(51.5074, -0.1278);
 const Toronto = LatLng(43.6532, -79.3832);
@@ -18,7 +16,7 @@ const Belfast = LatLng(54.5973, -5.9301);
 const Edinburgh = LatLng(55.9533, -3.1883);
 
 const initialZoom = 15.0;
-const circleToMarkerZoomThreshold = 16.0;
+const circleToMarkerZoomThreshold = 10.0;
 const maxZoomSupported = 18.0;
 
 const alarmBorderColor = Color(0xff2b2b2b);

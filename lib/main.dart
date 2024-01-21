@@ -18,8 +18,6 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
-  change pas to las
-  show some sort icon on map for alarm if too zoomed out to see the circle. (could use current zoom level to determine this).
   App Logo
   show something when user is too zoomed in. Use current zoom level to determine this.
   get distance to closest alarm. have some sort of ui layer that points towards the alarm from current location if it is offscreen.

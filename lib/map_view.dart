@@ -19,16 +19,19 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
+  bool showMarkersInsteadOfCircles = false;
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProximityAlarmState>(
       builder: (state) {
         var statusBarHeight = MediaQuery.of(context).padding.top;
 
-        // Place all the alarms on the map.
+        // Display the alarms as circles on the map.
         var circles = <CircleMarker>[];
+        var markers = <Marker>[];
         for (var alarm in state.alarms) {
-          var marker = CircleMarker(
+          var circle = CircleMarker(
             point: alarm.position,
             color: alarm.color.withOpacity(alarmColorOpacity),
             borderColor: alarmBorderColor,
@@ -36,17 +39,14 @@ class _MapViewState extends State<MapView> {
             radius: alarm.radius,
             useRadiusInMeter: true,
           );
-          circles.add(marker);
-        }
 
-        // These are the same alarms as above, but as markers instead of circles. These are only visible when the user is zoomed out.
-        var markers = <Marker>[];
-        for (var alarm in state.alarms) {
+          // These are the same as the circles, but they are markers instead. They are only visible when the user is zoomed out.
           var marker = Marker(
             point: alarm.position,
-            // child: Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
-            child: FlutterLogo(),
+            child: Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
           );
+
+          circles.add(circle);
           markers.add(marker);
         }
 
@@ -73,9 +73,20 @@ class _MapViewState extends State<MapView> {
                 initialCenter: LatLng(0, 0),
                 initialZoom: initialZoom,
                 interactionOptions: InteractionOptions(flags: InteractiveFlag.all & ~InteractiveFlag.rotate),
-                maxZoom: maxZoomSupported,
+                // maxZoom: maxZoomSupported,
                 keepAlive: true, // Keep the map alive when it is not visible.
-                onMapEvent: (event) => state.update(), // @Speed Currently, we rebuild the MapView widget on every map event. Maybe this is slow.
+                onMapEvent: (event) { // @Speed Currently, we rebuild the MapView widget on every map event. Maybe this is slow.
+
+                  // If the user is zoomed out, show the alarms as markers instead of circles.
+                  if (state.mapController.camera.zoom < circleToMarkerZoomThreshold)
+                    showMarkersInsteadOfCircles = true;
+                  else
+                    showMarkersInsteadOfCircles = false;
+
+                  debugPrint('Current zoom: ${state.mapController.camera.zoom}');
+
+                  state.update();
+                },
               ),
               children: [
                 TileLayer(
@@ -84,14 +95,12 @@ class _MapViewState extends State<MapView> {
                   userAgentPackageName: 'com.location_alarm.app',
                   tileProvider: CancellableNetworkTileProvider(),
                 ),
-                // if (state.mapController.camera.zoom < circleToMarkerZoomThreshold) 
-                  CircleLayer(circles: circles),
-                // else 
-                //   MarkerLayer(markers: markers),
+                if (showMarkersInsteadOfCircles) MarkerLayer(markers: markers) else CircleLayer(circles: circles),
                 CurrentLocationLayer(),
               ],
             ),
-            Positioned( // Attribution to OpenStreetMap
+            Positioned(
+              // Attribution to OpenStreetMap
               top: statusBarHeight + 5,
               child: Align(
                 child: Container(
