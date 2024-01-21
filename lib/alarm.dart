@@ -61,3 +61,20 @@ List<Alarm> checkIfUserTriggersAlarms(LatLng userPosition, List<Alarm> alarms) {
 
   return triggeredAlarms;
 }
+
+Alarm? getClosestAlarmToPosition(LatLng position, List<Alarm> alarms) {
+  Alarm? closestAlarm;
+  var closestDistance = double.infinity;
+  
+  if (alarms.isEmpty) return null;
+
+  for (var alarm in alarms) {
+    var distance = Geolocator.distanceBetween(alarm.position.latitude, alarm.position.longitude, position.latitude, position.longitude);
+    if (distance < closestDistance) {
+      closestAlarm = alarm;
+      closestDistance = distance;
+    }
+  }
+
+  return closestAlarm;
+}

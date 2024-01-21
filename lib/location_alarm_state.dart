@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/alarm.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/main.dart';
@@ -22,6 +23,9 @@ class ProximityAlarmState extends GetxController {
   MapController mapController = MapController();
   bool isPlacingAlarm = false;
   double alarmPlacementRadius = 100;
+  bool showMarkersInsteadOfCircles = false;
+  Alarm? closestAlarm;
+  bool closestAlarmIsInView = false;
 
   // Settings
   bool alarmSound = true;
@@ -69,11 +73,11 @@ bool updateAlarmById(String id, Alarm newAlarmData) {
 
   for (var alarm in las.alarms) {
     if (alarm.id == id) {
-      alarm.name     = newAlarmData.name;
+      alarm.name = newAlarmData.name;
       alarm.position = newAlarmData.position;
-      alarm.radius   = newAlarmData.radius;
-      alarm.color    = newAlarmData.color;
-      alarm.active   = newAlarmData.active;
+      alarm.radius = newAlarmData.radius;
+      alarm.color = newAlarmData.color;
+      alarm.active = newAlarmData.active;
       las.update();
       saveAlarmsToSharedPreferences();
       return true;

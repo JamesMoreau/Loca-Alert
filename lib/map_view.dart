@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -19,13 +21,20 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
-  bool showMarkersInsteadOfCircles = false;
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProximityAlarmState>(
       builder: (state) {
         var statusBarHeight = MediaQuery.of(context).padding.top;
+
+        // If no alarms are currently visible, show an arrow pointing towards the closest alarm (if there is one).
+        var showClosestAlarmArrow = state.closestAlarm != null && !state.closestAlarmIsInView;
+        Widget arrow = SizedBox.shrink();
+        var angle = 0.0;
+        if (showClosestAlarmArrow) {
+          arrow = Icon(Icons.arrow_upward_rounded, color: state.closestAlarm!.color, size: 30);
+          angle = getAngleBetweenTwoPoints(state.mapController.camera.center, state.closestAlarm!.position);
+        }
 
         // Display the alarms as circles on the map.
         var circles = <CircleMarker>[];
@@ -75,18 +84,8 @@ class _MapViewState extends State<MapView> {
                 interactionOptions: InteractionOptions(flags: InteractiveFlag.all & ~InteractiveFlag.rotate),
                 // maxZoom: maxZoomSupported,
                 keepAlive: true, // Keep the map alive when it is not visible.
-                onMapEvent: (event) { // @Speed Currently, we rebuild the MapView widget on every map event. Maybe this is slow.
-
-                  // If the user is zoomed out, show the alarms as markers instead of circles.
-                  if (state.mapController.camera.zoom < circleToMarkerZoomThreshold)
-                    showMarkersInsteadOfCircles = true;
-                  else
-                    showMarkersInsteadOfCircles = false;
-
-                  debugPrint('Current zoom: ${state.mapController.camera.zoom}');
-
-                  state.update();
-                },
+                // @Speed Currently, we rebuild the MapView widget on every map event. Maybe this is slow.
+                onMapEvent: myOnMapEvent,
               ),
               children: [
                 TileLayer(
@@ -95,10 +94,17 @@ class _MapViewState extends State<MapView> {
                   userAgentPackageName: 'com.location_alarm.app',
                   tileProvider: CancellableNetworkTileProvider(),
                 ),
-                if (showMarkersInsteadOfCircles) MarkerLayer(markers: markers) else CircleLayer(circles: circles),
-                CurrentLocationLayer(),
+                if (state.showMarkersInsteadOfCircles) MarkerLayer(markers: markers) else CircleLayer(circles: circles),
+                // CurrentLocationLayer(),
               ],
             ),
+            if (showClosestAlarmArrow)
+              Center(
+                child: Transform.rotate(
+                  angle: angle,
+                  child: arrow,
+                ),
+              ),
             Positioned(
               // Attribution to OpenStreetMap
               top: statusBarHeight + 5,
@@ -222,6 +228,35 @@ class _MapViewState extends State<MapView> {
     resetAlarmPlacementUIState();
     super.dispose();
   }
+
+  void myOnMapEvent(MapEvent event) {
+    var las = Get.find<ProximityAlarmState>();
+
+    // Update the closest alarm stuff.
+    var alarms = las.alarms;
+    var cameraPosition = las.mapController.camera.center;
+    las.closestAlarm = getClosestAlarmToPosition(cameraPosition, alarms);
+
+    if (las.closestAlarm != null) {
+      var cameraBounds = las.mapController.camera.visibleBounds;
+      if (cameraBounds.contains(las.closestAlarm!.position))
+        las.closestAlarmIsInView = true;
+      else
+        las.closestAlarmIsInView = false;
+
+      debugPrint('Closest alarm: ${las.closestAlarm!.name} is in view: ${las.closestAlarmIsInView}');
+    }
+
+    // If the user is zoomed out, show the alarms as markers instead of circles.
+    if (las.mapController.camera.zoom < circleToMarkerZoomThreshold)
+      las.showMarkersInsteadOfCircles = true;
+    else
+      las.showMarkersInsteadOfCircles = false;
+
+    debugPrint('Current zoom: ${las.mapController.camera.zoom}');
+
+    las.update();
+  }
 }
 
 Future<void> checkLocationPermissions() async {
@@ -253,4 +288,17 @@ Future<void> navigateMapToUserLocation() async {
 
   var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
   las.mapController.move(userLocation, initialZoom);
+}
+
+double getAngleBetweenTwoPoints(LatLng from, LatLng to) {
+  var angle = atan2(to.longitude - from.longitude, to.latitude - from.latitude);
+  return angle;
+}
+
+LatLng calculatePointOnCircle(LatLng center, double radius, double angle) {
+  // Calculate the position on the circumference of the circle based on the angle.
+  var x = center.latitude + (radius * cos(angle));
+  var y = center.longitude + (radius * sin(angle));
+
+  return LatLng(x, y);
 }

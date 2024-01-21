@@ -18,6 +18,7 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
+  Fix CurrentLocationMarker. Maybe do it by hand.
   App Logo
   show something when user is too zoomed in. Use current zoom level to determine this.
   get distance to closest alarm. have some sort of ui layer that points towards the alarm from current location if it is offscreen.
