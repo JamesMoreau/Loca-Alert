@@ -23,9 +23,10 @@ class ProximityAlarmState extends GetxController {
   MapController mapController = MapController();
   bool isPlacingAlarm = false;
   double alarmPlacementRadius = 100;
-  bool showMarkersInsteadOfCircles = false;
+  bool showMarkersInsteadOfCircles = false; // TODO: remove this
   Alarm? closestAlarm;
   bool closestAlarmIsInView = false;
+  LatLng centerOfMap = LatLng(0, 0); //TODO: remove this
 
   // Settings
   bool alarmSound = true;
