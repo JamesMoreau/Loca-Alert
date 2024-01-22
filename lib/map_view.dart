@@ -53,24 +53,29 @@ class _MapViewState extends State<MapView> {
         // Display the alarms as circles on the map.
         var alarmCircles = <CircleMarker>[];
         var alarmMarkers = <Marker>[];
-        for (var alarm in state.alarms) {
-          var circle = CircleMarker(
-            point: alarm.position,
-            color: alarm.color.withOpacity(alarmColorOpacity),
-            borderColor: alarmBorderColor,
-            borderStrokeWidth: alarmBorderWidth,
-            radius: alarm.radius,
-            useRadiusInMeter: true,
-          );
-
+        if (state.showMarkersInsteadOfCircles) {
           // These are the same alarms as the circles, but they are markers instead. They are only visible when the user is zoomed out beyond circleToMarkerZoomThreshold.
-          var marker = Marker(
-            point: alarm.position,
-            child: Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
-          );
-
-          alarmCircles.add(circle);
-          alarmMarkers.add(marker);
+          for (var alarm in state.alarms) {
+            var marker = Marker(
+              point: alarm.position,
+              child: Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
+            );
+          
+            alarmMarkers.add(marker);
+          }
+        } else {
+          for (var alarm in state.alarms) {
+            var circle = CircleMarker(
+              point: alarm.position,
+              color: alarm.color.withOpacity(alarmColorOpacity),
+              borderColor: alarmBorderColor,
+              borderStrokeWidth: alarmBorderWidth,
+              radius: alarm.radius,
+              useRadiusInMeter: true,
+            );
+          
+            alarmCircles.add(circle);
+          }
         }
 
         // Overlay the alarm placement ui on top of the map. This is only visible when the user is placing an alarm.
@@ -96,14 +101,11 @@ class _MapViewState extends State<MapView> {
                 initialCenter: LatLng(0, 0),
                 initialZoom: initialZoom,
                 interactionOptions: InteractionOptions(flags: InteractiveFlag.all & ~InteractiveFlag.rotate),
-                // maxZoom: maxZoomSupported,
                 keepAlive: true, // Keep the map alive when it is not visible.
-                // @Speed Currently, we rebuild the MapView widget on every map event. Maybe this is slow.
                 onMapEvent: myOnMapEvent,
               ),
               children: [
                 TileLayer(
-                  // urlTemplate: openStreetMapTemplateUrl,
                   urlTemplate: openStreetMapTemplateUrl,
                   userAgentPackageName: 'com.location_alarm.app',
                   tileProvider: CancellableNetworkTileProvider(),
@@ -124,8 +126,7 @@ class _MapViewState extends State<MapView> {
                 ),
               ),
 
-            Positioned(
-              // Attribution to OpenStreetMap
+            Positioned( // Attribution to OpenStreetMap
               top: statusBarHeight + 5,
               child: Align(
                 child: Container(
