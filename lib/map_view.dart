@@ -21,6 +21,7 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
+  
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProximityAlarmState>(
@@ -31,23 +32,19 @@ class _MapViewState extends State<MapView> {
         // If no alarms are currently visible, show an arrow pointing towards the closest alarm (if there is one).
         var showClosestAlarmCompass = state.closestAlarm != null && !state.closestAlarmIsInView;
         Widget arrow = SizedBox.shrink();
+        Widget compassAlarmIcon = SizedBox.shrink();
+
         var angle = 0.0;
         var alarmCompassSizePercentage = 0.9;
         var alarmCompassDisplayRadius = widthOfScreen * alarmCompassSizePercentage * (1 / 2);
-        var iconRotationOffset = -90.0; // This is needed because the icon is pointing rightwards by default.
-        var offsetX = 0.0;
-        var offsetY = 0.0;
+
         if (showClosestAlarmCompass) {
           // Arrow pointing upwards
-          arrow = Icon(Icons.arrow_forward_ios_rounded, color: state.closestAlarm!.color, size: 30);
+          arrow = Icon(Icons.arrow_upward_rounded, color: state.closestAlarm!.color, size: 30);
+          compassAlarmIcon = Icon(Icons.pin_drop_rounded, color: state.closestAlarm!.color, size: 30);
 
           // Calculate the angle between the center of the map and the closest alarm
           angle = getAngleBetweenTwoPositions(state.centerOfMap, state.closestAlarm!.position);
-          debugPrint('Angle between center of map and closest alarm: $angle');
-
-          // Calculate the offset based on the angle and radius
-          offsetX = alarmCompassDisplayRadius * sin(angle);
-          offsetY = -alarmCompassDisplayRadius * cos(angle);
         }
 
         // Display the alarms as circles on the map.
@@ -60,7 +57,7 @@ class _MapViewState extends State<MapView> {
               point: alarm.position,
               child: Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
             );
-          
+
             alarmMarkers.add(marker);
           }
         } else {
@@ -73,7 +70,7 @@ class _MapViewState extends State<MapView> {
               radius: alarm.radius,
               useRadiusInMeter: true,
             );
-          
+
             alarmCircles.add(circle);
           }
         }
@@ -114,19 +111,25 @@ class _MapViewState extends State<MapView> {
                 // CurrentLocationLayer(),
               ],
             ),
-            
-            if (showClosestAlarmCompass) // Display the arrow pointing towards the closest alarm.
-              Center(
-                child: Transform.translate(
-                  offset: Offset(offsetX, offsetY),
-                  child: Transform.rotate(
-                    angle: angle + iconRotationOffset,
-                    child: arrow,
-                  )
+            if (showClosestAlarmCompass) ...[
+              // Display the arrow pointing towards the closest alarm.
+              IgnorePointer(
+                child: Center(
+                  child: Transform.translate(
+                    offset: Offset(alarmCompassDisplayRadius * sin(angle), -alarmCompassDisplayRadius * cos(angle)),
+                    child: Transform.rotate(
+                      angle: angle,
+                      child: arrow,
+                    ),
+                  ),
                 ),
               ),
-
-            Positioned( // Attribution to OpenStreetMap
+              IgnorePointer(
+                child: Center(child: Transform.translate(offset: Offset((alarmCompassDisplayRadius - 30) * sin(angle), -(alarmCompassDisplayRadius - 30) * cos(angle)), child: compassAlarmIcon)),
+              ),
+            ],
+            Positioned(
+              // Attribution to OpenStreetMap
               top: statusBarHeight + 5,
               child: Align(
                 child: Container(
@@ -254,7 +257,6 @@ class _MapViewState extends State<MapView> {
 
     // Update the camera position.
     las.centerOfMap = las.mapController.camera.center;
-    debugPrint('Center of map: ${las.centerOfMap}');
 
     // Update the closest alarm stuff.
     var alarms = las.alarms;
@@ -267,8 +269,6 @@ class _MapViewState extends State<MapView> {
         las.closestAlarmIsInView = true;
       else
         las.closestAlarmIsInView = false;
-
-      // debugPrint('Closest alarm: ${las.closestAlarm!.name} is in view: ${las.closestAlarmIsInView}');
     }
 
     // If the user is zoomed out, show the alarms as markers instead of circles.
@@ -276,8 +276,6 @@ class _MapViewState extends State<MapView> {
       las.showMarkersInsteadOfCircles = true;
     else
       las.showMarkersInsteadOfCircles = false;
-
-    // debugPrint('Current zoom: ${las.mapController.camera.zoom}');
 
     las.update();
   }
