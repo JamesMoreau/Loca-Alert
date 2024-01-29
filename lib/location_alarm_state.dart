@@ -16,6 +16,7 @@ class ProximityAlarmState extends GetxController {
   ProximityAlarmViews currentView = ProximityAlarmViews.alarms;
   late PageController pageController;
 
+  // Alarm Stuff
   bool alarmIsCurrentlyTriggered = false;
   double alarmTimer = 0;
 

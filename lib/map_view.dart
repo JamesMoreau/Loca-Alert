@@ -76,9 +76,10 @@ class _MapViewState extends State<MapView> {
         }
 
         // Overlay the alarm placement ui on top of the map. This is only visible when the user is placing an alarm.
+        CircleMarker? alarmPlacementCircle;
         if (state.isPlacingAlarm) {
           var alarmPlacementPosition = state.centerOfMap;
-          var alarmPlacementMarker = CircleMarker(
+          alarmPlacementCircle = CircleMarker(
             point: alarmPlacementPosition,
             radius: state.alarmPlacementRadius,
             color: Colors.redAccent.withOpacity(0.5),
@@ -86,7 +87,6 @@ class _MapViewState extends State<MapView> {
             borderStrokeWidth: 2,
             useRadiusInMeter: true,
           );
-          alarmCircles.add(alarmPlacementMarker);
         }
 
         return Stack(
@@ -108,7 +108,8 @@ class _MapViewState extends State<MapView> {
                   tileProvider: CancellableNetworkTileProvider(),
                 ),
                 if (state.showMarkersInsteadOfCircles) MarkerLayer(markers: alarmMarkers) else CircleLayer(circles: alarmCircles),
-                // CurrentLocationLayer(),
+                if (alarmPlacementCircle != null) CircleLayer(circles: [alarmPlacementCircle]),
+                CurrentLocationLayer(),
               ],
             ),
             if (showClosestAlarmCompass) ...[
@@ -283,8 +284,8 @@ class _MapViewState extends State<MapView> {
 
 Future<void> checkLocationPermissions() async {
   var permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.deniedForever) {
-    debugPrint('Warning: User has denied location permissions.');
+  if (permission == LocationPermission.deniedForever || permission == LocationPermission.denied) {
+    debugPrint('Warning: User has denied location permissions forever.');
     ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,

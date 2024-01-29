@@ -18,11 +18,9 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
-  Offscreen alarm compass is not pointing exactly at the alarm.
   Fix CurrentLocationMarker. Maybe do it by hand.
+  add caching
   App Logo
-  show something when user is too zoomed in. Use current zoom level to determine this.
-  get distance to closest alarm. have some sort of ui layer that points towards the alarm from current location if it is offscreen.
 */
 
 // Notification stuff
@@ -130,7 +128,7 @@ Future<void> periodicAlarmCheck() async {
 
   var permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
-    debugPrint('Periodic Alarm Check: Location permission denied. Cannot check for triggered alarms.');
+    debugPrint('Warning: Location permission denied. Cannot check for triggered alarms.');
     return;
   }
 
