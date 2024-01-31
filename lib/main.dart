@@ -18,7 +18,6 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
-  Fix CurrentLocationMarker. Maybe do it by hand.
   add caching
   App Logo
 */
@@ -30,7 +29,7 @@ int id = 0;
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Get.put(ProximityAlarmState()); // Inject the global app state into memory.
+  Get.put(ProximityAlarmState()); // Inject the global app state into memory. Also initializes a bunch of stuff inside onInit().
 
   // Load saved alarms and settings from shared preferences.
   loadAlarmsFromSharedPreferences();

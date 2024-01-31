@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/alarm.dart';
@@ -11,6 +13,9 @@ import 'package:uuid/uuid.dart';
 
 class ProximityAlarmState extends GetxController {
   List<Alarm> alarms = <Alarm>[];
+
+  LatLng userLocation = LatLng(0, 0);
+  StreamSubscription<Position>? positionStream;
 
   // View Stuff
   ProximityAlarmViews currentView = ProximityAlarmViews.alarms;
@@ -37,7 +42,23 @@ class ProximityAlarmState extends GetxController {
   @override
   void onInit() {
     pageController = PageController(initialPage: currentView.index);
+
+    // Initialize the location stream.
+    positionStream = Geolocator.getPositionStream(
+      locationSettings: LocationSettings(accuracy: LocationAccuracy.bestForNavigation, distanceFilter: 10),
+    ).listen((Position position) {
+      userLocation = LatLng(position.latitude, position.longitude);
+      update(); // Trigger a rebuild when the user location is updated
+    });
+
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    positionStream?.cancel();
+    
+    super.onClose();
   }
 }
 

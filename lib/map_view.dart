@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
-import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
@@ -21,13 +20,26 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
-  
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProximityAlarmState>(
       builder: (state) {
         var statusBarHeight = MediaQuery.of(context).padding.top;
         var widthOfScreen = MediaQuery.of(context).size.width;
+
+        // Display user's location on the map.
+        var userLocationMarker = <Marker>[
+          Marker(
+            point: state.userLocation,
+            // alignment: Alignment.topCenter,
+            child: Icon(Icons.circle, color: Colors.blue),
+          ),
+          Marker(
+            point: state.userLocation,
+            // alignment: Alignment.topCenter,
+            child: Icon(Icons.person_rounded, color: Colors.white, size: 18),
+          ),
+        ];
 
         // If no alarms are currently visible, show an arrow pointing towards the closest alarm (if there is one).
         var showClosestAlarmCompass = state.closestAlarm != null && !state.closestAlarmIsInView;
@@ -109,7 +121,8 @@ class _MapViewState extends State<MapView> {
                 ),
                 if (state.showMarkersInsteadOfCircles) MarkerLayer(markers: alarmMarkers) else CircleLayer(circles: alarmCircles),
                 if (alarmPlacementCircle != null) CircleLayer(circles: [alarmPlacementCircle]),
-                CurrentLocationLayer(),
+                // CurrentLocationLayer(),
+                MarkerLayer(markers: userLocationMarker),
               ],
             ),
             if (showClosestAlarmCompass) ...[
@@ -300,7 +313,12 @@ Future<void> checkLocationPermissions() async {
   }
 }
 
+bool navigateToUserLocationProcedureIsLocked = false; // Make sure the user doesn't spam the button.
+
 Future<void> navigateMapToUserLocation() async {
+  if (navigateToUserLocationProcedureIsLocked) return;
+  navigateToUserLocationProcedureIsLocked = true;
+
   var las = Get.find<ProximityAlarmState>();
 
   var userPosition = await Geolocator.getLastKnownPosition();
@@ -311,6 +329,8 @@ Future<void> navigateMapToUserLocation() async {
 
   var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
   las.mapController.move(userLocation, initialZoom);
+
+  navigateToUserLocationProcedureIsLocked = false;
 }
 
 double getAngleBetweenTwoPositions(LatLng from, LatLng to) {
