@@ -28,18 +28,18 @@ class _MapViewState extends State<MapView> {
         var widthOfScreen = MediaQuery.of(context).size.width;
 
         // Display user's location on the map.
-        var userLocationMarker = <Marker>[
-          Marker(
-            point: state.userLocation,
-            // alignment: Alignment.topCenter,
-            child: Icon(Icons.circle, color: Colors.blue),
-          ),
-          Marker(
-            point: state.userLocation,
-            // alignment: Alignment.topCenter,
-            child: Icon(Icons.person_rounded, color: Colors.white, size: 18),
-          ),
-        ];
+        var userLocationMarker = <Marker>[];
+        if (state.userLocation != null)
+          userLocationMarker.addAll([
+            Marker(
+              point: state.userLocation!,
+              child: Icon(Icons.circle, color: Colors.blue),
+            ),
+            Marker(
+              point: state.userLocation!,
+              child: Icon(Icons.person_rounded, color: Colors.white, size: 18),
+            ),
+          ]);
 
         // If no alarms are currently visible, show an arrow pointing towards the closest alarm (if there is one).
         var showClosestAlarmCompass = state.closestAlarm != null && !state.closestAlarmIsInView;
@@ -139,7 +139,9 @@ class _MapViewState extends State<MapView> {
                 ),
               ),
               IgnorePointer(
-                child: Center(child: Transform.translate(offset: Offset((alarmCompassDisplayRadius - 30) * sin(angle), -(alarmCompassDisplayRadius - 30) * cos(angle)), child: compassAlarmIcon)),
+                child: Center(
+                    child: Transform.translate(
+                        offset: Offset((alarmCompassDisplayRadius - 30) * sin(angle), -(alarmCompassDisplayRadius - 30) * cos(angle)), child: compassAlarmIcon)),
               ),
             ],
             Positioned(
@@ -297,20 +299,33 @@ class _MapViewState extends State<MapView> {
 
 Future<void> checkLocationPermissions() async {
   var permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.deniedForever || permission == LocationPermission.denied) {
-    debugPrint('Warning: User has denied location permissions forever.');
-    ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Container(
-          padding: const EdgeInsets.all(8),
-          child: Text('Location permissions are required to use this app.'),
-        ),
-        action: SnackBarAction(label: 'Settings', onPressed: Geolocator.openAppSettings),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
+  if (permission == LocationPermission.denied) {
+    debugPrint('Warning: Location permission denied. Requesting permission.');
+    var requestPermission = await Geolocator.requestPermission();
+    if (requestPermission == LocationPermission.whileInUse || requestPermission == LocationPermission.always) {
+      debugPrint('Location permission request granted.');
+      // await navigateMapToUserLocation();
+    } else {
+      debugPrint('Warning: Location permission request denied.');
+    }
+
+    return;
   }
+
+  // if (permission == LocationPermission.deniedForever) {
+  //   debugPrint('Warning: User has denied location permissions forever.');
+  //   ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
+  //     SnackBar(
+  //       behavior: SnackBarBehavior.floating,
+  //       content: Container(
+  //         padding: const EdgeInsets.all(8),
+  //         child: Text('Location permissions are required to use this app.'),
+  //       ),
+  //       action: SnackBarAction(label: 'Settings', onPressed: Geolocator.openAppSettings),
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  //     ),
+  //   );
+  // }
 }
 
 bool navigateToUserLocationProcedureIsLocked = false; // Make sure the user doesn't spam the button.
@@ -319,17 +334,19 @@ Future<void> navigateMapToUserLocation() async {
   if (navigateToUserLocationProcedureIsLocked) return;
   navigateToUserLocationProcedureIsLocked = true;
 
+  debugPrint('Navigating to user location.');
+
   var las = Get.find<ProximityAlarmState>();
 
-  var userPosition = await Geolocator.getLastKnownPosition();
+  var userPosition = las.userLocation;
   if (userPosition == null) {
     debugPrint('Error: Unable to navigate map to user location.');
     return;
   }
 
-  var userLocation = LatLng(userPosition.latitude, userPosition.longitude);
-  las.mapController.move(userLocation, initialZoom);
+  las.mapController.move(userPosition, initialZoom);
 
+  debugPrint('Navigating to user location.');
   navigateToUserLocationProcedureIsLocked = false;
 }
 

@@ -14,7 +14,7 @@ import 'package:uuid/uuid.dart';
 class ProximityAlarmState extends GetxController {
   List<Alarm> alarms = <Alarm>[];
 
-  LatLng userLocation = LatLng(0, 0);
+  LatLng? userLocation;
   StreamSubscription<Position>? positionStream;
 
   // View Stuff
@@ -43,21 +43,15 @@ class ProximityAlarmState extends GetxController {
   void onInit() {
     pageController = PageController(initialPage: currentView.index);
 
-    // Initialize the location stream.
-    positionStream = Geolocator.getPositionStream(
-      locationSettings: LocationSettings(accuracy: LocationAccuracy.bestForNavigation, distanceFilter: 10),
-    ).listen((Position position) {
-      userLocation = LatLng(position.latitude, position.longitude);
-      update(); // Trigger a rebuild when the user location is updated
-    });
+    // initializeUserPositionStream();
 
     super.onInit();
+    debugPrint('ProximityAlarmState initialized.');
   }
 
   @override
   void onClose() {
-    positionStream?.cancel();
-    
+    if (positionStream != null) positionStream!.cancel();
     super.onClose();
   }
 }
@@ -217,4 +211,35 @@ Future<void> navigateToAlarm(Alarm alarm) async {
   las.update();
   await las.pageController.animateToPage(las.currentView.index, duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
   las.mapController.move(alarm.position, initialZoom);
+}
+
+Future<void> checkPermissionAndInitializePositionStream() async {
+  var las = Get.find<ProximityAlarmState>();
+
+  var permission = await Geolocator.checkPermission();
+  var locationPermissionIsGranted = permission == LocationPermission.whileInUse || permission == LocationPermission.always;
+  var positionStreamIsInitialized = las.positionStream != null;
+
+  if (!locationPermissionIsGranted && !positionStreamIsInitialized) {
+    debugPrint('Location permission denied and position stream uninitialized. Cannot initialize user location stream.');
+    return;
+  }
+
+  if (!locationPermissionIsGranted && positionStreamIsInitialized) {
+    debugPrint('Location permission denied and position stream initialized. Cancelling user location stream.');
+    await las.positionStream!.cancel();
+    return;
+  }
+
+  if (locationPermissionIsGranted && !positionStreamIsInitialized) {
+    debugPrint('Location permission granted and position stream uninitialized. Initializing user location stream.');
+    las.positionStream = Geolocator.getPositionStream(
+      locationSettings: LocationSettings(accuracy: LocationAccuracy.bestForNavigation, distanceFilter: 10),
+    ).listen((Position position) {
+      las.userLocation = LatLng(position.latitude, position.longitude);
+      las.update(); // Trigger a rebuild when the user location is updated
+    });
+  }
+
+  // The remaining case is locationPermissionIsGranted && positionStreamIsInitialized. In which case, do nothing.
 }

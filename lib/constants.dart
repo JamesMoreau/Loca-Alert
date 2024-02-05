@@ -24,6 +24,7 @@ const alarmBorderWidth = 2.0;
 const alarmColorOpacity = 0.5;
 
 const alarmCheckPeriod = Duration(seconds: 5);
+const locationPermissionCheckPeriod = Duration(seconds: 30);
 const numberOfTriggeredAlarmVibrations = 6;
 
 const sharedPreferencesAlarmKey = 'alarms';

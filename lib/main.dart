@@ -18,7 +18,8 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
-  add caching
+  periodically check if user has permitted location access and initialize the user position stream if they have.
+  add tile caching
   App Logo
 */
 
@@ -30,6 +31,13 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   Get.put(ProximityAlarmState()); // Inject the global app state into memory. Also initializes a bunch of stuff inside onInit().
+
+  // Initialize the user's position stream.
+  // run a function every 30 seconds to do this
+  checkPermissionAndInitializePositionStream();
+  
+  // Start a timer for periodic permission checks
+  Timer.periodic(locationPermissionCheckPeriod, (Timer timer) => checkPermissionAndInitializePositionStream() );
 
   // Load saved alarms and settings from shared preferences.
   loadAlarmsFromSharedPreferences();
@@ -43,7 +51,7 @@ void main() {
   Timer.periodic(alarmCheckPeriod, (timer) => periodicAlarmCheck());
 
   // Get location permission
-  Geolocator.requestPermission();
+  // Geolocator.requestPermission();
 
   // Set up http overrides. This is needed to increase the number of concurrent http requests allowed. This helps with the map tiles loading.
   HttpOverrides.global = MyHttpOverrides();
@@ -131,7 +139,7 @@ Future<void> periodicAlarmCheck() async {
     return;
   }
 
-  var userPosition = await Geolocator.getLastKnownPosition();
+  var userPosition = las.userLocation;
   if (userPosition == null) {
     debugPrint('Periodic Alarm Check: No user position found.');
     return;
@@ -170,6 +178,7 @@ Future<void> periodicAlarmCheck() async {
     las.alarmIsCurrentlyTriggered = true;
     showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
 
+    // Commence the vibration after the dialog is shown.
     if (las.vibration) {
       for (var i = 0; i < numberOfTriggeredAlarmVibrations; i++) {
         await Vibration.vibrate(duration: 1000);
