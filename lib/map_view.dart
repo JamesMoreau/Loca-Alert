@@ -112,6 +112,7 @@ class _MapViewState extends State<MapView> {
                 interactionOptions: InteractionOptions(flags: InteractiveFlag.all & ~InteractiveFlag.rotate),
                 keepAlive: true, // Keep the map alive when it is not visible.
                 onMapEvent: myOnMapEvent,
+                onMapReady: myOnMapReady,
               ),
               children: [
                 TileLayer(
@@ -256,13 +257,6 @@ class _MapViewState extends State<MapView> {
   }
 
   @override
-  void initState() {
-    checkLocationPermissions();
-    navigateMapToUserLocation();
-    super.initState();
-  }
-
-  @override
   void dispose() {
     resetAlarmPlacementUIState();
     super.dispose();
@@ -295,59 +289,62 @@ class _MapViewState extends State<MapView> {
 
     las.update();
   }
-}
 
-Future<void> checkLocationPermissions() async {
-  var permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    debugPrint('Warning: Location permission denied. Requesting permission.');
-    var requestPermission = await Geolocator.requestPermission();
-    if (requestPermission == LocationPermission.whileInUse || requestPermission == LocationPermission.always) {
-      debugPrint('Location permission request granted.');
-      // await navigateMapToUserLocation();
-    } else {
-      debugPrint('Warning: Location permission request denied.');
+  Future<void> myOnMapReady() async {
+    // Check location permission and request it if necessary.
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+      await checkPermissionAndMaybeInitializeUserPositionStream();
+      await navigateMapToUserLocation();
+      return; // the user has already granted location permissions.
     }
 
-    return;
-  }
+    if (permission == LocationPermission.denied) {
+      // The user has denied location permissions. We can ask for them again.
+      var permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+        await checkPermissionAndMaybeInitializeUserPositionStream();
+        await navigateMapToUserLocation();
+      }
+      return;
+    }
 
-  // if (permission == LocationPermission.deniedForever) {
-  //   debugPrint('Warning: User has denied location permissions forever.');
-  //   ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
-  //     SnackBar(
-  //       behavior: SnackBarBehavior.floating,
-  //       content: Container(
-  //         padding: const EdgeInsets.all(8),
-  //         child: Text('Location permissions are required to use this app.'),
-  //       ),
-  //       action: SnackBarAction(label: 'Settings', onPressed: Geolocator.openAppSettings),
-  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-  //     ),
-  //   );
-  // }
+    if (permission == LocationPermission.deniedForever) {
+      debugPrint('Warning: User has denied location permissions forever.');
+      ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Container(
+            padding: const EdgeInsets.all(8),
+            child: Text('Location permissions are required to use this app.'),
+          ),
+          action: SnackBarAction(label: 'Settings', onPressed: Geolocator.openAppSettings),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+    }
+  }
 }
 
-bool navigateToUserLocationProcedureIsLocked = false; // Make sure the user doesn't spam the button.
+// bool navigateToUserLocationProcedureIsLocked = false; // Make sure the user doesn't spam the button.
 
 Future<void> navigateMapToUserLocation() async {
-  if (navigateToUserLocationProcedureIsLocked) return;
-  navigateToUserLocationProcedureIsLocked = true;
-
-  debugPrint('Navigating to user location.');
-
+  // debugPrint('Hello from navigateMapToUserLocation1 navigatemaptoUserLocationProcedureIsLocked: $navigateToUserLocationProcedureIsLocked');
+  // if (navigateToUserLocationProcedureIsLocked) return;
+  // navigateToUserLocationProcedureIsLocked = true;
   var las = Get.find<ProximityAlarmState>();
 
   var userPosition = las.userLocation;
   if (userPosition == null) {
     debugPrint('Error: Unable to navigate map to user location.');
+    // navigateToUserLocationProcedureIsLocked = false;
     return;
   }
 
   las.mapController.move(userPosition, initialZoom);
 
   debugPrint('Navigating to user location.');
-  navigateToUserLocationProcedureIsLocked = false;
+  // navigateToUserLocationProcedureIsLocked = false;
 }
 
 double getAngleBetweenTwoPositions(LatLng from, LatLng to) {

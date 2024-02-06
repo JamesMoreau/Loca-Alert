@@ -11,6 +11,7 @@ import 'package:location_alarm/alarm.dart';
 import 'package:location_alarm/alarms_view.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
+import 'package:location_alarm/location_permission_dialog.dart';
 import 'package:location_alarm/map_view.dart';
 import 'package:location_alarm/settings_view.dart';
 import 'package:location_alarm/triggered_alarm_dialog.dart';
@@ -18,9 +19,15 @@ import 'package:vibration/vibration.dart';
 
 /* 
   TODO:
-  periodically check if user has permitted location access and initialize the user position stream if they have.
-  add tile caching
-  App Logo
+  [X] periodically check if user has permitted location access and initialize the user position stream if they have.
+  [X] Add show closest alarm setting.
+  [ ] add tile caching. this would be very helpful if the user doesnt have good internet.
+  [ ] convert spaces to tabs in all files
+  [ ] App Logo
+  [ ] could split up app state into multiple controllers for better organization and performance
+  [ ] instead of checking if an alarm is triggered every 5 seconds, we could check when the user's position changes. What if the user is moving quickly and they pass through the radius of an alarm in less than 5 seconds?
+  [ ] could make thumb slider larger. wrap in a SliderThemeData widget.
+  [ ] could transition to cupertino widgets for everything.
 */
 
 // Notification stuff
@@ -32,13 +39,6 @@ void main() {
 
   Get.put(ProximityAlarmState()); // Inject the global app state into memory. Also initializes a bunch of stuff inside onInit().
 
-  // Initialize the user's position stream.
-  // run a function every 30 seconds to do this
-  checkPermissionAndInitializePositionStream();
-  
-  // Start a timer for periodic permission checks
-  Timer.periodic(locationPermissionCheckPeriod, (Timer timer) => checkPermissionAndInitializePositionStream() );
-
   // Load saved alarms and settings from shared preferences.
   loadAlarmsFromSharedPreferences();
   loadSettingsFromSharedPreferences();
@@ -47,16 +47,16 @@ void main() {
   var initializationSettings = InitializationSettings(iOS: DarwinInitializationSettings());
   flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-  // Set off periodic alarm checks.
-  Timer.periodic(alarmCheckPeriod, (timer) => periodicAlarmCheck());
-
-  // Get location permission
-  // Geolocator.requestPermission();
-
   // Set up http overrides. This is needed to increase the number of concurrent http requests allowed. This helps with the map tiles loading.
   HttpOverrides.global = MyHttpOverrides();
 
   runApp(const MainApp());
+
+  // Set off periodic alarm checks.
+  Timer.periodic(alarmCheckPeriod, (timer) => periodicAlarmCheck());
+
+  // Start a timer for periodic location permission checks
+  Timer.periodic(locationPermissionCheckPeriod, (Timer timer) => checkPermissionAndMaybeInitializeUserPositionStream());
 }
 
 enum ProximityAlarmViews { alarms, map, settings }
@@ -197,4 +197,15 @@ class MyHttpOverrides extends HttpOverrides {
     client.maxConnectionsPerHost = maxConnections;
     return client;
   }
+}
+
+Future<void> checkLocationPermission() async {
+  var permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+    debugPrint('Location permission is already granted by the user.');
+    return;
+  }
+
+  // If the user has denied location permission, show a dialog explaining why it's needed.
+  showLocationPermissionDialog(NavigationService.navigatorKey.currentContext!);
 }

@@ -8,6 +8,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/alarm.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/main.dart';
+import 'package:location_alarm/map_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -42,8 +43,6 @@ class ProximityAlarmState extends GetxController {
   @override
   void onInit() {
     pageController = PageController(initialPage: currentView.index);
-
-    // initializeUserPositionStream();
 
     super.onInit();
     debugPrint('ProximityAlarmState initialized.');
@@ -213,7 +212,7 @@ Future<void> navigateToAlarm(Alarm alarm) async {
   las.mapController.move(alarm.position, initialZoom);
 }
 
-Future<void> checkPermissionAndInitializePositionStream() async {
+Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
   var las = Get.find<ProximityAlarmState>();
 
   var permission = await Geolocator.checkPermission();
@@ -228,6 +227,9 @@ Future<void> checkPermissionAndInitializePositionStream() async {
   if (!locationPermissionIsGranted && positionStreamIsInitialized) {
     debugPrint('Location permission denied and position stream initialized. Cancelling user location stream.');
     await las.positionStream!.cancel();
+    las.positionStream = null;
+    las.userLocation = null;
+    las.update(); // Trigger a rebuild when the user location stream is cancelled so the user no longer shows on the map
     return;
   }
 
@@ -239,6 +241,12 @@ Future<void> checkPermissionAndInitializePositionStream() async {
       las.userLocation = LatLng(position.latitude, position.longitude);
       las.update(); // Trigger a rebuild when the user location is updated
     });
+
+    las.userLocation = null;
+    var position = await Geolocator.getLastKnownPosition();
+    if (position != null) las.userLocation = LatLng(position.latitude, position.longitude);
+    las.update();
+    await navigateMapToUserLocation();
   }
 
   // The remaining case is locationPermissionIsGranted && positionStreamIsInitialized. In which case, do nothing.
