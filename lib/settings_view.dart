@@ -52,6 +52,17 @@ class SettingsView extends StatelessWidget {
 							),
 							Padding(
 								padding: const EdgeInsets.symmetric(vertical: 8),
+								child: SwitchListTile(
+									title: Text('Show Closest Off-Screen Alarm'),
+									value: state.showClosestOffScreenAlarm,
+									onChanged: (value) {
+										changeShowClosestOffScreenAlarm(newValue: value);
+									},
+									thumbIcon: thumbIcon,
+								),
+							),
+							Padding(
+								padding: const EdgeInsets.symmetric(vertical: 8),
 								child: ListTile(
 									title: Text('Location Settings'),
 									trailing: Icon(Icons.keyboard_arrow_right),

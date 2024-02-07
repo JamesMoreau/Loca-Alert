@@ -18,7 +18,7 @@ import 'package:location_alarm/triggered_alarm_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vibration/vibration.dart';
 
-/* 
+/*
 	TODO:
 	[X] periodically check if user has permitted location access and initialize the user position stream if they have.
 	[X] Add show closest alarm setting.
@@ -26,7 +26,7 @@ import 'package:vibration/vibration.dart';
 	[X] convert spaces to tabs in all files
 	[ ] App Logo
 	[ ] could split up app state into multiple controllers for better organization and performance
-	[ ] instead of checking if an alarm is triggered every 5 seconds, we could check when the user's position changes. What if the user is moving quickly and they pass through the radius of an alarm in less than 5 seconds?
+	[X] instead of checking if an alarm is triggered every 5 seconds, we could check when the user's position changes. What if the user is moving quickly and they pass through the radius of an alarm in less than 5 seconds?
 	[ ] could make thumb slider larger. wrap in a SliderThemeData widget.
 	[ ] could transition to cupertino widgets for everythingsince i will likely only publish to app store.
 	[ ] Organize project layout
@@ -41,8 +41,8 @@ void main() {
 
   Get.put(ProximityAlarmState()); // Inject the global app state into memory. Also initializes a bunch of stuff inside onInit().
 
-	// Load map tile cache
-	initializeTileCache();
+  // Load map tile cache
+  initializeTileCache();
 
   // Load saved alarms and settings from shared preferences.
   loadAlarmsFromSharedPreferences();
@@ -56,9 +56,6 @@ void main() {
   HttpOverrides.global = MyHttpOverrides();
 
   runApp(const MainApp());
-
-  // Set off periodic alarm checks.
-  Timer.periodic(alarmCheckPeriod, (timer) => periodicAlarmCheck());
 
   // Start a timer for periodic location permission checks
   Timer.periodic(locationPermissionCheckPeriod, (Timer timer) => checkPermissionAndMaybeInitializeUserPositionStream());
@@ -132,21 +129,20 @@ class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
 
-Future<void> periodicAlarmCheck() async {
-  // debugPrint('Should see me every 5 seconds. ${DateFormat('HH:mm:ss').format(DateTime.now())}');
+Future<void> checkAlarmsOnUserPositionChange() async {
   var las = Get.find<ProximityAlarmState>();
 
   var activeAlarms = las.alarms.where((alarm) => alarm.active).toList();
 
   var permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
-    debugPrint('Warning: Location permission denied. Cannot check for triggered alarms.');
+    debugPrint('Alarm Check: Location permission denied. Cannot check for triggered alarms.');
     return;
   }
 
   var userPosition = las.userLocation;
   if (userPosition == null) {
-    debugPrint('Periodic Alarm Check: No user position found.');
+    debugPrint('Alarm Check: No user position found.');
     return;
   }
 
@@ -155,24 +151,19 @@ Future<void> periodicAlarmCheck() async {
   var triggeredAlarms = checkIfUserTriggersAlarms(userLatLng, activeAlarms);
 
   if (triggeredAlarms.isEmpty) {
-    debugPrint('Periodic Alarm Check: No alarms triggered.');
+    debugPrint('Alarm Check: No alarms triggered.');
     return;
   }
 
-  for (var alarm in triggeredAlarms) debugPrint('Periodic Alarm Check: Triggered alarm ${alarm.name}');
+  for (var alarm in triggeredAlarms) debugPrint('Alarm Check: Triggered alarm ${alarm.name}');
 
   // If an alarm is already triggered, don't show another dialog.
   if (las.alarmIsCurrentlyTriggered) return;
 
   for (var alarm in triggeredAlarms) {
-    // if (las.settings.sound) {
-    //   debugPrint('Playing sound.');
-    //   await AudioCache().play('alarm.mp3');
-    // }
-
     if (las.notification) {
       // the notification boolean is always set to true but we might want to add user control later.
-      debugPrint('Sending the user a notification for alarm ${alarm.name}.');
+      debugPrint('Alarm Check: Sending the user a notification for alarm ${alarm.name}.');
       var notificationDetails = NotificationDetails(
         iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentBanner: true, presentSound: true),
       );
@@ -218,5 +209,5 @@ Future<void> checkLocationPermission() async {
 Future<void> initializeTileCache() async {
   var las = Get.find<ProximityAlarmState>();
   var cacheDirectory = await getTemporaryDirectory();
-	las.mapTileCachePath = cacheDirectory.path;
+  las.mapTileCachePath = cacheDirectory.path;
 }

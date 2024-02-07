@@ -31,6 +31,7 @@ const sharedPreferencesAlarmKey = 'alarms';
 const sharedPreferencesAlarmSoundKey = 'alarmSound';
 const sharedPreferencesAlarmVibrationKey = 'alarmVibration';
 const sharedPreferencesAlarmNotificationKey = 'alarmNotification';
+const sharedPreferencesShowClosestOffScreenAlarmKey = 'showClosestOffScreenAlarm';
 
 ThemeData locationAlarmTheme = ThemeData(
 	// colorSchemeSeed: const Color(0xfff1f3e0),

@@ -41,6 +41,7 @@ class ProximityAlarmState extends GetxController {
 	bool alarmSound = true;
 	bool vibration = true;
 	bool notification = true;
+	bool showClosestOffScreenAlarm = true;
 
 	@override
 	void onInit() {
@@ -185,6 +186,13 @@ void changeAlarmNotification({required bool newValue}) {
 	saveSettingsToSharedPreferences();
 }
 
+void changeShowClosestOffScreenAlarm({required bool newValue}) {
+	var las = Get.find<ProximityAlarmState>();
+	las.showClosestOffScreenAlarm = newValue;
+	las.update();
+	saveSettingsToSharedPreferences();
+}
+
 Future<void> saveSettingsToSharedPreferences() async {
 	debugPrint('Saving settings to SharedPreferences');
 
@@ -194,6 +202,7 @@ Future<void> saveSettingsToSharedPreferences() async {
 	await preferences.setBool(sharedPreferencesAlarmSoundKey, las.alarmSound);
 	await preferences.setBool(sharedPreferencesAlarmVibrationKey, las.vibration);
 	await preferences.setBool(sharedPreferencesAlarmNotificationKey, las.notification);
+	await preferences.setBool(sharedPreferencesShowClosestOffScreenAlarmKey, las.showClosestOffScreenAlarm);
 }
 
 Future<void> loadSettingsFromSharedPreferences() async {
@@ -203,6 +212,7 @@ Future<void> loadSettingsFromSharedPreferences() async {
 	las.alarmSound = preferences.getBool(sharedPreferencesAlarmSoundKey) ?? true;
 	las.vibration = preferences.getBool(sharedPreferencesAlarmVibrationKey) ?? true;
 	las.notification = preferences.getBool(sharedPreferencesAlarmNotificationKey) ?? true;
+	las.showClosestOffScreenAlarm = preferences.getBool(sharedPreferencesShowClosestOffScreenAlarmKey) ?? true;
 	las.update();
 }
 
@@ -241,6 +251,7 @@ Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
 			locationSettings: LocationSettings(accuracy: LocationAccuracy.bestForNavigation, distanceFilter: 10),
 		).listen((Position position) {
 			las.userLocation = LatLng(position.latitude, position.longitude);
+			checkAlarmsOnUserPositionChange(); // Check if the user has entered the radius of any alarms
 			las.update(); // Trigger a rebuild when the user location is updated
 		});
 

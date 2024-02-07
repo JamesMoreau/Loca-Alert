@@ -54,7 +54,6 @@ List<Alarm> checkIfUserTriggersAlarms(LatLng userPosition, List<Alarm> alarms) {
 	var triggeredAlarms = <Alarm>[];
 
 	for (var alarm in alarms) {
-		// var distance = Distance().as(LengthUnit.Meter, userPosition, alarm.position);
 		var distance = Geolocator.distanceBetween(alarm.position.latitude, alarm.position.longitude, userPosition.latitude, userPosition.longitude);
 		if (distance <= alarm.radius) triggeredAlarms.add(alarm);
 	}
@@ -65,7 +64,7 @@ List<Alarm> checkIfUserTriggersAlarms(LatLng userPosition, List<Alarm> alarms) {
 Alarm? getClosestAlarmToPosition(LatLng position, List<Alarm> alarms) {
 	Alarm? closestAlarm;
 	var closestDistance = double.infinity;
-	
+
 	if (alarms.isEmpty) return null;
 
 	for (var alarm in alarms) {

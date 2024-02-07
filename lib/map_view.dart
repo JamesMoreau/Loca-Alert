@@ -43,7 +43,7 @@ class _MapViewState extends State<MapView> {
 					]);
 
 				// If no alarms are currently visible, show an arrow pointing towards the closest alarm (if there is one).
-				var showClosestAlarmCompass = state.closestAlarm != null && !state.closestAlarmIsInView;
+				var showClosestAlarmCompass = state.closestAlarm != null && !state.closestAlarmIsInView && state.showClosestOffScreenAlarm;
 				Widget arrow = SizedBox.shrink();
 				Widget compassAlarmIcon = SizedBox.shrink();
 
