@@ -62,6 +62,9 @@ ThemeData locationAlarmTheme = ThemeData(
 			borderRadius: BorderRadius.circular(8),
 		),
 	),
+	sliderTheme: SliderThemeData(
+		thumbShape: RoundSliderThumbShape(enabledThumbRadius: 13),
+	),
 	iconTheme: IconThemeData(color: Color(0xff50606e)),
 );
 

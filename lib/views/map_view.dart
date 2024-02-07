@@ -116,19 +116,19 @@ class _MapViewState extends State<MapView> {
 								onMapReady: myOnMapReady,
 							),
 							children: [
-                TileLayer(
-                  urlTemplate: openStreetMapTemplateUrl,
-                  userAgentPackageName: 'com.location_alarm.app',
-                  tileProvider: CachedTileProvider(
-                    maxStale: const Duration(days: 30),
-                    store: HiveCacheStore(
-                      state.mapTileCachePath,
-                      hiveBoxName: 'HiveCacheStore',
-                    ),
-                  ),
-                ),
-                if (state.showMarkersInsteadOfCircles) MarkerLayer(markers: alarmMarkers) else CircleLayer(circles: alarmCircles),
-                if (alarmPlacementCircle != null) CircleLayer(circles: [alarmPlacementCircle]),
+								TileLayer(
+									urlTemplate: openStreetMapTemplateUrl,
+									userAgentPackageName: 'com.location_alarm.app',
+									tileProvider: CachedTileProvider(
+										maxStale: const Duration(days: 30),
+										store: HiveCacheStore(
+											state.mapTileCachePath,
+											hiveBoxName: 'HiveCacheStore',
+										),
+									),
+								),
+								if (state.showMarkersInsteadOfCircles) MarkerLayer(markers: alarmMarkers) else CircleLayer(circles: alarmCircles),
+								if (alarmPlacementCircle != null) CircleLayer(circles: [alarmPlacementCircle]),
 								// CurrentLocationLayer(),
 								MarkerLayer(markers: userLocationMarker),
 							],

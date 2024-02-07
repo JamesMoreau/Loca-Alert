@@ -25,9 +25,9 @@ import 'package:vibration/vibration.dart';
 	[X] add tile caching. this would be very helpful if the user doesnt have good internet.
 	[X] convert spaces to tabs in all files
 	[ ] App Logo
-	[ ] could split up app state into multiple controllers for better organization and performance
+	[?] could split up app state into multiple controllers for better organization and performance
 	[X] instead of checking if an alarm is triggered every 5 seconds, we could check when the user's position changes. What if the user is moving quickly and they pass through the radius of an alarm in less than 5 seconds?
-	[ ] could make thumb slider larger. wrap in a SliderThemeData widget.
+	[X] could make thumb slider larger. wrap in a SliderThemeData widget.
 	[ ] could transition to cupertino widgets for everything since i will likely only publish to app store.
 	[X] Organize project layout
 */
