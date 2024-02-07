@@ -7,14 +7,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/alarm.dart';
-import 'package:location_alarm/alarms_view.dart';
+import 'package:location_alarm/models/alarm.dart';
+import 'package:location_alarm/views/alarms.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
-import 'package:location_alarm/location_permission_dialog.dart';
-import 'package:location_alarm/map_view.dart';
-import 'package:location_alarm/settings_view.dart';
-import 'package:location_alarm/triggered_alarm_dialog.dart';
+import 'package:location_alarm/views/location_permission_dialog.dart';
+import 'package:location_alarm/views/map.dart';
+import 'package:location_alarm/views/settings.dart';
+import 'package:location_alarm/views/triggered_alarm_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vibration/vibration.dart';
 
@@ -28,8 +28,8 @@ import 'package:vibration/vibration.dart';
 	[ ] could split up app state into multiple controllers for better organization and performance
 	[X] instead of checking if an alarm is triggered every 5 seconds, we could check when the user's position changes. What if the user is moving quickly and they pass through the radius of an alarm in less than 5 seconds?
 	[ ] could make thumb slider larger. wrap in a SliderThemeData widget.
-	[ ] could transition to cupertino widgets for everythingsince i will likely only publish to app store.
-	[ ] Organize project layout
+	[ ] could transition to cupertino widgets for everything since i will likely only publish to app store.
+	[X] Organize project layout
 */
 
 // Notification stuff

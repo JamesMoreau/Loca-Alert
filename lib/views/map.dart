@@ -8,7 +8,7 @@ import 'package:flutter_map_cache/flutter_map_cache.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/alarm.dart';
+import 'package:location_alarm/models/alarm.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
 import 'package:location_alarm/main.dart';

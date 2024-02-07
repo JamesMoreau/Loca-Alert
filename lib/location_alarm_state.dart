@@ -5,10 +5,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/alarm.dart';
+import 'package:location_alarm/models/alarm.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/main.dart';
-import 'package:location_alarm/map_view.dart';
+import 'package:location_alarm/views/map.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
