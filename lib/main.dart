@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
@@ -36,21 +37,22 @@ import 'package:vibration/vibration.dart';
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 int id = 0;
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   Get.put(ProximityAlarmState()); // Inject the global app state into memory. Also initializes a bunch of stuff inside onInit().
 
-	// Load map tile cache
-	initializeTileCache();
+	// Initialize the tile caching system.
+	await FlutterMapTileCaching.initialise();
+	await FMTC.instance(flutterMapTileCacheStoreName).manage.createAsync();
 
   // Load saved alarms and settings from shared preferences.
-  loadAlarmsFromSharedPreferences();
-  loadSettingsFromSharedPreferences();
+  await loadAlarmsFromSharedPreferences();
+  await loadSettingsFromSharedPreferences();
 
   // Set up local notifications.
   var initializationSettings = InitializationSettings(iOS: DarwinInitializationSettings());
-  flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   // Set up http overrides. This is needed to increase the number of concurrent http requests allowed. This helps with the map tiles loading.
   HttpOverrides.global = MyHttpOverrides();
@@ -213,10 +215,4 @@ Future<void> checkLocationPermission() async {
 
   // If the user has denied location permission, show a dialog explaining why it's needed.
   showLocationPermissionDialog(NavigationService.navigatorKey.currentContext!);
-}
-
-Future<void> initializeTileCache() async {
-  var las = Get.find<ProximityAlarmState>();
-  var cacheDirectory = await getTemporaryDirectory();
-	las.mapTileCachePath = cacheDirectory.path;
 }
