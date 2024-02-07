@@ -15,6 +15,7 @@ import 'package:uuid/uuid.dart';
 class ProximityAlarmState extends GetxController {
 	List<Alarm> alarms = <Alarm>[];
 
+	// User Location Stuff
 	LatLng? userLocation;
 	StreamSubscription<Position>? positionStream;
 
@@ -34,6 +35,7 @@ class ProximityAlarmState extends GetxController {
 	Alarm? closestAlarm;
 	bool closestAlarmIsInView = false;
 	LatLng centerOfMap = LatLng(0, 0);
+	String mapTileCachePath = '';
 
 	// Settings
 	bool alarmSound = true;

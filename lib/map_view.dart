@@ -1,8 +1,10 @@
 import 'dart:math';
 
+import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_cache/flutter_map_cache.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -115,13 +117,19 @@ class _MapViewState extends State<MapView> {
 								onMapReady: myOnMapReady,
 							),
 							children: [
-								TileLayer(
-									urlTemplate: openStreetMapTemplateUrl,
-									userAgentPackageName: 'com.location_alarm.app',
-									tileProvider: CancellableNetworkTileProvider(),
-								),
-								if (state.showMarkersInsteadOfCircles) MarkerLayer(markers: alarmMarkers) else CircleLayer(circles: alarmCircles),
-								if (alarmPlacementCircle != null) CircleLayer(circles: [alarmPlacementCircle]),
+                TileLayer(
+                  urlTemplate: openStreetMapTemplateUrl,
+                  userAgentPackageName: 'com.location_alarm.app',
+                  tileProvider: CachedTileProvider(
+                    maxStale: const Duration(days: 30),
+                    store: HiveCacheStore(
+                      state.mapTileCachePath,
+                      hiveBoxName: 'HiveCacheStore',
+                    ),
+                  ),
+                ),
+                if (state.showMarkersInsteadOfCircles) MarkerLayer(markers: alarmMarkers) else CircleLayer(circles: alarmCircles),
+                if (alarmPlacementCircle != null) CircleLayer(circles: [alarmPlacementCircle]),
 								// CurrentLocationLayer(),
 								MarkerLayer(markers: userLocationMarker),
 							],
