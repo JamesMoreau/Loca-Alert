@@ -8,10 +8,10 @@ import 'package:flutter_map_cache/flutter_map_cache.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/models/alarm.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
 import 'package:location_alarm/main.dart';
+import 'package:location_alarm/models/alarm.dart';
 
 class MapView extends StatefulWidget {
 	const MapView({super.key});
@@ -147,11 +147,14 @@ class _MapViewState extends State<MapView> {
 								),
 							),
 							IgnorePointer(
-								child: Center(
-										child: Transform.translate(
-												offset: Offset((alarmCompassDisplayRadius - 30) * sin(angle), -(alarmCompassDisplayRadius - 30) * cos(angle)), child: compassAlarmIcon)),
-							),
-						],
+                child: Center(
+                  child: Transform.translate(
+                    offset: Offset((alarmCompassDisplayRadius - 30) * sin(angle), -(alarmCompassDisplayRadius - 30) * cos(angle)),
+                    child: compassAlarmIcon,
+                  ),
+                ),
+              ),
+            ],
 						Positioned(
 							// Attribution to OpenStreetMap
 							top: statusBarHeight + 5,
@@ -333,25 +336,18 @@ class _MapViewState extends State<MapView> {
 	}
 }
 
-// bool navigateToUserLocationProcedureIsLocked = false; // Make sure the user doesn't spam the button.
-
 Future<void> navigateMapToUserLocation() async {
-	// debugPrint('Hello from navigateMapToUserLocation1 navigatemaptoUserLocationProcedureIsLocked: $navigateToUserLocationProcedureIsLocked');
-	// if (navigateToUserLocationProcedureIsLocked) return;
-	// navigateToUserLocationProcedureIsLocked = true;
 	var las = Get.find<ProximityAlarmState>();
 
 	var userPosition = las.userLocation;
 	if (userPosition == null) {
 		debugPrint('Error: Unable to navigate map to user location.');
-		// navigateToUserLocationProcedureIsLocked = false;
 		return;
 	}
 
 	las.mapController.move(userPosition, initialZoom);
 
 	debugPrint('Navigating to user location.');
-	// navigateToUserLocationProcedureIsLocked = false;
 }
 
 double getAngleBetweenTwoPositions(LatLng from, LatLng to) {

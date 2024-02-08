@@ -8,12 +8,12 @@ const githubLink = 'www.github.com/jamesmoreau';
 
 const openStreetMapTemplateUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
-const London = LatLng(51.5074, -0.1278);
-const Toronto = LatLng(43.6532, -79.3832);
-const Montreal = LatLng(45.5017, -73.5673);
-const Dublin = LatLng(53.3498, -6.2603);
-const Belfast = LatLng(54.5973, -5.9301);
-const Edinburgh = LatLng(55.9533, -3.1883);
+const london = LatLng(51.5074, -0.1278);
+const toronto = LatLng(43.6532, -79.3832);
+const montreal = LatLng(45.5017, -73.5673);
+const dublin = LatLng(53.3498, -6.2603);
+const belfast = LatLng(54.5973, -5.9301);
+const edinburgh = LatLng(55.9533, -3.1883);
 
 const initialZoom = 15.0;
 const circleToMarkerZoomThreshold = 10.0;

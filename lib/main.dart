@@ -7,11 +7,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/models/alarm.dart';
-import 'package:location_alarm/views/alarms.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
-import 'package:location_alarm/views/location_permission_dialog.dart';
+import 'package:location_alarm/models/alarm.dart';
+import 'package:location_alarm/views/alarms.dart';
 import 'package:location_alarm/views/map.dart';
 import 'package:location_alarm/views/settings.dart';
 import 'package:location_alarm/views/triggered_alarm_dialog.dart';
@@ -193,17 +192,6 @@ class MyHttpOverrides extends HttpOverrides {
     client.maxConnectionsPerHost = maxConnections;
     return client;
   }
-}
-
-Future<void> checkLocationPermission() async {
-  var permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
-    debugPrint('Location permission is already granted by the user.');
-    return;
-  }
-
-  // If the user has denied location permission, show a dialog explaining why it's needed.
-  showLocationPermissionDialog(NavigationService.navigatorKey.currentContext!);
 }
 
 Future<void> initializeTileCache() async {

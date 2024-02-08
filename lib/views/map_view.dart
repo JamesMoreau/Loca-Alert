@@ -8,10 +8,10 @@ import 'package:flutter_map_cache/flutter_map_cache.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/models/alarm.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
 import 'package:location_alarm/main.dart';
+import 'package:location_alarm/models/alarm.dart';
 
 class MapView extends StatefulWidget {
 	const MapView({super.key});
@@ -147,10 +147,13 @@ class _MapViewState extends State<MapView> {
 								),
 							),
 							IgnorePointer(
-								child: Center(
-										child: Transform.translate(
-												offset: Offset((alarmCompassDisplayRadius - 30) * sin(angle), -(alarmCompassDisplayRadius - 30) * cos(angle)), child: compassAlarmIcon)),
-							),
+                child: Center(
+                  child: Transform.translate(
+                    offset: Offset((alarmCompassDisplayRadius - 30) * sin(angle), -(alarmCompassDisplayRadius - 30) * cos(angle)),
+                    child: compassAlarmIcon,
+                  ),
+                ),
+              ),
 						],
 						Positioned(
 							// Attribution to OpenStreetMap
