@@ -118,7 +118,7 @@ void addAlarm(Alarm alarm) {
 // This saves all current alarms to shared preferences. Should be called everytime the alarms state is changed.
 Future<void> saveAlarmsToHive() async {
 	var las = Get.find<ProximityAlarmState>();
-	var box = Hive.box<List<String>>(mainHiveBox);
+	var box = Hive.box<List<String>>(alarmsHiveBox);
 
 	var alarmJsons = <String>[];
 	for (var alarm in las.alarms) {
@@ -133,7 +133,7 @@ Future<void> saveAlarmsToHive() async {
 
 Future<void> loadAlarmsFromHive() async {
 	var las = Get.find<ProximityAlarmState>();
-	var box = Hive.box<List<String>>(mainHiveBox);
+	var box = Hive.box<List<String>>(alarmsHiveBox);
 
 	var alarmJsons = box.get(alarmsKey);
 	if (alarmJsons == null) {
@@ -153,7 +153,7 @@ Future<void> loadAlarmsFromHive() async {
 }
 
 Future<void> clearAlarmsFromHive() async {
-	var box = Hive.box<List<String>>(mainHiveBox);
+	var box = Hive.box<List<String>>(alarmsHiveBox);
 	await box.delete(alarmsKey);
 	debugPrint('Cleared alarms from hive.');
 }
@@ -196,7 +196,7 @@ Future<void> saveSettingsToHive() async {
 	debugPrint('Saving settings to hive');
 
 	var las = Get.find<ProximityAlarmState>();
-	var settings = Hive.box<bool>(mainHiveBox);
+	var settings = Hive.box<bool>(settingsHiveBox);
 
 	await settings.put(settingsAlarmSoundKey, las.alarmSound);
 	await settings.put(settingsAlarmVibrationKey, las.vibration);
@@ -207,7 +207,7 @@ Future<void> saveSettingsToHive() async {
 
 Future<void> loadSettingsFromHive() async {
 	var las = Get.find<ProximityAlarmState>();
-	var settings = Hive.box<bool>(mainHiveBox);
+	var settings = Hive.box<bool>(settingsHiveBox);
 
 	las.alarmSound = settings.get(settingsAlarmSoundKey) ?? true;
 	las.vibration = settings.get(settingsAlarmVibrationKey) ?? true;

@@ -76,7 +76,7 @@ class SettingsView extends StatelessWidget {
 										title: Text('Print Alarms SP Data.'),
 										trailing: Icon(Icons.alarm_rounded),
 										onTap: () async {
-											var box = Hive.box<List<String>>(mainHiveBox);
+											var box = Hive.box<List<String>>(alarmsHiveBox);
 											var alarmJsonStrings = box.get(alarmsKey);
 											if (alarmJsonStrings == null) {
 												debugPrint('No alarms found in shared preferences.');

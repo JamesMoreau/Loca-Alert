@@ -33,7 +33,8 @@ const settingsAlarmVibrationKey = 'alarmVibration';
 const settingsAlarmNotificationKey = 'alarmNotification';
 const settingsShowClosestOffScreenAlarmKey = 'showClosestOffScreenAlarm';
 
-const mainHiveBox = 'mainBox';
+const settingsHiveBox = 'settings';
+const alarmsHiveBox = 'alarms';
 
 ThemeData locationAlarmTheme = ThemeData(
 	// colorSchemeSeed: const Color(0xfff1f3e0),
