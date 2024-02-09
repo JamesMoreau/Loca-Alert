@@ -185,7 +185,7 @@ class _MapViewState extends State<MapView> {
 										FloatingActionButton(
 											onPressed: () {
 												// Save alarm
-												var alarmPlacementPosition = state.mapController.camera.center;
+												var alarmPlacementPosition = state.centerOfMap;
 												var alarm = createAlarm(name: 'Alarm', position: alarmPlacementPosition, radius: state.alarmPlacementRadius);
 												addAlarm(alarm);
 												resetAlarmPlacementUIState();

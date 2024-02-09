@@ -23,10 +23,7 @@ class ProximityAlarmState extends GetxController {
 	// View Stuff
 	ProximityAlarmViews currentView = ProximityAlarmViews.alarms;
 	late PageController pageController;
-
-	// Alarm Stuff
 	bool alarmIsCurrentlyTriggered = false;
-	double alarmTimer = 0;
 
 	// MapView stuff
 	MapController mapController = MapController();
@@ -35,8 +32,8 @@ class ProximityAlarmState extends GetxController {
 	bool showMarkersInsteadOfCircles = false;
 	Alarm? closestAlarm;
 	bool closestAlarmIsInView = false;
-	LatLng centerOfMap = LatLng(0, 0);
-	String mapTileCachePath = '';
+	LatLng centerOfMap = LatLng(0, 0); // TODO: Maybe get rid of this.
+	String? mapTileCachePath;
 
 	// Settings
 	bool alarmSound = true;
@@ -118,7 +115,7 @@ void addAlarm(Alarm alarm) {
 // This saves all current alarms to shared preferences. Should be called everytime the alarms state is changed.
 Future<void> saveAlarmsToHive() async {
 	var las = Get.find<ProximityAlarmState>();
-	var box = Hive.box<List<String>>(alarmsHiveBox);
+	var box = Hive.box(mainHiveBox);	
 
 	var alarmJsons = <String>[];
 	for (var alarm in las.alarms) {
@@ -133,7 +130,7 @@ Future<void> saveAlarmsToHive() async {
 
 Future<void> loadAlarmsAndSettingsFromHive() async {
 	var las = Get.find<ProximityAlarmState>();
-	var box = Hive.box<List<String>>(alarmsHiveBox);
+	var box = Hive.box(mainHiveBox);
 
 	var alarmJsons = box.get(alarmsKey);
 	if (alarmJsons == null) {
@@ -141,7 +138,7 @@ Future<void> loadAlarmsAndSettingsFromHive() async {
 		return;
 	}
 
-	for (var alarmJsonString in alarmJsons) {
+	for (var alarmJsonString in alarmJsons as List<String>) {
 		var alarmJson = jsonDecode(alarmJsonString);
 		var alarm = alarmFromJson(alarmJson as Map<String, dynamic>);
 		debugPrint(alarmJsonString);
@@ -149,18 +146,16 @@ Future<void> loadAlarmsAndSettingsFromHive() async {
 		las.alarms.add(alarm);
 	}
 
-	var settings = Hive.box<bool>(settingsHiveBox);
-
-	las.alarmSound = settings.get(settingsAlarmSoundKey) ?? true;
-	las.vibration = settings.get(settingsAlarmVibrationKey) ?? true;
-	las.notification = settings.get(settingsAlarmNotificationKey) ?? true;
-	las.showClosestOffScreenAlarm = settings.get(settingsShowClosestOffScreenAlarmKey) ?? true;
+	las.alarmSound = box.get(settingsAlarmSoundKey, defaultValue: true) as bool;
+	las.vibration = box.get(settingsAlarmVibrationKey, defaultValue: true) as bool;
+	las.notification = box.get(settingsAlarmNotificationKey, defaultValue: true) as bool;
+	las.showClosestOffScreenAlarm = box.get(settingsShowClosestOffScreenAlarmKey, defaultValue: true) as bool;
 
 	las.update();
 }
 
 Future<void> clearAlarmsFromHive() async {
-	var box = Hive.box<List<String>>(alarmsHiveBox);
+	var box = Hive.box(mainHiveBox);
 	await box.delete(alarmsKey);
 	debugPrint('Cleared alarms from hive.');
 }
@@ -203,7 +198,7 @@ Future<void> saveSettingsToHive() async {
 	debugPrint('Saving settings to hive');
 
 	var las = Get.find<ProximityAlarmState>();
-	var settings = Hive.box<bool>(settingsHiveBox);
+	var settings = Hive.box(mainHiveBox);
 
 	await settings.put(settingsAlarmSoundKey, las.alarmSound);
 	await settings.put(settingsAlarmVibrationKey, las.vibration);

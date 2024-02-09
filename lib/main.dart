@@ -50,8 +50,7 @@ void main() async {
 
 	// Initialize hive
 	await Hive.initFlutter();
-	await Hive.openBox<bool>(settingsHiveBox);
-	await Hive.openBox<List<String>>(alarmsHiveBox);
+	await Hive.openBox(mainHiveBox);
 	
   // Load saved alarms and settings.
   await loadAlarmsAndSettingsFromHive();
