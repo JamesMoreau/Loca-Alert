@@ -131,7 +131,7 @@ Future<void> saveAlarmsToHive() async {
 	await box.put(alarmsKey, alarmJsons);
 }
 
-Future<void> loadAlarmsFromHive() async {
+Future<void> loadAlarmsAndSettingsFromHive() async {
 	var las = Get.find<ProximityAlarmState>();
 	var box = Hive.box<List<String>>(alarmsHiveBox);
 
@@ -148,6 +148,13 @@ Future<void> loadAlarmsFromHive() async {
 
 		las.alarms.add(alarm);
 	}
+
+	var settings = Hive.box<bool>(settingsHiveBox);
+
+	las.alarmSound = settings.get(settingsAlarmSoundKey) ?? true;
+	las.vibration = settings.get(settingsAlarmVibrationKey) ?? true;
+	las.notification = settings.get(settingsAlarmNotificationKey) ?? true;
+	las.showClosestOffScreenAlarm = settings.get(settingsShowClosestOffScreenAlarmKey) ?? true;
 
 	las.update();
 }
@@ -202,19 +209,6 @@ Future<void> saveSettingsToHive() async {
 	await settings.put(settingsAlarmVibrationKey, las.vibration);
 	await settings.put(settingsAlarmNotificationKey, las.notification);
 	await settings.put(settingsShowClosestOffScreenAlarmKey, las.showClosestOffScreenAlarm);
-
-}
-
-Future<void> loadSettingsFromHive() async {
-	var las = Get.find<ProximityAlarmState>();
-	var settings = Hive.box<bool>(settingsHiveBox);
-
-	las.alarmSound = settings.get(settingsAlarmSoundKey) ?? true;
-	las.vibration = settings.get(settingsAlarmVibrationKey) ?? true;
-	las.notification = settings.get(settingsAlarmNotificationKey) ?? true;
-	las.showClosestOffScreenAlarm = settings.get(settingsShowClosestOffScreenAlarmKey) ?? true;
-
-	las.update();
 }
 
 Future<void> navigateToAlarm(Alarm alarm) async {
