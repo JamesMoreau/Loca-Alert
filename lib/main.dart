@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
@@ -35,21 +37,27 @@ import 'package:vibration/vibration.dart';
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 int id = 0;
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   Get.put(ProximityAlarmState()); // Inject the global app state into memory. Also initializes a bunch of stuff inside onInit().
 
   // Load map tile cache
-  initializeTileCache();
+	var las = Get.find<ProximityAlarmState>();
+  var cacheDirectory = await getTemporaryDirectory();
+  las.mapTileCachePath = cacheDirectory.path;
 
-  // Load saved alarms and settings from shared preferences.
-  loadAlarmsFromSharedPreferences();
-  loadSettingsFromSharedPreferences();
+	// Initialize hive
+	await Hive.initFlutter();
+	await Hive.openBox<bool>(mainHiveBox);
+	
+  // Load saved alarms and settings.
+  await loadAlarmsFromHive(); //TODO change this to one function
+  await loadSettingsFromHive();
 
   // Set up local notifications.
   var initializationSettings = InitializationSettings(iOS: DarwinInitializationSettings());
-  flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   // Set up http overrides. This is needed to increase the number of concurrent http requests allowed. This helps with the map tiles loading.
   HttpOverrides.global = MyHttpOverrides();
@@ -195,7 +203,5 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 Future<void> initializeTileCache() async {
-  var las = Get.find<ProximityAlarmState>();
-  var cacheDirectory = await getTemporaryDirectory();
-  las.mapTileCachePath = cacheDirectory.path;
+
 }

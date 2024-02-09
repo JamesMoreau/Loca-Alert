@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsView extends StatelessWidget {
 	const SettingsView({super.key});
@@ -76,15 +76,14 @@ class SettingsView extends StatelessWidget {
 										title: Text('Print Alarms SP Data.'),
 										trailing: Icon(Icons.alarm_rounded),
 										onTap: () async {
-											var preferences = await SharedPreferences.getInstance();
-
-											final alarmsJsonStrings = preferences.getStringList(sharedPreferencesAlarmKey);
-											if (alarmsJsonStrings == null) {
+											var box = Hive.box<List<String>>(mainHiveBox);
+											var alarmJsonStrings = box.get(alarmsKey);
+											if (alarmJsonStrings == null) {
 												debugPrint('No alarms found in shared preferences.');
 												return;
 											}
 
-											for (var alarmJsonString in alarmsJsonStrings) {
+											for (var alarmJsonString in alarmJsonStrings) {
 												debugPrint(alarmJsonString);
 											}
 										},

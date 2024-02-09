@@ -30,16 +30,15 @@ class AlarmsView extends StatelessWidget {
 							mainAxisAlignment: MainAxisAlignment.center,
 							children: [
 								Text('No alarms.'),
-								if (kDebugMode)
-									ElevatedButton(
-										child: Text('Add mock alarms'),
-										onPressed: () {
-											addAlarm(createAlarm(name: 'London', position: london, radius: 1000));
-											addAlarm(createAlarm(name: 'Dublin', position: dublin, radius: 2000, color: Colors.blue));
-											addAlarm(createAlarm(name: 'Toronto', position: toronto, radius: 3000, color: Colors.lightGreen));
-											addAlarm(createAlarm(name: 'Belfast', position: belfast, radius: 1000, color: Colors.purple));
-										},
-									),
+								ElevatedButton(
+									child: Text('Add mock alarms'),
+									onPressed: () {
+										addAlarm(createAlarm(name: 'London', position: london, radius: 1000));
+										addAlarm(createAlarm(name: 'Dublin', position: dublin, radius: 2000, color: Colors.blue));
+										addAlarm(createAlarm(name: 'Toronto', position: toronto, radius: 3000, color: Colors.lightGreen));
+										addAlarm(createAlarm(name: 'Belfast', position: belfast, radius: 1000, color: Colors.purple));
+									},
+								),
 							],
 						),
 					);

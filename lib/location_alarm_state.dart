@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/main.dart';
 import 'package:location_alarm/models/alarm.dart';
 import 'package:location_alarm/views/map.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class ProximityAlarmState extends GetxController {
@@ -49,7 +49,7 @@ class ProximityAlarmState extends GetxController {
 		pageController = PageController(initialPage: currentView.index);
 
 		super.onInit();
-		debugPrint('ProximityAlarmState initialized.');
+		debugPrint('Location Alarm state initialized.');
 	}
 
 	@override
@@ -68,7 +68,7 @@ bool deleteAlarmById(String id) {
 		if (las.alarms[i].id == id) {
 			las.alarms.removeAt(i);
 			las.update();
-			saveAlarmsToSharedPreferences(); // update the storage
+			saveAlarmsToHive(); // update the storage
 			return true;
 		}
 	}
@@ -99,7 +99,7 @@ bool updateAlarmById(String id, Alarm newAlarmData) {
 			alarm.color = newAlarmData.color;
 			alarm.active = newAlarmData.active;
 			las.update();
-			saveAlarmsToSharedPreferences();
+			saveAlarmsToHive();
 			return true;
 		}
 	}
@@ -112,38 +112,36 @@ void addAlarm(Alarm alarm) {
 
 	las.alarms.add(alarm);
 	las.update();
-	saveAlarmsToSharedPreferences();
+	saveAlarmsToHive();
 }
 
 // This saves all current alarms to shared preferences. Should be called everytime the alarms state is changed.
-Future<void> saveAlarmsToSharedPreferences() async {
+Future<void> saveAlarmsToHive() async {
 	var las = Get.find<ProximityAlarmState>();
-	var preferences = await SharedPreferences.getInstance();
+	var box = Hive.box<List<String>>(mainHiveBox);
 
-	var alarmsJsonStrings = <String>[];
+	var alarmJsons = <String>[];
 	for (var alarm in las.alarms) {
 		var alarmJson = alarmToJson(alarm);
 		var alarmJsonString = jsonEncode(alarmJson);
-
-		alarmsJsonStrings.add(alarmJsonString);
+		alarmJsons.add(alarmJsonString);
 	}
 
-	debugPrint('Saving alarms to shared preferences: $alarmsJsonStrings.');
-	await preferences.setStringList(sharedPreferencesAlarmKey, alarmsJsonStrings);
+	debugPrint('Saving alarms to hive: $alarmJsons');
+	await box.put(alarmsKey, alarmJsons);
 }
 
-Future<void> loadAlarmsFromSharedPreferences() async {
+Future<void> loadAlarmsFromHive() async {
 	var las = Get.find<ProximityAlarmState>();
+	var box = Hive.box<List<String>>(mainHiveBox);
 
-	var preferences = await SharedPreferences.getInstance();
-
-	final alarmsJsonStrings = preferences.getStringList(sharedPreferencesAlarmKey);
-	if (alarmsJsonStrings == null) {
-		debugPrint('Warning: No alarms found in shared preferences.');
+	var alarmJsons = box.get(alarmsKey);
+	if (alarmJsons == null) {
+		debugPrint('Warning: No alarms found in hive.');
 		return;
 	}
 
-	for (var alarmJsonString in alarmsJsonStrings) {
+	for (var alarmJsonString in alarmJsons) {
 		var alarmJson = jsonDecode(alarmJsonString);
 		var alarm = alarmFromJson(alarmJson as Map<String, dynamic>);
 		debugPrint(alarmJsonString);
@@ -154,10 +152,10 @@ Future<void> loadAlarmsFromSharedPreferences() async {
 	las.update();
 }
 
-Future<void> clearAlarmsFromSharedPreferences() async {
-	var preferences = await SharedPreferences.getInstance();
-	await preferences.remove(sharedPreferencesAlarmKey);
-	debugPrint('Cleared alarms from shared preferences.');
+Future<void> clearAlarmsFromHive() async {
+	var box = Hive.box<List<String>>(mainHiveBox);
+	await box.delete(alarmsKey);
+	debugPrint('Cleared alarms from hive.');
 }
 
 void resetAlarmPlacementUIState() {
@@ -170,50 +168,52 @@ void changeAlarmSound({required bool newValue}) {
 	var las = Get.find<ProximityAlarmState>();
 	las.alarmSound = newValue;
 	las.update();
-	saveSettingsToSharedPreferences();
+	saveSettingsToHive();
 }
 
 void changeVibration({required bool newValue}) {
 	var las = Get.find<ProximityAlarmState>();
 	las.vibration = newValue;
 	las.update();
-	saveSettingsToSharedPreferences();
+	saveSettingsToHive();
 }
 
 void changeAlarmNotification({required bool newValue}) {
 	var las = Get.find<ProximityAlarmState>();
 	las.notification = newValue;
 	las.update();
-	saveSettingsToSharedPreferences();
+	saveSettingsToHive();
 }
 
 void changeShowClosestOffScreenAlarm({required bool newValue}) {
 	var las = Get.find<ProximityAlarmState>();
 	las.showClosestOffScreenAlarm = newValue;
 	las.update();
-	saveSettingsToSharedPreferences();
+	saveSettingsToHive();
 }
 
-Future<void> saveSettingsToSharedPreferences() async {
-	debugPrint('Saving settings to SharedPreferences');
+Future<void> saveSettingsToHive() async {
+	debugPrint('Saving settings to hive');
 
 	var las = Get.find<ProximityAlarmState>();
-	var preferences = await SharedPreferences.getInstance();
+	var settings = Hive.box<bool>(mainHiveBox);
 
-	await preferences.setBool(sharedPreferencesAlarmSoundKey, las.alarmSound);
-	await preferences.setBool(sharedPreferencesAlarmVibrationKey, las.vibration);
-	await preferences.setBool(sharedPreferencesAlarmNotificationKey, las.notification);
-	await preferences.setBool(sharedPreferencesShowClosestOffScreenAlarmKey, las.showClosestOffScreenAlarm);
+	await settings.put(settingsAlarmSoundKey, las.alarmSound);
+	await settings.put(settingsAlarmVibrationKey, las.vibration);
+	await settings.put(settingsAlarmNotificationKey, las.notification);
+	await settings.put(settingsShowClosestOffScreenAlarmKey, las.showClosestOffScreenAlarm);
+
 }
 
-Future<void> loadSettingsFromSharedPreferences() async {
+Future<void> loadSettingsFromHive() async {
 	var las = Get.find<ProximityAlarmState>();
-	var preferences = await SharedPreferences.getInstance();
+	var settings = Hive.box<bool>(mainHiveBox);
 
-	las.alarmSound = preferences.getBool(sharedPreferencesAlarmSoundKey) ?? true;
-	las.vibration = preferences.getBool(sharedPreferencesAlarmVibrationKey) ?? true;
-	las.notification = preferences.getBool(sharedPreferencesAlarmNotificationKey) ?? true;
-	las.showClosestOffScreenAlarm = preferences.getBool(sharedPreferencesShowClosestOffScreenAlarmKey) ?? true;
+	las.alarmSound = settings.get(settingsAlarmSoundKey) ?? true;
+	las.vibration = settings.get(settingsAlarmVibrationKey) ?? true;
+	las.notification = settings.get(settingsAlarmNotificationKey) ?? true;
+	las.showClosestOffScreenAlarm = settings.get(settingsShowClosestOffScreenAlarmKey) ?? true;
+
 	las.update();
 }
 

@@ -27,11 +27,13 @@ const alarmCheckPeriod = Duration(seconds: 5);
 const locationPermissionCheckPeriod = Duration(seconds: 30);
 const numberOfTriggeredAlarmVibrations = 6;
 
-const sharedPreferencesAlarmKey = 'alarms';
-const sharedPreferencesAlarmSoundKey = 'alarmSound';
-const sharedPreferencesAlarmVibrationKey = 'alarmVibration';
-const sharedPreferencesAlarmNotificationKey = 'alarmNotification';
-const sharedPreferencesShowClosestOffScreenAlarmKey = 'showClosestOffScreenAlarm';
+const alarmsKey = 'alarms';
+const settingsAlarmSoundKey = 'alarmSound';
+const settingsAlarmVibrationKey = 'alarmVibration';
+const settingsAlarmNotificationKey = 'alarmNotification';
+const settingsShowClosestOffScreenAlarmKey = 'showClosestOffScreenAlarm';
+
+const mainHiveBox = 'mainBox';
 
 ThemeData locationAlarmTheme = ThemeData(
 	// colorSchemeSeed: const Color(0xfff1f3e0),
