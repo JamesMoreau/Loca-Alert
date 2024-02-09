@@ -129,7 +129,6 @@ class _MapViewState extends State<MapView> {
                 ),
                 if (state.showMarkersInsteadOfCircles) MarkerLayer(markers: alarmMarkers) else CircleLayer(circles: alarmCircles),
                 if (alarmPlacementCircle != null) CircleLayer(circles: [alarmPlacementCircle]),
-								// CurrentLocationLayer(),
 								MarkerLayer(markers: userLocationMarker),
 							],
 						),
