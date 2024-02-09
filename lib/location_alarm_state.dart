@@ -130,7 +130,7 @@ Future<void> saveAlarmsToHive() async {
 
 Future<void> loadAlarmsAndSettingsFromHive() async {
 	var las = Get.find<ProximityAlarmState>();
-	var box = Hive.box(mainHiveBox);
+	var box = Hive.box(mainHiveBox); // TODO: fix this.
 
 	var alarmJsons = box.get(alarmsKey);
 	if (alarmJsons == null) {
