@@ -203,7 +203,3 @@ class MyHttpOverrides extends HttpOverrides {
     return client;
   }
 }
-
-Future<void> initializeTileCache() async {
-
-}
