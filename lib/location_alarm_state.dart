@@ -34,7 +34,6 @@ class ProximityAlarmState extends GetxController {
 	bool showMarkersInsteadOfCircles = false;
 	Alarm? closestAlarm;
 	bool closestAlarmIsInView = false;
-	LatLng centerOfMap = LatLng(0, 0); // TODO: Maybe get rid of this.
 	String? mapTileCachePath;
 
 	// Settings
@@ -134,7 +133,7 @@ Future<void> saveAlarmsToHive() async {
 
 Future<void> loadAlarmsAndSettingsFromHive() async {
 	var las = Get.find<ProximityAlarmState>();
-	var box = Hive.box(mainHiveBox); // TODO: fix this.
+	var box = Hive.box(mainHiveBox);
 
 	var alarmJsons = box.get(alarmsKey);
 	if (alarmJsons == null) {

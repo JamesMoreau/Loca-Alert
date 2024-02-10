@@ -57,7 +57,9 @@ class _MapViewState extends State<MapView> {
 					compassAlarmIcon = Icon(Icons.pin_drop_rounded, color: state.closestAlarm!.color, size: 30);
 
 					// Calculate the angle between the center of the map and the closest alarm
-					angle = getAngleBetweenTwoPositions(state.centerOfMap, state.closestAlarm!.position);
+					var centerOfMap = LatLng(0, 0);
+					if (state.mapController != null) centerOfMap = state.mapController!.camera.center;
+					angle = getAngleBetweenTwoPositions(centerOfMap, state.closestAlarm!.position);
 				}
 
 				// Display the alarms as circles on the map.
@@ -91,7 +93,9 @@ class _MapViewState extends State<MapView> {
 				// Overlay the alarm placement ui on top of the map. This is only visible when the user is placing an alarm.
 				CircleMarker? alarmPlacementCircle;
 				if (state.isPlacingAlarm) {
-					var alarmPlacementPosition = state.centerOfMap;
+					var centerOfMap = LatLng(0, 0);
+					if (state.mapController != null) centerOfMap = state.mapController!.camera.center;
+					var alarmPlacementPosition = centerOfMap;
 					alarmPlacementCircle = CircleMarker(
 						point: alarmPlacementPosition,
 						radius: state.alarmPlacementRadius,
@@ -185,7 +189,9 @@ class _MapViewState extends State<MapView> {
 										FloatingActionButton(
 											onPressed: () {
 												// Save alarm
-												var alarmPlacementPosition = state.centerOfMap;
+												var centerOfMap = LatLng(0, 0);
+												if (state.mapController != null) centerOfMap = state.mapController!.camera.center;
+												var alarmPlacementPosition = centerOfMap;
 												var alarm = createAlarm(name: 'Alarm', position: alarmPlacementPosition, radius: state.alarmPlacementRadius);
 												addAlarm(alarm);
 												resetAlarmPlacementUIState();
@@ -280,12 +286,11 @@ class _MapViewState extends State<MapView> {
 			return;
 		}
 
-		// Update the camera position.
-		las.centerOfMap = controller.camera.center; //TODO remove
+		var centerOfMap = controller.camera.center;
 
 		// Update the closest alarm stuff.
 		var alarms = las.alarms;
-		las.closestAlarm = getClosestAlarmToPosition(las.centerOfMap, alarms);
+		las.closestAlarm = getClosestAlarmToPosition(centerOfMap, alarms);
 
 		// Update whether the closest alarm is in view.
 		if (las.closestAlarm != null) {
