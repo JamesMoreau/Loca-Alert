@@ -28,7 +28,7 @@ class ProximityAlarmState extends GetxController {
 	bool alarmIsCurrentlyTriggered = false;
 
 	// MapView stuff
-	MapController mapController = MapController();
+	MapController? mapController;
 	bool isPlacingAlarm = false;
 	double alarmPlacementRadius = 100;
 	bool showMarkersInsteadOfCircles = false;
@@ -46,6 +46,8 @@ class ProximityAlarmState extends GetxController {
 	@override
 	void onInit() {
 		pageController = PageController(initialPage: currentView.index);
+
+		mapController = MapController();
 
 		super.onInit();
 		debugPrint('Location Alarm state initialized.');
@@ -210,10 +212,14 @@ Future<void> saveSettingsToHive() async {
 
 Future<void> navigateToAlarm(Alarm alarm) async {
 	var las = Get.find<ProximityAlarmState>();
+	
+	// Switch to the map view
 	las.currentView = ProximityAlarmViews.map;
 	las.update();
-	await las.pageController.animateToPage(las.currentView.index, duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
-	las.mapController.move(alarm.position, initialZoom);
+	las.pageController.jumpToPage(las.currentView.index);
+
+	// Move the map to the alarm
+	if (las.mapController != null) las.mapController!.move(alarm.position, initialZoom);
 }
 
 Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {

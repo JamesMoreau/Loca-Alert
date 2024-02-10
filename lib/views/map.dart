@@ -274,8 +274,14 @@ class _MapViewState extends State<MapView> {
 	void myOnMapEvent(MapEvent event) {
 		var las = Get.find<ProximityAlarmState>();
 
+		var controller = las.mapController;
+		if (controller == null) {
+			debugPrint('Error: Map controller is null. Unable to update map event.');
+			return;
+		}
+
 		// Update the camera position.
-		las.centerOfMap = las.mapController.camera.center;
+		las.centerOfMap = controller.camera.center; //TODO remove
 
 		// Update the closest alarm stuff.
 		var alarms = las.alarms;
@@ -283,7 +289,7 @@ class _MapViewState extends State<MapView> {
 
 		// Update whether the closest alarm is in view.
 		if (las.closestAlarm != null) {
-			var cameraBounds = las.mapController.camera.visibleBounds;
+			var cameraBounds = controller.camera.visibleBounds;
 			if (cameraBounds.contains(las.closestAlarm!.position))
 				las.closestAlarmIsInView = true;
 			else
@@ -291,7 +297,7 @@ class _MapViewState extends State<MapView> {
 		}
 
 		// If the user is zoomed out, show the alarms as markers instead of circles.
-		if (las.mapController.camera.zoom < circleToMarkerZoomThreshold)
+		if (controller.camera.zoom < circleToMarkerZoomThreshold)
 			las.showMarkersInsteadOfCircles = true;
 		else
 			las.showMarkersInsteadOfCircles = false;
@@ -344,7 +350,13 @@ Future<void> navigateMapToUserLocation() async {
 		return;
 	}
 
-	las.mapController.move(userPosition, initialZoom);
+	var controller = las.mapController;
+	if (controller == null) {
+		debugPrint('Error: Map controller is null. Unable to navigate map to user location.');
+		return;
+	}
+
+	controller.move(userPosition, initialZoom);
 
 	debugPrint('Navigating to user location.');
 }

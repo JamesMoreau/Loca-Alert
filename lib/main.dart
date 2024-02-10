@@ -30,7 +30,7 @@ import 'package:vibration/vibration.dart';
 	[X] could make thumb slider larger. wrap in a SliderThemeData widget.
 	[ ] could transition to cupertino widgets for everything since i will likely only publish to app store.
 	[X] Organize project layout
-	[ ] convert shared preferences to hive. Also add type adapters for alarms. FIGURE OUT WHY I CANT USE THE SAME BOX FOR MULTIPLE TYPES
+	[X] convert shared preferences to hive. Also add type adapters for alarms. FIGURE OUT WHY I CANT USE THE SAME BOX FOR MULTIPLE TYPES
 */
 
 // Notification stuff
