@@ -182,7 +182,14 @@ class _MapViewState extends State<MapView> {
 								crossAxisAlignment: CrossAxisAlignment.end,
 								mainAxisAlignment: MainAxisAlignment.spaceAround,
 								children: [
-									FloatingActionButton(onPressed: navigateMapToUserLocation, elevation: 4, child: Icon(CupertinoIcons.location_fill)),
+                  FloatingActionButton(
+                    onPressed: () {
+                      state.followUserLocation = !state.followUserLocation;
+                      state.update();
+                    },
+                    elevation: 4,
+                    child: Icon(state.followUserLocation ? Icons.lock_open_rounded : CupertinoIcons.location_fill),
+                  ),
 									SizedBox(height: 10),
 									if (state.isPlacingAlarm) ...[
 										// Show the confirm and cancel buttons when the user is placing an alarm.
@@ -214,6 +221,7 @@ class _MapViewState extends State<MapView> {
 										FloatingActionButton(
 											onPressed: () {
 												state.isPlacingAlarm = true;
+												state.followUserLocation = false;
 												state.update();
 											},
 											elevation: 4,
@@ -361,7 +369,8 @@ Future<void> navigateMapToUserLocation() async {
 		return;
 	}
 
-	controller.move(userPosition, initialZoom);
+	var currentZoom = controller.camera.zoom;
+	controller.move(userPosition, currentZoom);
 
 	debugPrint('Navigating to user location.');
 }

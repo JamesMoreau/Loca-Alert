@@ -35,6 +35,7 @@ class ProximityAlarmState extends GetxController {
 	Alarm? closestAlarm;
 	bool closestAlarmIsInView = false;
 	String? mapTileCachePath;
+	bool followUserLocation = false;
 
 	// Settings
 	bool alarmSound = true;

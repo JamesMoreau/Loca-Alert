@@ -3,7 +3,7 @@ import 'package:latlong2/latlong.dart';
 
 const appName = 'Proximity Alarm';
 const author = 'James Moreau';
-const myEmail = 'jmorea03@uoguelph.ca';
+const myEmail = 'jamiemoreau@live.com';
 const githubLink = 'www.github.com/jamesmoreau';
 
 const openStreetMapTemplateUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';

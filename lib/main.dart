@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -24,13 +25,14 @@ import 'package:vibration/vibration.dart';
 	[X] Add show closest alarm setting.
 	[X] add tile caching. this would be very helpful if the user doesnt have good internet.
 	[X] convert spaces to tabs in all files
-	[ ] App Logo
+	[X] App Logo
 	[?] could split up app state into multiple controllers for better organization and performance. Could use getBuilder Ids to accomplish this.
 	[X] instead of checking if an alarm is triggered every 5 seconds, we could check when the user's position changes. What if the user is moving quickly and they pass through the radius of an alarm in less than 5 seconds?
 	[X] could make thumb slider larger. wrap in a SliderThemeData widget.
 	[ ] could transition to cupertino widgets for everything since i will likely only publish to app store.
 	[X] Organize project layout
 	[X] convert shared preferences to hive. Also add type adapters for alarms. FIGURE OUT WHY I CANT USE THE SAME BOX FOR MULTIPLE TYPES
+	[ ] Add crash analytics
 */
 
 // Notification stuff
@@ -61,7 +63,7 @@ void main() async {
   // Set up http overrides. This is needed to increase the number of concurrent http requests allowed. This helps with the map tiles loading.
   HttpOverrides.global = MyHttpOverrides();
 
-  runApp(const MainApp());
+  runApp(BetterFeedback(child: const MainApp()));
 
   // Start a timer for periodic location permission checks
   Timer.periodic(locationPermissionCheckPeriod, (Timer timer) => checkPermissionAndMaybeInitializeUserPositionStream());
@@ -102,7 +104,6 @@ class MainApp extends StatelessWidget {
                   state.currentView = ProximityAlarmViews.values[index];
                   debugPrint('Navigating to ${state.currentView}.');
                   state.update();
-                  // state.pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
                   state.pageController.jumpToPage(index);
                 },
                 selectedIndex: state.currentView.index,
@@ -137,6 +138,10 @@ class NavigationService {
 
 Future<void> checkAlarmsOnUserPositionChange() async {
   var las = Get.find<ProximityAlarmState>();
+
+	if (las.followUserLocation) { // Update the map camera position to the user's location
+		await navigateMapToUserLocation();
+	}
 
   var activeAlarms = las.alarms.where((alarm) => alarm.active).toList();
 
