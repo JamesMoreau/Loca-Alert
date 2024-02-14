@@ -89,7 +89,7 @@ class SettingsView extends StatelessWidget {
 								Padding(
 									padding: const EdgeInsets.symmetric(vertical: 8),
 									child: ListTile(
-										title: Text('Print Alarms SP Data.'),
+										title: Text('Print Alarms Stored in Hive.'),
 										trailing: Icon(Icons.alarm_rounded),
 										onTap: () async {
 											var box = Hive.box<List<String>>(mainHiveBox);

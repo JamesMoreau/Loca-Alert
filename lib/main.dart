@@ -139,9 +139,8 @@ class NavigationService {
 Future<void> checkAlarmsOnUserPositionChange() async {
   var las = Get.find<ProximityAlarmState>();
 
-	if (las.followUserLocation) { // Update the map camera position to the user's location
-		await navigateMapToUserLocation();
-	}
+	// Update the map camera position to the user's location
+	if (las.followUserLocation)	await navigateMapToUserLocation();
 
   var activeAlarms = las.alarms.where((alarm) => alarm.active).toList();
 
