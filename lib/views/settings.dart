@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:feedback/feedback.dart';
@@ -7,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
+import 'package:location_alarm/models/alarm.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SettingsView extends StatelessWidget {
@@ -89,19 +90,25 @@ class SettingsView extends StatelessWidget {
 								Padding(
 									padding: const EdgeInsets.symmetric(vertical: 8),
 									child: ListTile(
-										title: Text('Print Alarms Stored in Hive.'),
+										title: Text('Print Alarms In Storage.'),
 										trailing: Icon(Icons.alarm_rounded),
 										onTap: () async {
-											var box = Hive.box<List<String>>(mainHiveBox);
-											var alarmJsonStrings = box.get(alarmsKey);
-											if (alarmJsonStrings == null) {
-												debugPrint('No alarms found in shared preferences.');
+											var directory = await getApplicationDocumentsDirectory();
+											var alarmsPath = '${directory.path}${Platform.pathSeparator}$alarmsFilename';
+											var alarmsFile = File(alarmsPath);
+
+											if (!alarmsFile.existsSync()) {
+												debugPrint('Warning: No alarms file found in storage.');
 												return;
 											}
 
-											for (var alarmJsonString in alarmJsonStrings) {
-												debugPrint(alarmJsonString);
+											var alarmJsons = await alarmsFile.readAsString();
+											if (alarmJsons.isEmpty) {
+												debugPrint('No alarms found in storage.');
+												return;
 											}
+
+											debugPrint('Alarms found in storage: $alarmJsons');
 										},
 									),
 								),

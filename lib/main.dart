@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
@@ -23,10 +22,9 @@ import 'package:vibration/vibration.dart';
 /*
 	TODO:
 	[?] could split up app state into multiple controllers for better organization and performance. Could use getBuilder Ids to accomplish this.
-	[ ] could transition to cupertino widgets for everything since i will likely only publish to app store.
 	[ ] Add crash analytics. use sentry.
 	[ ] Convert hive stuff to just using files for both map cache and settings + alarms storage.
-	[ ] Make it so when locked to user location the map gestures are disabled.
+	[ ] Make it so when locked to user location the map gestures are disabled. (zoom but no moving). also make it so map immedietly locks on instead of next position update.
 */
 
 // Notification stuff
@@ -41,15 +39,12 @@ void main() async {
   // Load map tile cache
 	var las = Get.find<ProximityAlarmState>();
   var cacheDirectory = await getTemporaryDirectory();
-  var mapTileCachePath = '${cacheDirectory.path}${Platform.pathSeparator}MapTiles';
+  var mapTileCachePath = '${cacheDirectory.path}${Platform.pathSeparator}$mapTileCacheFilename';
 	las.mapTileCacheStore = FileCacheStore(mapTileCachePath);
 
-	// Initialize hive
-	await Hive.initFlutter();
-	await Hive.openBox<dynamic>(mainHiveBox);
-	
   // Load saved alarms and settings.
-  await loadAlarmsAndSettingsFromHive();
+	await loadSettingsFromStorage();
+  await loadAlarmsFromStorage();
 
   // Set up local notifications.
   var initializationSettings = InitializationSettings(iOS: DarwinInitializationSettings());

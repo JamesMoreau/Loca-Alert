@@ -375,3 +375,15 @@ double getAngleBetweenTwoPositions(LatLng from, LatLng to) {
 	var angle = atan2(to.longitude - from.longitude, to.latitude - from.latitude);
 	return angle;
 }
+
+Future<void> navigateToAlarm(Alarm alarm) async {
+	var las = Get.find<ProximityAlarmState>();
+	
+	// Switch to the map view
+	las.currentView = ProximityAlarmViews.map;
+	las.update();
+	las.pageController.jumpToPage(las.currentView.index);
+
+	// Move the map to the alarm
+	if (las.mapController != null) las.mapController!.move(alarm.position, initialZoom);
+}
