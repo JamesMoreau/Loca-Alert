@@ -19,18 +19,6 @@ import 'package:location_alarm/views/triggered_alarm_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vibration/vibration.dart';
 
-/*
-	TODO:
-	[?] could split up app state into multiple controllers for better organization and performance. Could use getBuilder Ids to accomplish this.
-	[ ] Add crash analytics. use sentry.
-	[ ] Convert hive stuff to just using files for both map cache and settings + alarms storage.
-	[ ] Make it so when locked to user location the map gestures are disabled. (zoom but no moving). also make it so map immedietly locks on instead of next position update.
-*/
-
-// Notification stuff
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-int id = 0;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -121,6 +109,10 @@ class MainApp extends StatelessWidget {
     );
   }
 }
+
+// Notification stuff
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+int id = 0;
 
 class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

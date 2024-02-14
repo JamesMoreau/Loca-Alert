@@ -1,6 +1,6 @@
-# Proximity Alarm
+# Location Alarm
 
-A location based alarm mobile app for travel. Set alarms at desired locations to never miss a train stop or attraction.
+A poximity based alarm mobile app for travel. Set alarms at desired locations to never miss a train stop or attraction.
 Built in Flutter using geolocation, mapping, notification, and storage libraries.
 
 ![Screenshot](documentation/x4LaTmy1JM.png)
