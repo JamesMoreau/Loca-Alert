@@ -7,6 +7,7 @@ const myEmail = 'jamiemoreau@live.com';
 const githubLink = 'www.github.com/jamesmoreau';
 
 const openStreetMapTemplateUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const mapTileCacheFilename = 'myMapTiles';
 
 const london = LatLng(51.5074, -0.1278);
 const toronto = LatLng(43.6532, -79.3832);
@@ -27,14 +28,12 @@ const alarmCheckPeriod = Duration(seconds: 5);
 const locationPermissionCheckPeriod = Duration(seconds: 30);
 const numberOfTriggeredAlarmVibrations = 6;
 
-const alarmsKey = 'alarms';
 const settingsAlarmSoundKey = 'alarmSound';
 const settingsAlarmVibrationKey = 'alarmVibration';
 const settingsAlarmNotificationKey = 'alarmNotification';
 const settingsShowClosestOffScreenAlarmKey = 'showClosestOffScreenAlarm';
-
-// const settingsHiveBox = 'settings';
-const mainHiveBox = 'main';
+const settingsFilename = 'settings.json';
+const alarmsFilename = 'alarms.json';
 
 ThemeData locationAlarmTheme = ThemeData(
 	// colorSchemeSeed: const Color(0xfff1f3e0),

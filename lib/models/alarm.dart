@@ -23,7 +23,7 @@ Alarm createAlarm({required String name, required LatLng position, required doub
 	return alarm;
 }
 
-Map<String, dynamic> alarmToJson(Alarm alarm) {
+Map<String, dynamic> alarmToMap(Alarm alarm) {
 	return {
 		'name': alarm.name,
 		'color': alarm.color.value,
@@ -36,7 +36,7 @@ Map<String, dynamic> alarmToJson(Alarm alarm) {
 	};
 }
 
-Alarm alarmFromJson(Map<String, dynamic> alarmJson) {
+Alarm alarmFromMap(Map<String, dynamic> alarmJson) {
 	return createAlarm(
 		name: alarmJson['name'] as String,
 		color: Color(alarmJson['color'] as int),

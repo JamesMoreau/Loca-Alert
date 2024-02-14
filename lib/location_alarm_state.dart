@@ -1,18 +1,18 @@
-// ignore_for_file: inference_failure_on_function_invocation
-
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/main.dart';
 import 'package:location_alarm/models/alarm.dart';
 import 'package:location_alarm/views/map.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 class ProximityAlarmState extends GetxController {
@@ -34,7 +34,7 @@ class ProximityAlarmState extends GetxController {
 	bool showMarkersInsteadOfCircles = false;
 	Alarm? closestAlarm;
 	bool closestAlarmIsInView = false;
-	String? mapTileCachePath;
+	CacheStore? mapTileCacheStore;
 	bool followUserLocation = false;
 
 	// Settings
@@ -69,7 +69,7 @@ bool deleteAlarmById(String id) {
 		if (las.alarms[i].id == id) {
 			las.alarms.removeAt(i);
 			las.update();
-			saveAlarmsToHive(); // update the storage
+			saveAlarmsToStorage(); // update the storage
 			return true;
 		}
 	}
@@ -100,7 +100,7 @@ bool updateAlarmById(String id, Alarm newAlarmData) {
 			alarm.color = newAlarmData.color;
 			alarm.active = newAlarmData.active;
 			las.update();
-			saveAlarmsToHive();
+			saveAlarmsToStorage();
 			return true;
 		}
 	}
@@ -113,55 +113,96 @@ void addAlarm(Alarm alarm) {
 
 	las.alarms.add(alarm);
 	las.update();
-	saveAlarmsToHive();
+	saveAlarmsToStorage();
 }
 
 // This saves all current alarms to shared preferences. Should be called everytime the alarms state is changed.
-Future<void> saveAlarmsToHive() async {
+Future<void> saveAlarmsToStorage() async {
 	var las = Get.find<ProximityAlarmState>();
-	var box = Hive.box(mainHiveBox);	
+	
+	var directory = await getApplicationDocumentsDirectory();
+	var alarmsPath = '${directory.path}${Platform.pathSeparator}$alarmsFilename';
+	var file = File(alarmsPath);
 
-	var alarmJsons = <String>[];
+	var alarmJsons = List<String>.empty(growable: true);
 	for (var alarm in las.alarms) {
-		var alarmJson = alarmToJson(alarm);
-		var alarmJsonString = jsonEncode(alarmJson);
-		alarmJsons.add(alarmJsonString);
+		var alarmMap = alarmToMap(alarm);
+		var alarmJson = jsonEncode(alarmMap);
+		alarmJsons.add(alarmJson);
 	}
 
-	debugPrint('Saving alarms to hive: $alarmJsons');
-	await box.put(alarmsKey, alarmJsons);
+	var json = jsonEncode(alarmJsons);
+	await file.writeAsString(json);
+	debugPrint('Saved alarms to storage: $alarmJsons');
 }
 
-Future<void> loadAlarmsAndSettingsFromHive() async {
+Future<void> loadAlarmsFromStorage() async {
 	var las = Get.find<ProximityAlarmState>();
-	var box = Hive.box(mainHiveBox);
 
-	var alarmJsons = box.get(alarmsKey);
-	if (alarmJsons == null) {
-		debugPrint('Warning: No alarms found in hive.');
+	var directory = await getApplicationDocumentsDirectory();
+	var alarmsPath = '${directory.path}${Platform.pathSeparator}$alarmsFilename';
+	var file = File(alarmsPath);
+
+	if (!file.existsSync()) {
+		debugPrint('Warning: No alarms file found in storage.');
 		return;
 	}
 
-	for (var alarmJsonString in alarmJsons as List<String>) {
-		var alarmJson = jsonDecode(alarmJsonString);
-		var alarm = alarmFromJson(alarmJson as Map<String, dynamic>);
-		debugPrint(alarmJsonString);
+	var alarmJsons = await file.readAsString();
+	if (alarmJsons.isEmpty) {
+		debugPrint('Warning: No alarms found in storage.');
+		return;
+	}
 
+	var alarmJsonsList = jsonDecode(alarmJsons) as List;
+	for (var alarmJson in alarmJsonsList) {
+		var alarmMap = jsonDecode(alarmJson as String) as Map<String, dynamic>;
+		var alarm = alarmFromMap(alarmMap);
 		las.alarms.add(alarm);
 	}
 
-	las.alarmSound = box.get(settingsAlarmSoundKey, defaultValue: true) as bool;
-	las.vibration = box.get(settingsAlarmVibrationKey, defaultValue: true) as bool;
-	las.notification = box.get(settingsAlarmNotificationKey, defaultValue: true) as bool;
-	las.showClosestOffScreenAlarm = box.get(settingsShowClosestOffScreenAlarmKey, defaultValue: true) as bool;
-
 	las.update();
+	debugPrint('Loaded alarms from storage');
 }
 
-Future<void> clearAlarmsFromHive() async {
-	var box = Hive.box(mainHiveBox);
-	await box.delete(alarmsKey);
-	debugPrint('Cleared alarms from hive.');
+Future<void> loadSettingsFromStorage() async {
+	var las = Get.find<ProximityAlarmState>();
+
+	var directory = await getApplicationDocumentsDirectory();
+	var settingsPath = '${directory.path}${Platform.pathSeparator}$settingsFilename';
+	var settingsFile = File(settingsPath);
+
+	if (!settingsFile.existsSync()) {
+		debugPrint('Warning: No settings file found in storage.');
+		return;
+	}
+
+	var settingsJson = await settingsFile.readAsString();
+	if (settingsJson.isEmpty) {
+		debugPrint('Error: No settings found in storage.');
+		return;
+	}
+
+	var settingsMap = jsonDecode(settingsJson) as Map<String, dynamic>;
+	las.alarmSound = settingsMap[settingsAlarmSoundKey] as bool;
+	las.vibration = settingsMap[settingsAlarmVibrationKey] as bool;
+	las.notification = settingsMap[settingsAlarmNotificationKey] as bool;
+	las.showClosestOffScreenAlarm = settingsMap[settingsShowClosestOffScreenAlarmKey] as bool;
+	debugPrint('Loaded settings from storage');
+}
+
+Future<void> clearAlarmsFromStorage() async {
+	var directory = await getApplicationDocumentsDirectory();
+	var alarmsPath = '${directory.path}${Platform.pathSeparator}$alarmsFilename';
+	var alarmsFile = File(alarmsPath);
+
+	if (!alarmsFile.existsSync()) {
+		debugPrint('Warning: No alarms file found in storage. Cannot clear alarms.');
+		return;
+	}
+
+	await alarmsFile.delete();
+	debugPrint('Cleared alarms from storage.');
 }
 
 void resetAlarmPlacementUIState() {
@@ -174,52 +215,47 @@ void changeAlarmSound({required bool newValue}) {
 	var las = Get.find<ProximityAlarmState>();
 	las.alarmSound = newValue;
 	las.update();
-	saveSettingsToHive();
+	saveSettingsToStorage();
 }
 
 void changeVibration({required bool newValue}) {
 	var las = Get.find<ProximityAlarmState>();
 	las.vibration = newValue;
 	las.update();
-	saveSettingsToHive();
+	saveSettingsToStorage();
 }
 
 void changeAlarmNotification({required bool newValue}) {
 	var las = Get.find<ProximityAlarmState>();
 	las.notification = newValue;
 	las.update();
-	saveSettingsToHive();
+	saveSettingsToStorage();
 }
 
 void changeShowClosestOffScreenAlarm({required bool newValue}) {
 	var las = Get.find<ProximityAlarmState>();
 	las.showClosestOffScreenAlarm = newValue;
 	las.update();
-	saveSettingsToHive();
+	saveSettingsToStorage();
 }
 
-Future<void> saveSettingsToHive() async {
-	debugPrint('Saving settings to hive');
-
+Future<void> saveSettingsToStorage() async {
 	var las = Get.find<ProximityAlarmState>();
-	var settings = Hive.box(mainHiveBox);
+	var directory = await getApplicationDocumentsDirectory();
+	var settingsPath = '${directory.path}${Platform.pathSeparator}$settingsFilename';
+	var settingsFile = File(settingsPath);
 
-	await settings.put(settingsAlarmSoundKey, las.alarmSound);
-	await settings.put(settingsAlarmVibrationKey, las.vibration);
-	await settings.put(settingsAlarmNotificationKey, las.notification);
-	await settings.put(settingsShowClosestOffScreenAlarmKey, las.showClosestOffScreenAlarm);
-}
+	var settingsMap = <String, dynamic>{
+		settingsAlarmSoundKey: las.alarmSound,
+		settingsAlarmVibrationKey: las.vibration,
+		settingsAlarmNotificationKey: las.notification,
+		settingsShowClosestOffScreenAlarmKey: las.showClosestOffScreenAlarm,
+	};
 
-Future<void> navigateToAlarm(Alarm alarm) async {
-	var las = Get.find<ProximityAlarmState>();
-	
-	// Switch to the map view
-	las.currentView = ProximityAlarmViews.map;
-	las.update();
-	las.pageController.jumpToPage(las.currentView.index);
+	var settingsJson = jsonEncode(settingsMap);
+	await settingsFile.writeAsString(settingsJson);
 
-	// Move the map to the alarm
-	if (las.mapController != null) las.mapController!.move(alarm.position, initialZoom);
+	debugPrint('Saved settings to storage.');
 }
 
 Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {

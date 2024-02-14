@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dio_cache_interceptor_file_store/dio_cache_interceptor_file_store.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
@@ -21,18 +21,10 @@ import 'package:vibration/vibration.dart';
 
 /*
 	TODO:
-	[X] periodically check if user has permitted location access and initialize the user position stream if they have.
-	[X] Add show closest alarm setting.
-	[X] add tile caching. this would be very helpful if the user doesnt have good internet.
-	[X] convert spaces to tabs in all files
-	[X] App Logo
 	[?] could split up app state into multiple controllers for better organization and performance. Could use getBuilder Ids to accomplish this.
-	[X] instead of checking if an alarm is triggered every 5 seconds, we could check when the user's position changes. What if the user is moving quickly and they pass through the radius of an alarm in less than 5 seconds?
-	[X] could make thumb slider larger. wrap in a SliderThemeData widget.
-	[ ] could transition to cupertino widgets for everything since i will likely only publish to app store.
-	[X] Organize project layout
-	[X] convert shared preferences to hive. Also add type adapters for alarms. FIGURE OUT WHY I CANT USE THE SAME BOX FOR MULTIPLE TYPES
-	[ ] Add crash analytics
+	[ ] Add crash analytics. use sentry.
+	[ ] Convert hive stuff to just using files for both map cache and settings + alarms storage.
+	[ ] Make it so when locked to user location the map gestures are disabled. (zoom but no moving). also make it so map immedietly locks on instead of next position update.
 */
 
 // Notification stuff
@@ -47,14 +39,12 @@ void main() async {
   // Load map tile cache
 	var las = Get.find<ProximityAlarmState>();
   var cacheDirectory = await getTemporaryDirectory();
-  las.mapTileCachePath = cacheDirectory.path;
+  var mapTileCachePath = '${cacheDirectory.path}${Platform.pathSeparator}$mapTileCacheFilename';
+	las.mapTileCacheStore = FileCacheStore(mapTileCachePath);
 
-	// Initialize hive
-	await Hive.initFlutter();
-	await Hive.openBox<dynamic>(mainHiveBox);
-	
   // Load saved alarms and settings.
-  await loadAlarmsAndSettingsFromHive();
+	await loadSettingsFromStorage();
+  await loadAlarmsFromStorage();
 
   // Set up local notifications.
   var initializationSettings = InitializationSettings(iOS: DarwinInitializationSettings());

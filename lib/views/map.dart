@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -125,10 +124,7 @@ class _MapViewState extends State<MapView> {
                   userAgentPackageName: 'com.location_alarm.app',
                   tileProvider: CachedTileProvider(
                     maxStale: const Duration(days: 30),
-                    store: HiveCacheStore(
-                      state.mapTileCachePath,
-                      hiveBoxName: 'HiveCacheStore',
-                    ),
+                    store: state.mapTileCacheStore!,
                   ),
                 ),
                 if (state.showMarkersInsteadOfCircles) MarkerLayer(markers: alarmMarkers) else CircleLayer(circles: alarmCircles),
@@ -378,4 +374,16 @@ Future<void> navigateMapToUserLocation() async {
 double getAngleBetweenTwoPositions(LatLng from, LatLng to) {
 	var angle = atan2(to.longitude - from.longitude, to.latitude - from.latitude);
 	return angle;
+}
+
+Future<void> navigateToAlarm(Alarm alarm) async {
+	var las = Get.find<ProximityAlarmState>();
+	
+	// Switch to the map view
+	las.currentView = ProximityAlarmViews.map;
+	las.update();
+	las.pageController.jumpToPage(las.currentView.index);
+
+	// Move the map to the alarm
+	if (las.mapController != null) las.mapController!.move(alarm.position, initialZoom);
 }
