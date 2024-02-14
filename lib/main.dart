@@ -19,10 +19,6 @@ import 'package:location_alarm/views/triggered_alarm_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vibration/vibration.dart';
 
-// Notification stuff
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-int id = 0;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -113,6 +109,10 @@ class MainApp extends StatelessWidget {
     );
   }
 }
+
+// Notification stuff
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+int id = 0;
 
 class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
