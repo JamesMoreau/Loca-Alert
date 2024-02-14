@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -125,10 +124,7 @@ class _MapViewState extends State<MapView> {
                   userAgentPackageName: 'com.location_alarm.app',
                   tileProvider: CachedTileProvider(
                     maxStale: const Duration(days: 30),
-                    store: HiveCacheStore(
-                      state.mapTileCachePath,
-                      hiveBoxName: 'HiveCacheStore',
-                    ),
+                    store: state.mapTileCacheStore!,
                   ),
                 ),
                 if (state.showMarkersInsteadOfCircles) MarkerLayer(markers: alarmMarkers) else CircleLayer(circles: alarmCircles),
