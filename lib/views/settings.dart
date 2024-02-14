@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:feedback/feedback.dart';
@@ -10,7 +9,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
-import 'package:location_alarm/models/alarm.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SettingsView extends StatelessWidget {
