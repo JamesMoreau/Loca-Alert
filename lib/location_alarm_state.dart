@@ -293,7 +293,6 @@ Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
 		var position = await Geolocator.getLastKnownPosition();
 		if (position != null) las.userLocation = LatLng(position.latitude, position.longitude);
 		las.update();
-		await navigateMapToUserLocation();
 	}
 
 	// The remaining case is locationPermissionIsGranted && positionStreamIsInitialized. In which case, do nothing.

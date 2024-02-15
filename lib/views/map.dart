@@ -105,6 +105,10 @@ class _MapViewState extends State<MapView> {
 					);
 				}
 
+				// If the map is locked to the user's location, disable move interaction.
+				var myInteractiveFlags = InteractiveFlag.all & ~InteractiveFlag.rotate;
+				if (state.followUserLocation) myInteractiveFlags = myInteractiveFlags & ~InteractiveFlag.pinchMove & ~InteractiveFlag.drag;
+
 				return Stack(
 					alignment: Alignment.center,
 					children: [
@@ -113,7 +117,7 @@ class _MapViewState extends State<MapView> {
 							options: MapOptions(
 								initialCenter: LatLng(0, 0),
 								initialZoom: initialZoom,
-								interactionOptions: InteractionOptions(flags: InteractiveFlag.all & ~InteractiveFlag.rotate),
+								interactionOptions: InteractionOptions(flags: myInteractiveFlags),
 								keepAlive: true, // Keep the map alive when it is not visible.
 								onMapEvent: myOnMapEvent,
 								onMapReady: myOnMapReady,
@@ -291,6 +295,10 @@ class _MapViewState extends State<MapView> {
 		}
 
 		var centerOfMap = controller.camera.center;
+
+		if (las.followUserLocation) { // If the user is following their location, update the map camera position to the user's location.
+			if (las.userLocation != null) controller.move(las.userLocation!, controller.camera.zoom);
+		}
 
 		// Update the closest alarm stuff.
 		var alarms = las.alarms;

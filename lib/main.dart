@@ -19,6 +19,14 @@ import 'package:location_alarm/views/triggered_alarm_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vibration/vibration.dart';
 
+/*
+ TODO:
+ [X] Make it so when locked to user location the map gestures are disabled. (zoom but no moving). move lock on logic to mapOnUpdate. also make it so map immedietly locks on instead of next position update. 
+ [ ] Add crash analytics. use sentry.
+ [ ] Could split up app state into multiple controllers for better organization and performance. Could use getBuilder Ids to accomplish this.
+ [X] Convert hive stuff to just using files for both map cache and settings + alarms storage.
+*/
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
