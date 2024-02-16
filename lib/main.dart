@@ -25,6 +25,7 @@ import 'package:vibration/vibration.dart';
  [ ] Add crash analytics. use sentry.
  [ ] Could split up app state into multiple controllers for better organization and performance. Could use getBuilder Ids to accomplish this.
  [X] Convert hive stuff to just using files for both map cache and settings + alarms storage.
+ [ ] Give a border shadow to the bottom navigation menu so it doesn't blend it with the list view.
 */
 
 void main() async {
@@ -128,9 +129,6 @@ class NavigationService {
 
 Future<void> checkAlarmsOnUserPositionChange() async {
   var las = Get.find<ProximityAlarmState>();
-
-	// Update the map camera position to the user's location
-	if (las.followUserLocation)	await navigateMapToUserLocation();
 
   var activeAlarms = las.alarms.where((alarm) => alarm.active).toList();
 

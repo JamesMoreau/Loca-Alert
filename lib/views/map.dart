@@ -107,7 +107,7 @@ class _MapViewState extends State<MapView> {
 
 				// If the map is locked to the user's location, disable move interaction.
 				var myInteractiveFlags = InteractiveFlag.all & ~InteractiveFlag.rotate;
-				if (state.followUserLocation) myInteractiveFlags = myInteractiveFlags & ~InteractiveFlag.pinchMove & ~InteractiveFlag.drag;
+				if (state.followUserLocation) myInteractiveFlags = myInteractiveFlags & ~InteractiveFlag.pinchMove & ~InteractiveFlag.drag & ~InteractiveFlag.flingAnimation;
 
 				return Stack(
 					alignment: Alignment.center,
@@ -184,7 +184,12 @@ class _MapViewState extends State<MapView> {
 								children: [
                   FloatingActionButton(
                     onPressed: () {
-                      state.followUserLocation = !state.followUserLocation;
+											if (state.followUserLocation) {
+												state.followUserLocation = false;
+											} else {
+												state.followUserLocation = true;
+												moveMapToUserLocation();
+											}
                       state.update();
                     },
                     elevation: 4,
@@ -296,10 +301,6 @@ class _MapViewState extends State<MapView> {
 
 		var centerOfMap = controller.camera.center;
 
-		if (las.followUserLocation) { // If the user is following their location, update the map camera position to the user's location.
-			if (las.userLocation != null) controller.move(las.userLocation!, controller.camera.zoom);
-		}
-
 		// Update the closest alarm stuff.
 		var alarms = las.alarms;
 		las.closestAlarm = getClosestAlarmToPosition(centerOfMap, alarms);
@@ -327,7 +328,7 @@ class _MapViewState extends State<MapView> {
 		var permission = await Geolocator.checkPermission();
 		if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
 			await checkPermissionAndMaybeInitializeUserPositionStream();
-			await navigateMapToUserLocation();
+			await moveMapToUserLocation();
 			return; // the user has already granted location permissions.
 		}
 
@@ -336,7 +337,7 @@ class _MapViewState extends State<MapView> {
 			var permission = await Geolocator.requestPermission();
 			if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
 				await checkPermissionAndMaybeInitializeUserPositionStream();
-				await navigateMapToUserLocation();
+				await moveMapToUserLocation();
 			}
 			return;
 		}
@@ -358,25 +359,25 @@ class _MapViewState extends State<MapView> {
 	}
 }
 
-Future<void> navigateMapToUserLocation() async {
+Future<void> moveMapToUserLocation() async {
 	var las = Get.find<ProximityAlarmState>();
 
 	var userPosition = las.userLocation;
 	if (userPosition == null) {
-		debugPrint('Error: Unable to navigate map to user location.');
+		debugPrint('Error: Unable to move map to user location.');
 		return;
 	}
 
 	var controller = las.mapController;
 	if (controller == null) {
-		debugPrint('Error: Map controller is null. Unable to navigate map to user location.');
+		debugPrint('Error: Map controller is null. Unable to move map to user location.');
 		return;
 	}
 
 	var currentZoom = controller.camera.zoom;
 	controller.move(userPosition, currentZoom);
 
-	debugPrint('Navigating to user location.');
+	debugPrint('Moving map to user location.');
 }
 
 double getAngleBetweenTwoPositions(LatLng from, LatLng to) {

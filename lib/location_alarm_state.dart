@@ -275,7 +275,7 @@ Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
 		await las.positionStream!.cancel();
 		las.positionStream = null;
 		las.userLocation = null;
-		las.update(); // Trigger a rebuild when the user location stream is cancelled so the user no longer shows on the map
+		las.update(); // Trigger a rebuild when the user location stream is cancelled so the user no longer shows on the map.
 		return;
 	}
 
@@ -283,15 +283,21 @@ Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
 		debugPrint('Location permission granted and position stream uninitialized. Initializing user location stream.');
 		las.positionStream = Geolocator.getPositionStream(
 			locationSettings: LocationSettings(accuracy: LocationAccuracy.bestForNavigation, distanceFilter: 10),
-		).listen((Position position) {
+		).listen((Position position) async {
 			las.userLocation = LatLng(position.latitude, position.longitude);
-			checkAlarmsOnUserPositionChange(); // Check if the user has entered the radius of any alarms
-			las.update(); // Trigger a rebuild when the user location is updated
+			
+			await checkAlarmsOnUserPositionChange(); // Check if the user has entered the radius of any alarms.
+			
+			// Update the map camera position to the user's location
+			if (las.followUserLocation)	await moveMapToUserLocation();
+			
+			las.update(); // Trigger a rebuild when the user location is updated.
 		});
 
 		las.userLocation = null;
 		var position = await Geolocator.getLastKnownPosition();
 		if (position != null) las.userLocation = LatLng(position.latitude, position.longitude);
+				
 		las.update();
 	}
 
