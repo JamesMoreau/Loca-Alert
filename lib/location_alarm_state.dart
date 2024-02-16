@@ -28,7 +28,7 @@ class ProximityAlarmState extends GetxController {
 	bool alarmIsCurrentlyTriggered = false;
 
 	// MapView stuff
-	MapController? mapController;
+	late MapController mapController;
 	bool isPlacingAlarm = false;
 	double alarmPlacementRadius = 100;
 	bool showMarkersInsteadOfCircles = false;
@@ -56,7 +56,12 @@ class ProximityAlarmState extends GetxController {
 	@override
 	void onClose() {
 		if (positionStream != null) positionStream!.cancel();
+		pageController.dispose();
+		mapController.dispose();
+		if (mapTileCacheStore != null) mapTileCacheStore!.close();
+		
 		super.onClose();
+		debugPrint('Location Alarm state disposed.');
 	}
 }
 

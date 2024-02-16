@@ -61,9 +61,7 @@ class AlarmsView extends StatelessWidget {
 									activeColor: alarm.color,
 									thumbIcon: thumbIcon,
 									onChanged: (value) {
-										// alarm.active = value;
-										var updatedAlarmData =
-												createAlarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: value);
+										var updatedAlarmData = createAlarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: value);
 										updateAlarmById(alarm.id, updatedAlarmData);
 									},
 								),
@@ -125,10 +123,6 @@ class _EditAlarmDialogState extends State<EditAlarmDialog> {
 
 	@override
 	Widget build(BuildContext context) {
-		// if (bufferAlarm == null) {
-		//   return Text('Error: Unable to retrieve alarm');
-		// }
-
 		return SizedBox(
 			height: MediaQuery.of(context).size.height * 0.9,
 			child: Padding(
