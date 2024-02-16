@@ -182,15 +182,7 @@ class _MapViewState extends State<MapView> {
 								mainAxisAlignment: MainAxisAlignment.spaceAround,
 								children: [
                   FloatingActionButton(
-                    onPressed: () {
-											if (state.followUserLocation) {
-												state.followUserLocation = false;
-											} else {
-												state.followUserLocation = true;
-												moveMapToUserLocation();
-											}
-                      state.update();
-                    },
+                    onPressed: followOrUnfollowUserLocation,
                     elevation: 4,
                     child: Icon(state.followUserLocation ? Icons.lock_open_rounded : CupertinoIcons.location_fill),
                   ),
@@ -349,6 +341,35 @@ class _MapViewState extends State<MapView> {
 			);
 		}
 	}
+
+  void followOrUnfollowUserLocation() {
+    var state = Get.find<ProximityAlarmState>();
+    if (state.followUserLocation) {
+      state.followUserLocation = false;
+			state.update();
+			return;
+		}
+
+		// Check if we actually can follow the user's location. If not, show a snackbar.
+		if (state.userLocation == null) {
+			debugPrint("Error: Unable to follow the user's location.");
+			ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
+				SnackBar(
+					behavior: SnackBarBehavior.floating,
+					content: Container(
+						padding: const EdgeInsets.all(8),
+						child: Text('Unable to follow your location. Are location services permitted?'),
+					),
+					shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+				),
+			);
+			return;
+		}
+
+		state.followUserLocation = true;
+		moveMapToUserLocation();
+		state.update();
+  }
 }
 
 Future<void> moveMapToUserLocation() async {
