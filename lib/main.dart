@@ -25,7 +25,7 @@ import 'package:vibration/vibration.dart';
  [ ] Add crash analytics. use sentry.
  [ ] Could split up app state into multiple controllers for better organization and performance. Could use getBuilder Ids to accomplish this.
  [X] Convert hive stuff to just using files for both map cache and settings + alarms storage.
- [ ] Give a border shadow to the bottom navigation menu so it doesn't blend it with the list view.
+ [X] Give a border shadow to the bottom navigation menu so it doesn't blend it with the list view.
 */
 
 void main() async {
@@ -80,36 +80,51 @@ class MainApp extends StatelessWidget {
               ],
             ),
             extendBody: true,
-            bottomNavigationBar: ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50),
-                topRight: Radius.circular(50),
-              ),
-              child: NavigationBar(
-                elevation: 3,
-                onDestinationSelected: (int index) {
-                  state.currentView = ProximityAlarmViews.values[index];
-                  debugPrint('Navigating to ${state.currentView}.');
-                  state.update();
-                  state.pageController.jumpToPage(index);
-                },
-                selectedIndex: state.currentView.index,
-                destinations: const [
-                  NavigationDestination(
-                    icon: Icon(Icons.pin_drop_rounded),
-                    label: 'Alarms',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.map_rounded),
-                    label: 'Map',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.settings_rounded),
-                    label: 'Settings',
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 5,
                   ),
                 ],
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(50),
+                ),
               ),
-            ),
+							child: ClipRRect(
+								borderRadius: BorderRadius.only(
+									topLeft: Radius.circular(50),
+									topRight: Radius.circular(50),
+								),
+								child: NavigationBar(
+									elevation: 3,
+									onDestinationSelected: (int index) {
+										state.currentView = ProximityAlarmViews.values[index];
+										debugPrint('Navigating to ${state.currentView}.');
+										state.update();
+										state.pageController.jumpToPage(index);
+									},
+									selectedIndex: state.currentView.index,
+									destinations: const [
+										NavigationDestination(
+											icon: Icon(Icons.pin_drop_rounded),
+											label: 'Alarms',
+										),
+										NavigationDestination(
+											icon: Icon(Icons.map_rounded),
+											label: 'Map',
+										),
+										NavigationDestination(
+											icon: Icon(Icons.settings_rounded),
+											label: 'Settings',
+										),
+									],
+								),
+							),
+						),
           );
         },
       ),
