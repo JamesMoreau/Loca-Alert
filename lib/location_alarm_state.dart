@@ -22,6 +22,11 @@ class LocationAlarmState extends GetxController {
 	LatLng? userLocation;
 	StreamSubscription<Position>? positionStream;
 
+	// EditAlarmDialog Stuff
+	// String? alarmBeingEditedId;
+	Alarm? bufferAlarm;
+	late TextEditingController nameInputController;
+
 	// View Stuff
 	ProximityAlarmViews currentView = ProximityAlarmViews.alarms;
 	late PageController pageController;
@@ -45,6 +50,8 @@ class LocationAlarmState extends GetxController {
 
 	@override
 	void onInit() {
+		nameInputController = TextEditingController();
+
 		pageController = PageController(initialPage: currentView.index);
 
 		mapController = MapController();
