@@ -12,17 +12,12 @@ import 'package:location_alarm/location_alarm_state.dart';
 import 'package:location_alarm/main.dart';
 import 'package:location_alarm/models/alarm.dart';
 
-class MapView extends StatefulWidget {
-	const MapView({super.key});
+class MapView extends StatelessWidget {
+  const MapView({super.key});
 
-	@override
-	State<MapView> createState() => _MapViewState();
-}
-
-class _MapViewState extends State<MapView> {
 	@override
 	Widget build(BuildContext context) {
-		return GetBuilder<ProximityAlarmState>(
+		return GetBuilder<LocationAlarmState>(
 			builder: (state) {
 				var statusBarHeight = MediaQuery.of(context).padding.top;
 				var widthOfScreen = MediaQuery.of(context).size.width;
@@ -274,14 +269,8 @@ class _MapViewState extends State<MapView> {
 		);
 	}
 
-	@override
-	void dispose() {
-		resetAlarmPlacementUIState();
-		super.dispose();
-	}
-
 	void myOnMapEvent(MapEvent event) {
-		var las = Get.find<ProximityAlarmState>();
+		var las = Get.find<LocationAlarmState>();
 
 		var centerOfMap = las.mapController.camera.center;
 
@@ -343,7 +332,7 @@ class _MapViewState extends State<MapView> {
 	}
 
   void followOrUnfollowUserLocation() {
-    var state = Get.find<ProximityAlarmState>();
+    var state = Get.find<LocationAlarmState>();
     if (state.followUserLocation) {
       state.followUserLocation = false;
 			state.update();
@@ -373,7 +362,7 @@ class _MapViewState extends State<MapView> {
 }
 
 Future<void> moveMapToUserLocation() async {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 
 	var userPosition = las.userLocation;
 	if (userPosition == null) {
@@ -393,7 +382,7 @@ double getAngleBetweenTwoPositions(LatLng from, LatLng to) {
 }
 
 Future<void> navigateToAlarm(Alarm alarm) async {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 	
 	// Switch to the map view
 	las.currentView = ProximityAlarmViews.map;

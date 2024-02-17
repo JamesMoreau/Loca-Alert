@@ -6,7 +6,7 @@ import 'package:location_alarm/models/alarm.dart';
 import 'package:vibration/vibration.dart';
 
 void showAlarmDialog(BuildContext context, String alarmId) {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 	var alarm = getAlarmById(alarmId);
 
 	if (alarm == null) {

@@ -26,15 +26,16 @@ import 'package:vibration/vibration.dart';
  [ ] Could split up app state into multiple controllers for better organization and performance. Could use getBuilder Ids to accomplish this.
  [X] Convert hive stuff to just using files for both map cache and settings + alarms storage.
  [X] Give a border shadow to the bottom navigation menu so it doesn't blend it with the list view.
+ [ ] Convert compass circle to elipse for better screen use. also fix angle of icon.
 */
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Get.put(ProximityAlarmState()); // Inject the global app state into memory. Also initializes a bunch of stuff inside onInit().
+  Get.put(LocationAlarmState()); // Inject the global app state into memory. Also initializes a bunch of stuff inside onInit().
 
   // Load map tile cache
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
   var cacheDirectory = await getTemporaryDirectory();
   var mapTileCachePath = '${cacheDirectory.path}${Platform.pathSeparator}$mapTileCacheFilename';
 	las.mapTileCacheStore = FileCacheStore(mapTileCachePath);
@@ -67,7 +68,7 @@ class MainApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: GetBuilder<ProximityAlarmState>(
+      home: GetBuilder<LocationAlarmState>(
         builder: (state) {
           return Scaffold(
             body: PageView(
@@ -143,7 +144,7 @@ class NavigationService {
 }
 
 Future<void> checkAlarmsOnUserPositionChange() async {
-  var las = Get.find<ProximityAlarmState>();
+  var las = Get.find<LocationAlarmState>();
 
   var activeAlarms = las.alarms.where((alarm) => alarm.active).toList();
 

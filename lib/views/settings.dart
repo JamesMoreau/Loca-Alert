@@ -16,7 +16,7 @@ class SettingsView extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		return GetBuilder<ProximityAlarmState>(
+		return GetBuilder<LocationAlarmState>(
 			builder: (state) {
 				return SafeArea(
 					child: ListView(

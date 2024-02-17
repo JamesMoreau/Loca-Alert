@@ -15,7 +15,7 @@ import 'package:location_alarm/views/map.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
-class ProximityAlarmState extends GetxController {
+class LocationAlarmState extends GetxController {
 	List<Alarm> alarms = <Alarm>[];
 
 	// User Location Stuff
@@ -69,7 +69,7 @@ class ProximityAlarmState extends GetxController {
 final Uuid idGenerator = Uuid();
 
 bool deleteAlarmById(String id) {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 	for (var i = 0; i < las.alarms.length; i++) {
 		if (las.alarms[i].id == id) {
 			las.alarms.removeAt(i);
@@ -84,7 +84,7 @@ bool deleteAlarmById(String id) {
 }
 
 Alarm? getAlarmById(String id) {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 
 	for (var alarm in las.alarms) {
 		if (alarm.id == id) return alarm;
@@ -95,7 +95,7 @@ Alarm? getAlarmById(String id) {
 
 // pass your new alarm data here to update proxalarm state. The id field in newAlarmData is ignored. returns success.
 bool updateAlarmById(String id, Alarm newAlarmData) {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 
 	for (var alarm in las.alarms) {
 		if (alarm.id == id) {
@@ -114,7 +114,7 @@ bool updateAlarmById(String id, Alarm newAlarmData) {
 }
 
 void addAlarm(Alarm alarm) {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 
 	las.alarms.add(alarm);
 	las.update();
@@ -123,7 +123,7 @@ void addAlarm(Alarm alarm) {
 
 // This saves all current alarms to shared preferences. Should be called everytime the alarms state is changed.
 Future<void> saveAlarmsToStorage() async {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 	
 	var directory = await getApplicationDocumentsDirectory();
 	var alarmsPath = '${directory.path}${Platform.pathSeparator}$alarmsFilename';
@@ -142,7 +142,7 @@ Future<void> saveAlarmsToStorage() async {
 }
 
 Future<void> loadAlarmsFromStorage() async {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 
 	var directory = await getApplicationDocumentsDirectory();
 	var alarmsPath = '${directory.path}${Platform.pathSeparator}$alarmsFilename';
@@ -171,7 +171,7 @@ Future<void> loadAlarmsFromStorage() async {
 }
 
 Future<void> loadSettingsFromStorage() async {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 
 	var directory = await getApplicationDocumentsDirectory();
 	var settingsPath = '${directory.path}${Platform.pathSeparator}$settingsFilename';
@@ -211,41 +211,41 @@ Future<void> clearAlarmsFromStorage() async {
 }
 
 void resetAlarmPlacementUIState() {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 	las.isPlacingAlarm = false;
 	las.alarmPlacementRadius = 100;
 }
 
 void changeAlarmSound({required bool newValue}) {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 	las.alarmSound = newValue;
 	las.update();
 	saveSettingsToStorage();
 }
 
 void changeVibration({required bool newValue}) {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 	las.vibration = newValue;
 	las.update();
 	saveSettingsToStorage();
 }
 
 void changeAlarmNotification({required bool newValue}) {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 	las.notification = newValue;
 	las.update();
 	saveSettingsToStorage();
 }
 
 void changeShowClosestOffScreenAlarm({required bool newValue}) {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 	las.showClosestOffScreenAlarm = newValue;
 	las.update();
 	saveSettingsToStorage();
 }
 
 Future<void> saveSettingsToStorage() async {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 	var directory = await getApplicationDocumentsDirectory();
 	var settingsPath = '${directory.path}${Platform.pathSeparator}$settingsFilename';
 	var settingsFile = File(settingsPath);
@@ -264,7 +264,7 @@ Future<void> saveSettingsToStorage() async {
 }
 
 Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
-	var las = Get.find<ProximityAlarmState>();
+	var las = Get.find<LocationAlarmState>();
 
 	var permission = await Geolocator.checkPermission();
 	var locationPermissionIsGranted = permission == LocationPermission.whileInUse || permission == LocationPermission.always;

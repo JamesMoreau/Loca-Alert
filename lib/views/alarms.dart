@@ -22,7 +22,7 @@ class AlarmsView extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		return GetBuilder<ProximityAlarmState>(
+		return GetBuilder<LocationAlarmState>(
 			builder: (state) {
 				if (state.alarms.isEmpty) {
 					return Center(
@@ -84,7 +84,7 @@ class EditAlarmDialog extends StatefulWidget {
 }
 
 class _EditAlarmDialogState extends State<EditAlarmDialog> {
-	ProximityAlarmState pas = Get.find<ProximityAlarmState>();
+	LocationAlarmState las = Get.find<LocationAlarmState>();
 	late TextEditingController nameInputController;
 	late Alarm bufferAlarm;
 
