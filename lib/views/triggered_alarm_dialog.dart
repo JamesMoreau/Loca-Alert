@@ -6,12 +6,12 @@ import 'package:location_alarm/models/alarm.dart';
 import 'package:vibration/vibration.dart';
 
 void showAlarmDialog(BuildContext context, String alarmId) {
-	var las = Get.find<LocationAlarmState>();
+	var state = Get.find<LocationAlarmState>();
 	var alarm = getAlarmById(alarmId);
 
 	if (alarm == null) {
 		debugPrint('Error: Unable to retrieve triggered alarm.');
-		las.alarmIsCurrentlyTriggered = false;
+		state.alarmIsCurrentlyTriggered = false;
 		return;
 	}
 
@@ -25,9 +25,9 @@ void showAlarmDialog(BuildContext context, String alarmId) {
 			active: false, // deactivate the alarm
 		);
 		updateAlarmById(alarmId, dismissedAlarm);
-		if (las.vibration) Vibration.cancel();
+		if (state.vibration) Vibration.cancel();
 		Navigator.pop(context);
-		las.alarmIsCurrentlyTriggered = false;
+		state.alarmIsCurrentlyTriggered = false;
 	}
 
 	showGeneralDialog<void>(

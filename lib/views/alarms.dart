@@ -84,7 +84,7 @@ class EditAlarmDialog extends StatefulWidget {
 }
 
 class _EditAlarmDialogState extends State<EditAlarmDialog> {
-	LocationAlarmState las = Get.find<LocationAlarmState>();
+	LocationAlarmState state = Get.find<LocationAlarmState>();
 	late TextEditingController nameInputController;
 	late Alarm bufferAlarm;
 

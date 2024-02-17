@@ -270,30 +270,30 @@ class MapView extends StatelessWidget {
 	}
 
 	void myOnMapEvent(MapEvent event) {
-		var las = Get.find<LocationAlarmState>();
+		var state = Get.find<LocationAlarmState>();
 
-		var centerOfMap = las.mapController.camera.center;
+		var centerOfMap = state.mapController.camera.center;
 
 		// Update the closest alarm stuff.
-		var alarms = las.alarms;
-		las.closestAlarm = getClosestAlarmToPosition(centerOfMap, alarms);
+		var alarms = state.alarms;
+		state.closestAlarm = getClosestAlarmToPosition(centerOfMap, alarms);
 
 		// Update whether the closest alarm is in view.
-		if (las.closestAlarm != null) {
-			var cameraBounds = las.mapController.camera.visibleBounds;
-			if (cameraBounds.contains(las.closestAlarm!.position))
-				las.closestAlarmIsInView = true;
+		if (state.closestAlarm != null) {
+			var cameraBounds = state.mapController.camera.visibleBounds;
+			if (cameraBounds.contains(state.closestAlarm!.position))
+				state.closestAlarmIsInView = true;
 			else
-				las.closestAlarmIsInView = false;
+				state.closestAlarmIsInView = false;
 		}
 
 		// If the user is zoomed out, show the alarms as markers instead of circles.
-		if (las.mapController.camera.zoom < circleToMarkerZoomThreshold)
-			las.showMarkersInsteadOfCircles = true;
+		if (state.mapController.camera.zoom < circleToMarkerZoomThreshold)
+			state.showMarkersInsteadOfCircles = true;
 		else
-			las.showMarkersInsteadOfCircles = false;
+			state.showMarkersInsteadOfCircles = false;
 
-		las.update();
+		state.update();
 	}
 
 	Future<void> myOnMapReady() async {
@@ -362,16 +362,16 @@ class MapView extends StatelessWidget {
 }
 
 Future<void> moveMapToUserLocation() async {
-	var las = Get.find<LocationAlarmState>();
+	var state = Get.find<LocationAlarmState>();
 
-	var userPosition = las.userLocation;
+	var userPosition = state.userLocation;
 	if (userPosition == null) {
 		debugPrint('Error: Unable to move map to user location.');
 		return;
 	}
 
-	var currentZoom = las.mapController.camera.zoom;
-	las.mapController.move(userPosition, currentZoom);
+	var currentZoom = state.mapController.camera.zoom;
+	state.mapController.move(userPosition, currentZoom);
 
 	debugPrint('Moving map to user location.');
 }
@@ -382,13 +382,13 @@ double getAngleBetweenTwoPositions(LatLng from, LatLng to) {
 }
 
 Future<void> navigateToAlarm(Alarm alarm) async {
-	var las = Get.find<LocationAlarmState>();
+	var state = Get.find<LocationAlarmState>();
 	
 	// Switch to the map view
-	las.currentView = ProximityAlarmViews.map;
-	las.update();
-	las.pageController.jumpToPage(las.currentView.index);
+	state.currentView = ProximityAlarmViews.map;
+	state.update();
+	state.pageController.jumpToPage(state.currentView.index);
 
 	// Move the map to the alarm
-	las.mapController.move(alarm.position, initialZoom);
+	state.mapController.move(alarm.position, initialZoom);
 }

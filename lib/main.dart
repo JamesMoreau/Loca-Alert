@@ -35,10 +35,10 @@ void main() async {
   Get.put(LocationAlarmState()); // Inject the global app state into memory. Also initializes a bunch of stuff inside onInit().
 
   // Load map tile cache
-	var las = Get.find<LocationAlarmState>();
+	var state = Get.find<LocationAlarmState>();
   var cacheDirectory = await getTemporaryDirectory();
   var mapTileCachePath = '${cacheDirectory.path}${Platform.pathSeparator}$mapTileCacheFilename';
-	las.mapTileCacheStore = FileCacheStore(mapTileCachePath);
+	state.mapTileCacheStore = FileCacheStore(mapTileCachePath);
 
   // Load saved alarms and settings.
 	await loadSettingsFromStorage();
@@ -144,9 +144,9 @@ class NavigationService {
 }
 
 Future<void> checkAlarmsOnUserPositionChange() async {
-  var las = Get.find<LocationAlarmState>();
+  var state = Get.find<LocationAlarmState>();
 
-  var activeAlarms = las.alarms.where((alarm) => alarm.active).toList();
+  var activeAlarms = state.alarms.where((alarm) => alarm.active).toList();
 
   var permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
@@ -154,7 +154,7 @@ Future<void> checkAlarmsOnUserPositionChange() async {
     return;
   }
 
-  var userPosition = las.userLocation;
+  var userPosition = state.userLocation;
   if (userPosition == null) {
     debugPrint('Alarm Check: No user position found.');
     return;
@@ -172,10 +172,10 @@ Future<void> checkAlarmsOnUserPositionChange() async {
   for (var alarm in triggeredAlarms) debugPrint('Alarm Check: Triggered alarm ${alarm.name}');
 
   // If an alarm is already triggered, don't show another dialog.
-  if (las.alarmIsCurrentlyTriggered) return;
+  if (state.alarmIsCurrentlyTriggered) return;
 
   for (var alarm in triggeredAlarms) {
-    if (las.notification) {
+    if (state.notification) {
       // the notification boolean is always set to true but we might want to add user control later.
       debugPrint('Alarm Check: Sending the user a notification for alarm ${alarm.name}.');
       var notificationDetails = NotificationDetails(
@@ -185,11 +185,11 @@ Future<void> checkAlarmsOnUserPositionChange() async {
     }
 
     // No alarm is currently triggered, so we can show the dialog.
-    las.alarmIsCurrentlyTriggered = true;
+    state.alarmIsCurrentlyTriggered = true;
     showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
 
     // Commence the vibration after the dialog is shown.
-    if (las.vibration) {
+    if (state.vibration) {
       for (var i = 0; i < numberOfTriggeredAlarmVibrations; i++) {
         await Vibration.vibrate(duration: 1000);
         await Future<void>.delayed(Duration(milliseconds: 1000));

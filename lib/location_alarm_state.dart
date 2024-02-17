@@ -69,11 +69,11 @@ class LocationAlarmState extends GetxController {
 final Uuid idGenerator = Uuid();
 
 bool deleteAlarmById(String id) {
-	var las = Get.find<LocationAlarmState>();
-	for (var i = 0; i < las.alarms.length; i++) {
-		if (las.alarms[i].id == id) {
-			las.alarms.removeAt(i);
-			las.update();
+	var state = Get.find<LocationAlarmState>();
+	for (var i = 0; i < state.alarms.length; i++) {
+		if (state.alarms[i].id == id) {
+			state.alarms.removeAt(i);
+			state.update();
 			saveAlarmsToStorage(); // update the storage
 			return true;
 		}
@@ -84,9 +84,9 @@ bool deleteAlarmById(String id) {
 }
 
 Alarm? getAlarmById(String id) {
-	var las = Get.find<LocationAlarmState>();
+	var state = Get.find<LocationAlarmState>();
 
-	for (var alarm in las.alarms) {
+	for (var alarm in state.alarms) {
 		if (alarm.id == id) return alarm;
 	}
 
@@ -95,16 +95,16 @@ Alarm? getAlarmById(String id) {
 
 // pass your new alarm data here to update proxalarm state. The id field in newAlarmData is ignored. returns success.
 bool updateAlarmById(String id, Alarm newAlarmData) {
-	var las = Get.find<LocationAlarmState>();
+	var state = Get.find<LocationAlarmState>();
 
-	for (var alarm in las.alarms) {
+	for (var alarm in state.alarms) {
 		if (alarm.id == id) {
 			alarm.name = newAlarmData.name;
 			alarm.position = newAlarmData.position;
 			alarm.radius = newAlarmData.radius;
 			alarm.color = newAlarmData.color;
 			alarm.active = newAlarmData.active;
-			las.update();
+			state.update();
 			saveAlarmsToStorage();
 			return true;
 		}
@@ -114,23 +114,23 @@ bool updateAlarmById(String id, Alarm newAlarmData) {
 }
 
 void addAlarm(Alarm alarm) {
-	var las = Get.find<LocationAlarmState>();
+	var state = Get.find<LocationAlarmState>();
 
-	las.alarms.add(alarm);
-	las.update();
+	state.alarms.add(alarm);
+	state.update();
 	saveAlarmsToStorage();
 }
 
 // This saves all current alarms to shared preferences. Should be called everytime the alarms state is changed.
 Future<void> saveAlarmsToStorage() async {
-	var las = Get.find<LocationAlarmState>();
+	var state = Get.find<LocationAlarmState>();
 	
 	var directory = await getApplicationDocumentsDirectory();
 	var alarmsPath = '${directory.path}${Platform.pathSeparator}$alarmsFilename';
 	var file = File(alarmsPath);
 
 	var alarmJsons = List<String>.empty(growable: true);
-	for (var alarm in las.alarms) {
+	for (var alarm in state.alarms) {
 		var alarmMap = alarmToMap(alarm);
 		var alarmJson = jsonEncode(alarmMap);
 		alarmJsons.add(alarmJson);
@@ -142,7 +142,7 @@ Future<void> saveAlarmsToStorage() async {
 }
 
 Future<void> loadAlarmsFromStorage() async {
-	var las = Get.find<LocationAlarmState>();
+	var state = Get.find<LocationAlarmState>();
 
 	var directory = await getApplicationDocumentsDirectory();
 	var alarmsPath = '${directory.path}${Platform.pathSeparator}$alarmsFilename';
@@ -163,15 +163,15 @@ Future<void> loadAlarmsFromStorage() async {
 	for (var alarmJson in alarmJsonsList) {
 		var alarmMap = jsonDecode(alarmJson as String) as Map<String, dynamic>;
 		var alarm = alarmFromMap(alarmMap);
-		las.alarms.add(alarm);
+		state.alarms.add(alarm);
 	}
 
-	las.update();
+	state.update();
 	debugPrint('Loaded alarms from storage');
 }
 
 Future<void> loadSettingsFromStorage() async {
-	var las = Get.find<LocationAlarmState>();
+	var state = Get.find<LocationAlarmState>();
 
 	var directory = await getApplicationDocumentsDirectory();
 	var settingsPath = '${directory.path}${Platform.pathSeparator}$settingsFilename';
@@ -189,10 +189,10 @@ Future<void> loadSettingsFromStorage() async {
 	}
 
 	var settingsMap = jsonDecode(settingsJson) as Map<String, dynamic>;
-	las.alarmSound = settingsMap[settingsAlarmSoundKey] as bool;
-	las.vibration = settingsMap[settingsAlarmVibrationKey] as bool;
-	las.notification = settingsMap[settingsAlarmNotificationKey] as bool;
-	las.showClosestOffScreenAlarm = settingsMap[settingsShowClosestOffScreenAlarmKey] as bool;
+	state.alarmSound = settingsMap[settingsAlarmSoundKey] as bool;
+	state.vibration = settingsMap[settingsAlarmVibrationKey] as bool;
+	state.notification = settingsMap[settingsAlarmNotificationKey] as bool;
+	state.showClosestOffScreenAlarm = settingsMap[settingsShowClosestOffScreenAlarmKey] as bool;
 	debugPrint('Loaded settings from storage');
 }
 
@@ -211,50 +211,50 @@ Future<void> clearAlarmsFromStorage() async {
 }
 
 void resetAlarmPlacementUIState() {
-	var las = Get.find<LocationAlarmState>();
-	las.isPlacingAlarm = false;
-	las.alarmPlacementRadius = 100;
+	var state = Get.find<LocationAlarmState>();
+	state.isPlacingAlarm = false;
+	state.alarmPlacementRadius = 100;
 }
 
 void changeAlarmSound({required bool newValue}) {
-	var las = Get.find<LocationAlarmState>();
-	las.alarmSound = newValue;
-	las.update();
+	var state = Get.find<LocationAlarmState>();
+	state.alarmSound = newValue;
+	state.update();
 	saveSettingsToStorage();
 }
 
 void changeVibration({required bool newValue}) {
-	var las = Get.find<LocationAlarmState>();
-	las.vibration = newValue;
-	las.update();
+	var state = Get.find<LocationAlarmState>();
+	state.vibration = newValue;
+	state.update();
 	saveSettingsToStorage();
 }
 
 void changeAlarmNotification({required bool newValue}) {
-	var las = Get.find<LocationAlarmState>();
-	las.notification = newValue;
-	las.update();
+	var state = Get.find<LocationAlarmState>();
+	state.notification = newValue;
+	state.update();
 	saveSettingsToStorage();
 }
 
 void changeShowClosestOffScreenAlarm({required bool newValue}) {
-	var las = Get.find<LocationAlarmState>();
-	las.showClosestOffScreenAlarm = newValue;
-	las.update();
+	var state = Get.find<LocationAlarmState>();
+	state.showClosestOffScreenAlarm = newValue;
+	state.update();
 	saveSettingsToStorage();
 }
 
 Future<void> saveSettingsToStorage() async {
-	var las = Get.find<LocationAlarmState>();
+	var state = Get.find<LocationAlarmState>();
 	var directory = await getApplicationDocumentsDirectory();
 	var settingsPath = '${directory.path}${Platform.pathSeparator}$settingsFilename';
 	var settingsFile = File(settingsPath);
 
 	var settingsMap = <String, dynamic>{
-		settingsAlarmSoundKey: las.alarmSound,
-		settingsAlarmVibrationKey: las.vibration,
-		settingsAlarmNotificationKey: las.notification,
-		settingsShowClosestOffScreenAlarmKey: las.showClosestOffScreenAlarm,
+		settingsAlarmSoundKey: state.alarmSound,
+		settingsAlarmVibrationKey: state.vibration,
+		settingsAlarmNotificationKey: state.notification,
+		settingsShowClosestOffScreenAlarmKey: state.showClosestOffScreenAlarm,
 	};
 
 	var settingsJson = jsonEncode(settingsMap);
@@ -264,11 +264,11 @@ Future<void> saveSettingsToStorage() async {
 }
 
 Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
-	var las = Get.find<LocationAlarmState>();
+	var state = Get.find<LocationAlarmState>();
 
 	var permission = await Geolocator.checkPermission();
 	var locationPermissionIsGranted = permission == LocationPermission.whileInUse || permission == LocationPermission.always;
-	var positionStreamIsInitialized = las.positionStream != null;
+	var positionStreamIsInitialized = state.positionStream != null;
 
 	if (!locationPermissionIsGranted && !positionStreamIsInitialized) {
 		debugPrint('Location permission denied and position stream uninitialized. Cannot initialize user location stream.');
@@ -277,33 +277,33 @@ Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
 
 	if (!locationPermissionIsGranted && positionStreamIsInitialized) {
 		debugPrint('Location permission denied and position stream initialized. Cancelling user location stream.');
-		await las.positionStream!.cancel();
-		las.positionStream = null;
-		las.userLocation = null;
-		las.update(); // Trigger a rebuild when the user location stream is cancelled so the user no longer shows on the map.
+		await state.positionStream!.cancel();
+		state.positionStream = null;
+		state.userLocation = null;
+		state.update(); // Trigger a rebuild when the user location stream is cancelled so the user no longer shows on the map.
 		return;
 	}
 
 	if (locationPermissionIsGranted && !positionStreamIsInitialized) {
 		debugPrint('Location permission granted and position stream uninitialized. Initializing user location stream.');
-		las.positionStream = Geolocator.getPositionStream(
+		state.positionStream = Geolocator.getPositionStream(
 			locationSettings: LocationSettings(accuracy: LocationAccuracy.bestForNavigation, distanceFilter: 10),
 		).listen((Position position) async {
-			las.userLocation = LatLng(position.latitude, position.longitude);
+			state.userLocation = LatLng(position.latitude, position.longitude);
 			
 			await checkAlarmsOnUserPositionChange(); // Check if the user has entered the radius of any alarms.
 			
 			// Update the map camera position to the user's location
-			if (las.followUserLocation)	await moveMapToUserLocation();
+			if (state.followUserLocation)	await moveMapToUserLocation();
 			
-			las.update(); // Trigger a rebuild when the user location is updated.
+			state.update(); // Trigger a rebuild when the user location is updated.
 		});
 
-		las.userLocation = null;
+		state.userLocation = null;
 		var position = await Geolocator.getLastKnownPosition();
-		if (position != null) las.userLocation = LatLng(position.latitude, position.longitude);
+		if (position != null) state.userLocation = LatLng(position.latitude, position.longitude);
 				
-		las.update();
+		state.update();
 	}
 
 	// The remaining case is locationPermissionIsGranted && positionStreamIsInitialized. In which case, do nothing.
