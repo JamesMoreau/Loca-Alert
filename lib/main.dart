@@ -26,7 +26,7 @@ import 'package:vibration/vibration.dart';
  [ ] Could split up app state into multiple controllers for better organization and performance. Could use getBuilder Ids to accomplish this.
  [X] Convert hive stuff to just using files for both map cache and settings + alarms storage.
  [X] Give a border shadow to the bottom navigation menu so it doesn't blend it with the list view.
- [ ] Convert compass circle to elipse for better screen use. also fix angle of icon.
+ [ ] Convert compass circle to elipse for better screen use. also fix angle of icon. also add a background to the icon for better visual clarity.
  [ ] Change unlock icon to lock and red background.
  [ ] Add scrollbar to list views.
  [ ] add max lines to list views.
