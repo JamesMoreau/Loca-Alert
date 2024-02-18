@@ -386,8 +386,8 @@ Future<void> navigateToAlarm(Alarm alarm) async {
 	
 	// Switch to the map view
 	state.currentView = ProximityAlarmViews.map;
-	state.update();
 	state.pageController.jumpToPage(state.currentView.index);
+	state.update();
 
 	// Move the map to the alarm
 	state.mapController.move(alarm.position, initialZoom);
