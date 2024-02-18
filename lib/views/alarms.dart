@@ -11,6 +11,12 @@ class AlarmsView extends StatelessWidget {
 
   void openAlarmEdit(BuildContext context, Alarm alarm) {
     debugPrint('Editing alarm: ${alarm.name}, id: ${alarm.id}.');
+		
+		// Copy the alarm to the buffer alarm. We don't do this inside the edit widget because rebuilds will cause the buffer alarm to be reset.
+		var state = Get.find<LocationAlarmState>();
+		state.bufferAlarm = createAlarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: alarm.active);
+		state.nameInputController.text = alarm.name;
+		
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -102,19 +108,10 @@ class EditAlarmDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<LocationAlarmState>(
       builder: (state) {
-				var alarm = getAlarmById(alarmId);
-        if (alarm == null) {
-          debugPrint('Error: Unable to retrieve alarm for editing with id: $alarmId.');
-          return const Placeholder();
-        }
-
-        state.bufferAlarm = createAlarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: alarm.active);
         if (state.bufferAlarm == null) {
           debugPrint('Error: Buffer alarm is null.');
-          return const Placeholder();
+          return const SizedBox();
         }
-
-        // state.nameInputController.text = alarm.name;
 
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.9,
@@ -153,6 +150,7 @@ class EditAlarmDialog extends StatelessWidget {
                 TextFormField(
                   textAlign: TextAlign.center,
                   controller: state.nameInputController,
+									onChanged: (value) => state.update(),
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
                       icon: Icon(Icons.clear_rounded),
@@ -171,7 +169,6 @@ class EditAlarmDialog extends StatelessWidget {
                     icon: Icons.pin_drop_rounded,
                     selectedColor: state.bufferAlarm!.color,
                     onColorSelected: (newColor) {
-											debugPrint('New color: $newColor');
                       state.bufferAlarm!.color = newColor;
                       state.update();
                     },
@@ -185,9 +182,10 @@ class EditAlarmDialog extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        navigateToAlarm(state.bufferAlarm!);
+                      onPressed: () async { // Needs to be async since we have to wait for navigateToAlarm to finish before we can reset the state.
+                        Navigator.pop(context);
+                        await navigateToAlarm(state.bufferAlarm!);
+												resetEditAlarmState();
                       },
                       icon: Icon(Icons.navigate_next_rounded),
                       label: Text('Go To Alarm'),
@@ -211,7 +209,7 @@ class EditAlarmDialog extends StatelessWidget {
                       ),
                       onPressed: () {
                         deleteAlarmById(alarmId);
-                        Navigator.of(context).pop();
+                        Navigator.pop(context);
 												resetEditAlarmState();
                       },
                       child: Text('Delete Alarm', style: TextStyle(color: Colors.redAccent)),
