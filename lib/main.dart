@@ -27,9 +27,9 @@ import 'package:vibration/vibration.dart';
  [X] Convert hive stuff to just using files for both map cache and settings + alarms storage.
  [X] Give a border shadow to the bottom navigation menu so it doesn't blend it with the list view.
  [ ] Convert compass circle to elipse for better screen use. also fix angle of icon. also add a background to the icon for better visual clarity.
- [ ] Change unlock icon to lock and red background.
- [ ] Add scrollbar to list views.
- [ ] add max lines to list views.
+ [X] Change unlock icon to lock and red background.
+ [X] Add scrollbar to list views.
+ [X] add max lines to list views.
  [ ] Fix navigate to alarm exception on app restart (map has not been open yet).
 */
 

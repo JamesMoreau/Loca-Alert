@@ -11,12 +11,12 @@ class AlarmsView extends StatelessWidget {
 
   void openAlarmEdit(BuildContext context, Alarm alarm) {
     debugPrint('Editing alarm: ${alarm.name}, id: ${alarm.id}.');
-		
-		// Copy the alarm to the buffer alarm. We don't do this inside the edit widget because rebuilds will cause the buffer alarm to be reset.
-		var state = Get.find<LocationAlarmState>();
-		state.bufferAlarm = createAlarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: alarm.active);
-		state.nameInputController.text = alarm.name;
-		
+
+    // Copy the alarm to the buffer alarm. We don't do this inside the edit widget because rebuilds will cause the buffer alarm to be reset.
+    var state = Get.find<LocationAlarmState>();
+    state.bufferAlarm = createAlarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: alarm.active);
+    state.nameInputController.text = alarm.name;
+
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -50,30 +50,34 @@ class AlarmsView extends StatelessWidget {
           );
         }
 
-        return ListView.builder(
-          itemCount: state.alarms.length,
-          itemBuilder: (context, index) {
-            var alarm = state.alarms[index];
-            return Padding(
-              padding: const EdgeInsets.all(8),
-              child: ListTile(
-                title: Text(alarm.name),
-                leading: Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
-                subtitle: Text(alarm.position.toSexagesimal(), style: TextStyle(fontSize: 9, color: Colors.grey[700])),
-                onLongPress: () => openAlarmEdit(context, alarm),
-                onTap: () => openAlarmEdit(context, alarm),
-                trailing: Switch(
-                  value: alarm.active,
-                  activeColor: alarm.color,
-                  thumbIcon: thumbIcon,
-                  onChanged: (value) {
-                    var updatedAlarmData = createAlarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: value);
-                    updateAlarmById(alarm.id, updatedAlarmData);
-                  },
-                ),
-              ),
-            );
-          },
+        return SafeArea(
+          child: Scrollbar(
+            child: ListView.builder(
+              itemCount: state.alarms.length,
+              itemBuilder: (context, index) {
+                var alarm = state.alarms[index];
+                return Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ListTile(
+                    title: Text(alarm.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    leading: Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
+                    subtitle: Text(alarm.position.toSexagesimal(), style: TextStyle(fontSize: 9, color: Colors.grey[700])),
+                    onLongPress: () => openAlarmEdit(context, alarm),
+                    onTap: () => openAlarmEdit(context, alarm),
+                    trailing: Switch(
+                      value: alarm.active,
+                      activeColor: alarm.color,
+                      thumbIcon: thumbIcon,
+                      onChanged: (value) {
+                        var updatedAlarmData = createAlarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: value);
+                        updateAlarmById(alarm.id, updatedAlarmData);
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         );
       },
     );
@@ -125,12 +129,12 @@ class EditAlarmDialog extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
-											child: const Text('Cancel'), 
-											onPressed: () { 
-												Navigator.pop(context); 
-												resetEditAlarmState();
-											},
-										),
+                      child: const Text('Cancel'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        resetEditAlarmState();
+                      },
+                    ),
                     Text(
                       'Edit Alarm',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -140,7 +144,7 @@ class EditAlarmDialog extends StatelessWidget {
                       onPressed: () {
                         saveBufferToAlarm();
                         Navigator.pop(context);
-												resetEditAlarmState();
+                        resetEditAlarmState();
                       },
                     ),
                   ],
@@ -150,7 +154,7 @@ class EditAlarmDialog extends StatelessWidget {
                 TextFormField(
                   textAlign: TextAlign.center,
                   controller: state.nameInputController,
-									onChanged: (value) => state.update(),
+                  onChanged: (value) => state.update(),
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
                       icon: Icon(Icons.clear_rounded),
@@ -182,10 +186,11 @@ class EditAlarmDialog extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton.icon(
-                      onPressed: () async { // Needs to be async since we have to wait for navigateToAlarm to finish before we can reset the state.
+                      onPressed: () async {
+                        // Needs to be async since we have to wait for navigateToAlarm to finish before we can reset the state.
                         Navigator.pop(context);
                         await navigateToAlarm(state.bufferAlarm!);
-												resetEditAlarmState();
+                        resetEditAlarmState();
                       },
                       icon: Icon(Icons.navigate_next_rounded),
                       label: Text('Go To Alarm'),
@@ -210,7 +215,7 @@ class EditAlarmDialog extends StatelessWidget {
                       onPressed: () {
                         deleteAlarmById(alarmId);
                         Navigator.pop(context);
-												resetEditAlarmState();
+                        resetEditAlarmState();
                       },
                       child: Text('Delete Alarm', style: TextStyle(color: Colors.redAccent)),
                     ),
@@ -223,13 +228,13 @@ class EditAlarmDialog extends StatelessWidget {
       },
     );
   }
-	
-	void resetEditAlarmState() {
-		var state = Get.find<LocationAlarmState>();
-		state.bufferAlarm = null;
-		state.nameInputController.clear();
-		state.update();
-	}
+
+  void resetEditAlarmState() {
+    var state = Get.find<LocationAlarmState>();
+    state.bufferAlarm = null;
+    state.nameInputController.clear();
+    state.update();
+  }
 }
 
 // for switch icons.
