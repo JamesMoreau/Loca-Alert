@@ -20,7 +20,8 @@ class MapView extends StatelessWidget {
 		return GetBuilder<LocationAlarmState>(
 			builder: (state) {
 				var statusBarHeight = MediaQuery.of(context).padding.top;
-				var widthOfScreen = MediaQuery.of(context).size.width;
+				var widthOfScreen   = MediaQuery.of(context).size.width;
+				var heightOfScreen  = MediaQuery.of(context).size.height;
 
 				// Display user's location on the map.
 				var userLocationMarker = <Marker>[];
@@ -37,22 +38,24 @@ class MapView extends StatelessWidget {
 					]);
 
 				// If no alarms are currently visible, show an arrow pointing towards the closest alarm (if there is one).
-				var showClosestAlarmCompass = state.closestAlarm != null && !state.closestAlarmIsInView && state.showClosestOffScreenAlarm;
+				var showClosestAlarmIndicator = state.closestAlarm != null && !state.closestAlarmIsInView && state.showClosestOffScreenAlarm;
 				Widget arrow = SizedBox.shrink();
-				Widget compassAlarmIcon = SizedBox.shrink();
+				Widget indicatorAlarmIcon = SizedBox.shrink();
 
 				var angle = 0.0;
-				var alarmCompassSizePercentage = 0.9;
-				var alarmCompassDisplayRadius = widthOfScreen * alarmCompassSizePercentage * (1 / 2);
+				var arrowRotation = 0.0;
+				var ellipseWidth = widthOfScreen * 0.8;
+				var ellipseHeight = heightOfScreen * 0.65;
 
-				if (showClosestAlarmCompass) {
+				if (showClosestAlarmIndicator) {
 					// Arrow pointing upwards
 					arrow = Icon(Icons.arrow_upward_rounded, color: state.closestAlarm!.color, size: 30);
-					compassAlarmIcon = Icon(Icons.pin_drop_rounded, color: state.closestAlarm!.color, size: 30);
+					indicatorAlarmIcon = Icon(Icons.pin_drop_rounded, color: state.closestAlarm!.color, size: 30);
 
 					// Calculate the angle between the center of the map and the closest alarm
 					var centerOfMap = state.mapController.camera.center;
-					angle = getAngleBetweenTwoPositions(centerOfMap, state.closestAlarm!.position);
+					arrowRotation = angle = getAngleBetweenTwoPositions(centerOfMap, state.closestAlarm!.position);
+					angle = (arrowRotation + 3 * pi / 2) % (2 * pi); // Compensate the for y-axis pointing downwards on Transform.translate().
 				}
 
 				// Display the alarms as circles on the map.
@@ -130,14 +133,14 @@ class MapView extends StatelessWidget {
 								MarkerLayer(markers: userLocationMarker),
 							],
 						),
-						if (showClosestAlarmCompass) ...[
+						if (showClosestAlarmIndicator) ...[
 							// Display the arrow pointing towards the closest alarm.
 							IgnorePointer(
 								child: Center(
 									child: Transform.translate(
-										offset: Offset(alarmCompassDisplayRadius * sin(angle), -alarmCompassDisplayRadius * cos(angle)),
+										offset: Offset((ellipseWidth / 2) * cos(angle), (ellipseHeight / 2) * sin(angle)), // Move the arrow to the edge of the ellipse.
 										child: Transform.rotate(
-											angle: angle,
+											angle: arrowRotation,
 											child: arrow,
 										),
 									),
@@ -146,8 +149,8 @@ class MapView extends StatelessWidget {
 							IgnorePointer(
                 child: Center(
                   child: Transform.translate(
-                    offset: Offset((alarmCompassDisplayRadius - 30) * sin(angle), -(alarmCompassDisplayRadius - 30) * cos(angle)),
-                    child: compassAlarmIcon,
+                    offset: Offset((ellipseWidth / 2 - 30) * cos(angle), (ellipseHeight / 2 - 30) * sin(angle)),
+                    child: indicatorAlarmIcon,
                   ),
                 ),
               ),
@@ -376,10 +379,7 @@ Future<void> moveMapToUserLocation() async {
 	debugPrint('Moving map to user location.');
 }
 
-double getAngleBetweenTwoPositions(LatLng from, LatLng to) {
-	var angle = atan2(to.longitude - from.longitude, to.latitude - from.latitude);
-	return angle;
-}
+double getAngleBetweenTwoPositions(LatLng from, LatLng to) => atan2(to.longitude - from.longitude, to.latitude - from.latitude);
 
 Future<void> navigateToAlarm(Alarm alarm) async {
 	var state = Get.find<LocationAlarmState>();
