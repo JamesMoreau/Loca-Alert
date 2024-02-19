@@ -112,7 +112,7 @@ class MapView extends StatelessWidget {
 								initialCenter: LatLng(0, 0),
 								initialZoom: initialZoom,
 								interactionOptions: InteractionOptions(flags: myInteractiveFlags),
-								keepAlive: true, // Keep the map alive when it is not visible.
+								// keepAlive: true, // Keep the map alive when it is not visible.
 								onMapEvent: myOnMapEvent,
 								onMapReady: myOnMapReady,
 							),
@@ -386,8 +386,13 @@ Future<void> navigateToAlarm(Alarm alarm) async {
 	
 	// Switch to the map view
 	state.currentView = ProximityAlarmViews.map;
-	state.pageController.jumpToPage(state.currentView.index);
+	// state.pageController.jumpToPage(state.currentView.index);
+	await state.pageController.animateToPage(state.currentView.index,	duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+	state.followUserLocation = false; // Stop following the user's location before moving the map.
 	state.update();
+
+	// @Hack: This is bad programming, but it works for now. We need to wait for the map widget to load before we can move the map.
+	// await Future<void>.delayed(const Duration(milliseconds: 500));
 
 	// Move the map to the alarm
 	state.mapController.move(alarm.position, initialZoom);

@@ -30,7 +30,8 @@ import 'package:vibration/vibration.dart';
  [X] Change unlock icon to lock and red background.
  [X] Add scrollbar to list views.
  [X] add max lines to list views.
- [ ] Fix navigate to alarm exception on app restart (map has not been open yet).
+ [X] Fix navigate to alarm exception on app restart (map has not been open yet).
+ [ ] Figure out what to do if we call a mapController function and the map widget has not been initialized yet (this causes an exception.)
 */
 
 void main() async {
@@ -59,6 +60,7 @@ void main() async {
 
   // Start a timer for periodic location permission checks
   Timer.periodic(locationPermissionCheckPeriod, (Timer timer) => checkPermissionAndMaybeInitializeUserPositionStream());
+	await checkPermissionAndMaybeInitializeUserPositionStream();
 }
 
 enum ProximityAlarmViews { alarms, map, settings }
@@ -110,7 +112,8 @@ class MainApp extends StatelessWidget {
 										state.currentView = ProximityAlarmViews.values[index];
 										debugPrint('Navigating to ${state.currentView}.');
 										state.update();
-										state.pageController.jumpToPage(index);
+										// state.pageController.jumpToPage(index);
+										state.pageController.animateToPage(index,	duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
 									},
 									selectedIndex: state.currentView.index,
 									destinations: const [
