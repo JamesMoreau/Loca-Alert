@@ -23,7 +23,6 @@ class LocationAlarmState extends GetxController {
 	StreamSubscription<Position>? positionStream;
 
 	// EditAlarmDialog Stuff
-	// String? alarmBeingEditedId;
 	Alarm? bufferAlarm;
 	late TextEditingController nameInputController;
 

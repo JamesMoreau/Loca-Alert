@@ -39,8 +39,8 @@ class MapView extends StatelessWidget {
 
 				// If no alarms are currently visible, show an arrow pointing towards the closest alarm (if there is one).
 				var showClosestAlarmIndicator = state.closestAlarm != null && !state.closestAlarmIsInView && state.showClosestOffScreenAlarm;
-				Widget arrow = SizedBox.shrink();
-				Widget indicatorAlarmIcon = SizedBox.shrink();
+				var arrow = SizedBox.shrink() as Widget;
+				var indicatorAlarmIcon = <Widget>[];
 
 				var angle = 0.0;
 				var arrowRotation = 0.0;
@@ -48,9 +48,9 @@ class MapView extends StatelessWidget {
 				var ellipseHeight = heightOfScreen * 0.65;
 
 				if (showClosestAlarmIndicator) {
-					// Arrow pointing upwards
-					arrow = Icon(Icons.arrow_upward_rounded, color: state.closestAlarm!.color, size: 30);
-					indicatorAlarmIcon = Icon(Icons.pin_drop_rounded, color: state.closestAlarm!.color, size: 30);
+					var indicatorColor = state.closestAlarm!.color;
+					arrow = Transform.rotate(angle: -pi / 2 ,child: Icon(Icons.arrow_forward_ios, color: indicatorColor, size: 26));
+					indicatorAlarmIcon.addAll([ Icon(Icons.circle, color: Colors.grey.shade800, size: 36), Icon(Icons.circle, color: paleBlue, size: 34), Icon(Icons.pin_drop_rounded, color: indicatorColor, size: 26)]);
 
 					// Calculate the angle between the center of the map and the closest alarm
 					var centerOfMap = state.mapController.camera.center;
@@ -89,8 +89,7 @@ class MapView extends StatelessWidget {
 				// Overlay the alarm placement ui on top of the map. This is only visible when the user is placing an alarm.
 				CircleMarker? alarmPlacementCircle;
 				if (state.isPlacingAlarm) {
-					var centerOfMap = LatLng(0, 0);
-					centerOfMap = state.mapController.camera.center;
+					var centerOfMap = state.mapController.camera.center;
 					var alarmPlacementPosition = centerOfMap;
 					alarmPlacementCircle = CircleMarker(
 						point: alarmPlacementPosition,
@@ -115,7 +114,7 @@ class MapView extends StatelessWidget {
 								initialCenter: LatLng(0, 0),
 								initialZoom: initialZoom,
 								interactionOptions: InteractionOptions(flags: myInteractiveFlags),
-								// keepAlive: true, // Keep the map alive when it is not visible.
+								keepAlive: true, // Keep the map alive when it is not visible.
 								onMapEvent: myOnMapEvent,
 								onMapReady: myOnMapReady,
 							),
@@ -149,8 +148,11 @@ class MapView extends StatelessWidget {
 							IgnorePointer(
                 child: Center(
                   child: Transform.translate(
-                    offset: Offset((ellipseWidth / 2 - 30) * cos(angle), (ellipseHeight / 2 - 30) * sin(angle)),
-                    child: indicatorAlarmIcon,
+                    offset: Offset((ellipseWidth / 2 - 26) * cos(angle), (ellipseHeight / 2 - 26) * sin(angle)),
+                    child: Stack(
+											alignment: Alignment.center,
+											children: indicatorAlarmIcon,
+										),
                   ),
                 ),
               ),
@@ -384,16 +386,15 @@ double getAngleBetweenTwoPositions(LatLng from, LatLng to) => atan2(to.longitude
 Future<void> navigateToAlarm(Alarm alarm) async {
 	var state = Get.find<LocationAlarmState>();
 	
-	// Switch to the map view
-	state.currentView = ProximityAlarmViews.map;
-	// state.pageController.jumpToPage(state.currentView.index);
-	await state.pageController.animateToPage(state.currentView.index,	duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+	if (state.currentView != ProximityAlarmViews.map) {
+		state.currentView = ProximityAlarmViews.map;
+		
+		// @Hack: This is bad programming, but it works for now. We need to wait for the map widget to load before we can move the map.
+		await state.pageController.animateToPage(state.currentView.index,	duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+	}
+	
 	state.followUserLocation = false; // Stop following the user's location before moving the map.
 	state.update();
 
-	// @Hack: This is bad programming, but it works for now. We need to wait for the map widget to load before we can move the map.
-	// await Future<void>.delayed(const Duration(milliseconds: 500));
-
-	// Move the map to the alarm
 	state.mapController.move(alarm.position, initialZoom);
 }

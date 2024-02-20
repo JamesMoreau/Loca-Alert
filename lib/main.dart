@@ -24,15 +24,11 @@ import 'package:vibration/vibration.dart';
  [X] Make it so when locked to user location the map gestures are disabled. (zoom but no moving). move lock on logic to mapOnUpdate. also make it so map immedietly locks on instead of next position update. 
  [ ] Add crash analytics. use sentry. tie feedback into this.
  [ ] Could split up app state into multiple controllers for better organization and performance. Could use getBuilder Ids to accomplish this.
- [X] Convert hive stuff to just using files for both map cache and settings + alarms storage.
- [X] Give a border shadow to the bottom navigation menu so it doesn't blend it with the list view.
  [X] Convert compass circle to elipse for better screen use. also fix angle of icon. also add a background to the icon for better visual clarity.
  [X] Change unlock icon to lock and red background.
  [X] Add scrollbar to list views.
- [X] add max lines to list views.
- [X] Fix navigate to alarm exception on app restart (map has not been open yet).
- [ ] Figure out what to do if we call a mapController function and the map widget has not been initialized yet (this causes an exception.)
- [ ] Add background icon to off screen alarm ellipse for better visibility. also change the arrow icon to something simpler.
+ [X] Figure out what to do if we call a mapController function and the map widget has not been initialized yet (this causes an exception.)
+ [X] Add background icon to off screen alarm ellipse for better visibility. also change the arrow icon to something simpler.
 */
 
 void main() async {
