@@ -373,14 +373,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.2"
-  get:
-    dependency: "direct main"
-    description:
-      name: get
-      sha256: e4e7335ede17452b391ed3b2ede016545706c01a02292a6c97619705e7d2a85e
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.6.6"
   glob:
     dependency: transitive
     description:
@@ -445,6 +437,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.8.1"
+  june:
+    dependency: "direct main"
+    description:
+      name: june
+      sha256: fdead6f8128e6291287b55ade6595d3219fb4ca6768c09107d0cc02b5c36e4bf
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.8.5"
   latlong2:
     dependency: "direct main"
     description:
@@ -916,4 +916,4 @@ packages:
     version: "3.1.2"
 sdks:
   dart: ">=3.3.0 <4.0.0"
-  flutter: ">=3.13.0"
+  flutter: ">=3.10.0"

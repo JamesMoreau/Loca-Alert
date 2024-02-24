@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
+import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
@@ -21,24 +21,16 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- [X] Make it so when locked to user location the map gestures are disabled. (zoom but no moving). move lock on logic to mapOnUpdate. also make it so map immedietly locks on instead of next position update. 
  [ ] Add crash analytics. use sentry. tie feedback into this.
- [ ] Could split up app state into multiple controllers for better organization and performance. Could use getBuilder Ids to accomplish this.
- [X] Convert compass circle to elipse for better screen use. also fix angle of icon. also add a background to the icon for better visual clarity.
- [X] Change unlock icon to lock and red background.
- [X] Add scrollbar to list views.
- [X] Figure out what to do if we call a mapController function and the map widget has not been initialized yet (this causes an exception.)
- [X] Add background icon to off screen alarm ellipse for better visibility. also change the arrow icon to something simpler.
- [ ] transition to June state management.
+ [X] transition to June state management.
+ [ ] add distance value to off screen alarm.
 */
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Get.put(LocationAlarmState()); // Inject the global app state into memory. Also initializes a bunch of stuff inside onInit().
-
   // Load map tile cache
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
   var cacheDirectory = await getTemporaryDirectory();
   var mapTileCachePath = '${cacheDirectory.path}${Platform.pathSeparator}$mapTileCacheFilename';
 	state.mapTileCacheStore = FileCacheStore(mapTileCachePath);
@@ -72,7 +64,8 @@ class MainApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: GetBuilder<LocationAlarmState>(
+      home: JuneBuilder(
+        () => LocationAlarmState(),
         builder: (state) {
           return Scaffold(
             body: PageView(
@@ -109,7 +102,7 @@ class MainApp extends StatelessWidget {
 									onDestinationSelected: (int index) {
 										state.currentView = ProximityAlarmViews.values[index];
 										debugPrint('Navigating to ${state.currentView}.');
-										state.update();
+										state.setState();
 										// state.pageController.jumpToPage(index);
 										state.pageController.animateToPage(index,	duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
 									},
@@ -149,7 +142,7 @@ class NavigationService {
 }
 
 Future<void> checkAlarmsOnUserPositionChange() async {
-  var state = Get.find<LocationAlarmState>();
+  var state = June.getState(LocationAlarmState());
 
   var activeAlarms = state.alarms.where((alarm) => alarm.active).toList();
 

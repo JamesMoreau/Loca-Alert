@@ -40,6 +40,7 @@ linter:
     cascade_invocations: false
     prefer_final_in_for_each: false
     prefer_final_locals: false
+    unnecessary_lambdas: false
 
 
 # Additional information about this file can be found at

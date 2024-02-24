@@ -6,7 +6,7 @@ import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
+import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/main.dart';
@@ -15,7 +15,7 @@ import 'package:location_alarm/views/map.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
-class LocationAlarmState extends GetxController {
+class LocationAlarmState extends JuneState {
 	List<Alarm> alarms = <Alarm>[];
 
 	// User Location Stuff
@@ -75,11 +75,11 @@ class LocationAlarmState extends GetxController {
 final Uuid idGenerator = Uuid();
 
 bool deleteAlarmById(String id) {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 	for (var i = 0; i < state.alarms.length; i++) {
 		if (state.alarms[i].id == id) {
 			state.alarms.removeAt(i);
-			state.update();
+			state.setState();
 			saveAlarmsToStorage(); // update the storage
 			return true;
 		}
@@ -90,7 +90,7 @@ bool deleteAlarmById(String id) {
 }
 
 Alarm? getAlarmById(String id) {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 
 	for (var alarm in state.alarms) {
 		if (alarm.id == id) return alarm;
@@ -101,7 +101,7 @@ Alarm? getAlarmById(String id) {
 
 // pass your new alarm data here to update proxalarm state. The id field in newAlarmData is ignored. returns success.
 bool updateAlarmById(String id, Alarm newAlarmData) {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 
 	for (var alarm in state.alarms) {
 		if (alarm.id == id) {
@@ -110,7 +110,7 @@ bool updateAlarmById(String id, Alarm newAlarmData) {
 			alarm.radius = newAlarmData.radius;
 			alarm.color = newAlarmData.color;
 			alarm.active = newAlarmData.active;
-			state.update();
+			state.setState();
 			saveAlarmsToStorage();
 			return true;
 		}
@@ -120,16 +120,16 @@ bool updateAlarmById(String id, Alarm newAlarmData) {
 }
 
 void addAlarm(Alarm alarm) {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 
 	state.alarms.add(alarm);
-	state.update();
+	state.setState();
 	saveAlarmsToStorage();
 }
 
 // This saves all current alarms to shared preferences. Should be called everytime the alarms state is changed.
 Future<void> saveAlarmsToStorage() async {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 	
 	var directory = await getApplicationDocumentsDirectory();
 	var alarmsPath = '${directory.path}${Platform.pathSeparator}$alarmsFilename';
@@ -148,7 +148,7 @@ Future<void> saveAlarmsToStorage() async {
 }
 
 Future<void> loadAlarmsFromStorage() async {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 
 	var directory = await getApplicationDocumentsDirectory();
 	var alarmsPath = '${directory.path}${Platform.pathSeparator}$alarmsFilename';
@@ -172,12 +172,12 @@ Future<void> loadAlarmsFromStorage() async {
 		state.alarms.add(alarm);
 	}
 
-	state.update();
+	state.setState();
 	debugPrint('Loaded alarms from storage');
 }
 
 Future<void> loadSettingsFromStorage() async {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 
 	var directory = await getApplicationDocumentsDirectory();
 	var settingsPath = '${directory.path}${Platform.pathSeparator}$settingsFilename';
@@ -217,41 +217,41 @@ Future<void> clearAlarmsFromStorage() async {
 }
 
 void resetAlarmPlacementUIState() {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 	state.isPlacingAlarm = false;
 	state.alarmPlacementRadius = 100;
 }
 
 void changeAlarmSound({required bool newValue}) {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 	state.alarmSound = newValue;
-	state.update();
+	state.setState();
 	saveSettingsToStorage();
 }
 
 void changeVibration({required bool newValue}) {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 	state.vibration = newValue;
-	state.update();
+	state.setState();
 	saveSettingsToStorage();
 }
 
 void changeAlarmNotification({required bool newValue}) {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 	state.notification = newValue;
-	state.update();
+	state.setState();
 	saveSettingsToStorage();
 }
 
 void changeShowClosestOffScreenAlarm({required bool newValue}) {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 	state.showClosestOffScreenAlarm = newValue;
-	state.update();
+	state.setState();
 	saveSettingsToStorage();
 }
 
 Future<void> saveSettingsToStorage() async {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 	var directory = await getApplicationDocumentsDirectory();
 	var settingsPath = '${directory.path}${Platform.pathSeparator}$settingsFilename';
 	var settingsFile = File(settingsPath);
@@ -270,7 +270,7 @@ Future<void> saveSettingsToStorage() async {
 }
 
 Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 
 	var permission = await Geolocator.checkPermission();
 	var locationPermissionIsGranted = permission == LocationPermission.whileInUse || permission == LocationPermission.always;
@@ -286,7 +286,7 @@ Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
 		await state.positionStream!.cancel();
 		state.positionStream = null;
 		state.userLocation = null;
-		state.update(); // Trigger a rebuild when the user location stream is cancelled so the user no longer shows on the map.
+		state.setState(); // Trigger a rebuild when the user location stream is cancelled so the user no longer shows on the map.
 		return;
 	}
 
@@ -302,14 +302,14 @@ Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
 			// Update the map camera position to the user's location
 			if (state.followUserLocation)	await moveMapToUserLocation();
 			
-			state.update(); // Trigger a rebuild when the user location is updated.
+			state.setState(); // Trigger a rebuild when the user location is updated.
 		});
 
 		state.userLocation = null;
 		var position = await Geolocator.getLastKnownPosition();
 		if (position != null) state.userLocation = LatLng(position.latitude, position.longitude);
 				
-		state.update();
+		state.setState();
 	}
 
 	// The remaining case is locationPermissionIsGranted && positionStreamIsInitialized. In which case, do nothing.

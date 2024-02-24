@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:june/june.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
 import 'package:location_alarm/models/alarm.dart';
 import 'package:vibration/vibration.dart';
 
 void showAlarmDialog(BuildContext context, String alarmId) {
-	var state = Get.find<LocationAlarmState>();
+	var state = June.getState(LocationAlarmState());
 	var alarm = getAlarmById(alarmId);
 
 	if (alarm == null) {
