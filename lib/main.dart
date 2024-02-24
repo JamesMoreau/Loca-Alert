@@ -29,6 +29,7 @@ import 'package:vibration/vibration.dart';
  [X] Add scrollbar to list views.
  [X] Figure out what to do if we call a mapController function and the map widget has not been initialized yet (this causes an exception.)
  [X] Add background icon to off screen alarm ellipse for better visibility. also change the arrow icon to something simpler.
+ [ ] transition to June state management.
 */
 
 void main() async {
@@ -167,7 +168,6 @@ Future<void> checkAlarmsOnUserPositionChange() async {
   var userLatLng = LatLng(userPosition.latitude, userPosition.longitude);
 
   var triggeredAlarms = checkIfUserTriggersAlarms(userLatLng, activeAlarms);
-
   if (triggeredAlarms.isEmpty) {
     debugPrint('Alarm Check: No alarms triggered.');
     return;
@@ -188,17 +188,16 @@ Future<void> checkAlarmsOnUserPositionChange() async {
       await flutterLocalNotificationsPlugin.show(id++, 'Alarm Triggered', 'You have entered the radius of alarm: ${alarm.name}.', notificationDetails);
     }
 
-    // No alarm is currently triggered, so we can show the dialog.
-    state.alarmIsCurrentlyTriggered = true;
-    showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
-
-    // Commence the vibration after the dialog is shown.
     if (state.vibration) {
       for (var i = 0; i < numberOfTriggeredAlarmVibrations; i++) {
         await Vibration.vibrate(duration: 1000);
         await Future<void>.delayed(Duration(milliseconds: 1000));
       }
     }
+
+    // No alarm is currently triggered, so we can show the dialog.
+    state.alarmIsCurrentlyTriggered = true;
+    showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
   }
 }
 
