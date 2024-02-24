@@ -2,7 +2,6 @@ import 'package:fast_color_picker/fast_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
 import 'package:location_alarm/models/alarm.dart';
 import 'package:location_alarm/views/map.dart';
