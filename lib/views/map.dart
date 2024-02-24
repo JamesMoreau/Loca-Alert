@@ -21,8 +21,7 @@ class MapView extends StatelessWidget {
       () => LocationAlarmState(),
 			builder: (state) {
 				var statusBarHeight = MediaQuery.of(context).padding.top;
-				var widthOfScreen   = MediaQuery.of(context).size.width;
-				var heightOfScreen  = MediaQuery.of(context).size.height;
+        var screenSize = MediaQuery.of(context).size;
 
 				// Display user's location on the map.
 				var userLocationMarker = <Marker>[];
@@ -45,8 +44,8 @@ class MapView extends StatelessWidget {
 
 				var angle = 0.0;
 				var arrowRotation = 0.0;
-				var ellipseWidth = widthOfScreen * 0.8;
-				var ellipseHeight = heightOfScreen * 0.65;
+				var ellipseWidth = screenSize.width * 0.8;
+				var ellipseHeight = screenSize.height * 0.65;
 
 				if (showClosestAlarmIndicator) {
 					var indicatorColor = state.closestAlarm!.color;
@@ -130,7 +129,7 @@ class MapView extends StatelessWidget {
                 ),
                 if (state.showMarkersInsteadOfCircles) MarkerLayer(markers: alarmMarkers) else CircleLayer(circles: alarmCircles),
                 if (alarmPlacementCircle != null) CircleLayer(circles: [alarmPlacementCircle]),
-								MarkerLayer(markers: userLocationMarker),
+								if (state.userLocation != null) MarkerLayer(markers: userLocationMarker),
 							],
 						),
 						if (showClosestAlarmIndicator) ...[

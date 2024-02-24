@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
 
 const appName = 'Proximity Alarm';
 const author = 'James Moreau';
@@ -8,13 +7,6 @@ const githubLink = 'www.github.com/jamesmoreau';
 
 const openStreetMapTemplateUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const mapTileCacheFilename = 'myMapTiles';
-
-const london = LatLng(51.5074, -0.1278);
-const toronto = LatLng(43.6532, -79.3832);
-const montreal = LatLng(45.5017, -73.5673);
-const dublin = LatLng(53.3498, -6.2603);
-const belfast = LatLng(54.5973, -5.9301);
-const edinburgh = LatLng(55.9533, -3.1883);
 
 const initialZoom = 15.0;
 const circleToMarkerZoomThreshold = 10.0;
@@ -36,27 +28,7 @@ const settingsFilename = 'settings.json';
 const alarmsFilename = 'alarms.json';
 
 ThemeData locationAlarmTheme = ThemeData(
-	// colorSchemeSeed: const Color(0xfff1f3e0),
-	// colorSchemeSeed: Colors.lightBlue,
-	// colorSchemeSeed: Color(0xffb2d2de),
-	// colorSchemeSeed: Color.fromARGB(255, 201, 225, 233),
-
 	colorScheme: scheme,
-
-	// colorScheme: Airb
-	// colorScheme: const ColorScheme(
-	//     brightness: Brightness.light,
-	// primary: Color(0xff2b2b2b),
-	//     onPrimary: Colors.white,
-	//     secondary: Colors.white,
-	// onSecondary: Color(0xff2b2b2b),
-	//     error: Colors.red,
-	//     onError: Colors.white,
-	//     // background: Color(0xffe6e6e6),
-	//     background: Colors.white,
-	//     onBackground: Color(0xff2b2b2b),
-	// surface: Color(0xffe6e6e6),
-	// onSurface: Color(0xff2b2b2b)),
 	listTileTheme: ListTileThemeData(
 		contentPadding: const EdgeInsets.all(25),
 		tileColor: Color.fromARGB(255, 234, 239, 246), // Background color of the ListTile
@@ -99,8 +71,6 @@ ColorScheme scheme = ColorScheme(
 	inverseSurface: Color(0xff2e3133),
 	onInverseSurface: Color(0xfff0f0f3),
 	inversePrimary: Color(0xff8dcdff),
-	// primaryVariant: Color(0xff006493),
-	// secondaryVariant: Color(0xff50606e),
 	surfaceTint: Color(0xff006493),
 );
 

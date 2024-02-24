@@ -1,6 +1,7 @@
 import 'package:fast_color_picker/fast_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:june/june.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
 import 'package:location_alarm/models/alarm.dart';
@@ -40,10 +41,11 @@ class AlarmsView extends StatelessWidget {
                 ElevatedButton(
                   child: Text('Add mock alarms'),
                   onPressed: () {
-                    addAlarm(createAlarm(name: 'London', position: london, radius: 1000));
-                    addAlarm(createAlarm(name: 'Dublin', position: dublin, radius: 2000, color: Colors.blue));
-                    addAlarm(createAlarm(name: 'Toronto', position: toronto, radius: 3000, color: Colors.lightGreen));
-                    addAlarm(createAlarm(name: 'Belfast', position: belfast, radius: 1000, color: Colors.purple));
+                    addAlarm(createAlarm(name: 'Montreal', position: LatLng(45.5017, -73.5673), radius: 2000, color: Colors.blue));
+                    addAlarm(createAlarm(name: 'Saint Petersburg', position: LatLng(59.9310, 30.3609), radius: 2000, color: Colors.red));
+                    addAlarm(createAlarm(name: 'Dublin', position: LatLng(53.3498, -6.2603), radius: 2000, color: Colors.green));
+                    addAlarm(createAlarm(name: 'Osaka', position: LatLng(34.6937, 135.5023), radius: 2000, color: Colors.purple));
+                    addAlarm(createAlarm(name: 'San Antonio', position: LatLng(29.4241, -98.4936), radius: 2000, color: Colors.orange));
                   },
                 ),
               ],
