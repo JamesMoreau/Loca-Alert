@@ -23,6 +23,7 @@ import 'package:vibration/vibration.dart';
 /*
  TODO:
  - add distance value to off screen alarm.
+ - move dsn to environment variable.
 */
 
 void main() async {
