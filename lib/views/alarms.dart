@@ -41,10 +41,10 @@ class AlarmsView extends StatelessWidget {
                   child: Text('Add mock alarms'),
                   onPressed: () {
                     addAlarm(createAlarm(name: 'Montreal', position: LatLng(45.5017, -73.5673), radius: 2000, color: Colors.blue));
-                    addAlarm(createAlarm(name: 'Saint Petersburg', position: LatLng(59.9310, 30.3609), radius: 2000, color: Colors.red));
                     addAlarm(createAlarm(name: 'Dublin', position: LatLng(53.3498, -6.2603), radius: 2000, color: Colors.green));
-                    addAlarm(createAlarm(name: 'Osaka', position: LatLng(34.6937, 135.5023), radius: 2000, color: Colors.purple));
                     addAlarm(createAlarm(name: 'San Antonio', position: LatLng(29.4241, -98.4936), radius: 2000, color: Colors.orange));
+                    addAlarm(createAlarm(name: 'Saint Petersburg', position: LatLng(59.9310, 30.3609), radius: 2000, color: Colors.red));
+                    addAlarm(createAlarm(name: 'Osaka', position: LatLng(34.6937, 135.5023), radius: 2000, color: Colors.purple));
                   },
                 ),
               ],

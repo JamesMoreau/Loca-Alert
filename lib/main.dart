@@ -17,40 +17,48 @@ import 'package:location_alarm/views/map.dart';
 import 'package:location_alarm/views/settings.dart';
 import 'package:location_alarm/views/triggered_alarm_dialog.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- [ ] Add crash analytics. use sentry. tie feedback into this.
- [X] transition to June state management.
- [ ] add distance value to off screen alarm.
+ - add distance value to off screen alarm.
 */
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load map tile cache
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = 'https://bc7b8e77243b57aa0fac687ffc2ed77e@o4506730977689600.ingest.sentry.io/4506730979852288';
+      options.tracesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(BetterFeedback(child: MainApp())),
+  );
+  
 	var state = June.getState(LocationAlarmState());
-  var cacheDirectory = await getTemporaryDirectory();
-  var mapTileCachePath = '${cacheDirectory.path}${Platform.pathSeparator}$mapTileCacheFilename';
-	state.mapTileCacheStore = FileCacheStore(mapTileCachePath);
 
   // Load saved alarms and settings.
 	await loadSettingsFromStorage();
   await loadAlarmsFromStorage();
 
-  // Set up local notifications.
+  // Set up local notifications. This needs to be done before alarms are checked.
   var initializationSettings = InitializationSettings(iOS: DarwinInitializationSettings());
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-  // Set up http overrides. This is needed to increase the number of concurrent http requests allowed. This helps with the map tiles loading.
-  HttpOverrides.global = MyHttpOverrides();
-
-  runApp(BetterFeedback(child: const MainApp()));
+  state.notificationPluginIsInitialized = await flutterLocalNotificationsPlugin.initialize(initializationSettings) ?? false;
+  state.setState(); // Notify the ui that the notifications plugin is intialized.
 
   // Start a timer for periodic location permission checks
   Timer.periodic(locationPermissionCheckPeriod, (Timer timer) => checkPermissionAndMaybeInitializeUserPositionStream());
 	await checkPermissionAndMaybeInitializeUserPositionStream();
+
+  // Set up http overrides. This is needed to increase the number of concurrent http requests allowed. This helps with the map tiles loading.
+  HttpOverrides.global = MyHttpOverrides();
+
+  // Load map tile cache
+  var cacheDirectory = await getTemporaryDirectory();
+  var mapTileCachePath = '${cacheDirectory.path}${Platform.pathSeparator}$mapTileCacheFilename';
+	state.mapTileCacheStore = FileCacheStore(mapTileCachePath);
+  state.setState(); // Notify the ui that the map tile cache is loaded.
 }
 
 enum ProximityAlarmViews { alarms, map, settings }
@@ -67,6 +75,16 @@ class MainApp extends StatelessWidget {
       home: JuneBuilder(
         () => LocationAlarmState(),
         builder: (state) {
+
+          // Check that everything is initialized before building the app. Right now, the only thing that needs to be initialized is the map tile cache and notification plugin.
+          if (state.mapTileCacheStore == null || !state.notificationPluginIsInitialized) {
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+
           return Scaffold(
             body: PageView(
               controller: state.pageController,

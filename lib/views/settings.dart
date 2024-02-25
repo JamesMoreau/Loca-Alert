@@ -1,10 +1,8 @@
 import 'dart:io';
 
-import 'package:feedback/feedback.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:june/june.dart';
 import 'package:location_alarm/constants.dart';
@@ -81,7 +79,7 @@ class SettingsView extends StatelessWidget {
 									title: Text('Give Feedback'),
 									trailing: Icon(Icons.feedback_rounded),
 									onTap: () {
-										BetterFeedback.of(context).show(sendFeedback);
+										BetterFeedback.of(context).showAndUploadToSentry();
 									},
 								),
 							),
@@ -117,24 +115,6 @@ class SettingsView extends StatelessWidget {
 			},
 		);
 	}
-}
-
-Future<void> sendFeedback(UserFeedback feedback) async {
-	// Save the feedback screenshot to the user's device.
-	var dir = await getTemporaryDirectory();
-	var targetPath = '${dir.path}/feedback_image.png';
-	var imageFile = File(targetPath);
-	await imageFile.writeAsBytes(feedback.screenshot);
-
-	// Create and send the email.
-	var email = Email(
-		body: 'Feedback Text: $feedback.text',
-		subject: 'Location Alarm Feedback',
-		recipients: [myEmail],
-		attachmentPaths: [imageFile.path],
-	);
-
-	await FlutterEmailSender.send(email);
 }
 
 // for switch icons.

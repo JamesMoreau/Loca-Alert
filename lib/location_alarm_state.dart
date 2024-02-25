@@ -47,6 +47,8 @@ class LocationAlarmState extends JuneState {
 	bool notification = true;
 	bool showClosestOffScreenAlarm = true;
 
+  bool notificationPluginIsInitialized = false;
+
 	@override
 	void onInit() {
 		nameInputController = TextEditingController();
