@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:dio_cache_interceptor_file_store/dio_cache_interceptor_file_store.dart';
 import 'package:feedback/feedback.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:june/june.dart';
@@ -30,10 +32,19 @@ import 'package:vibration/vibration.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await dotenv.load();
+  
+  // Set up Sentry
+  var myProfilesSampleRate = 0.1;
+  if (kDebugMode) {
+    myProfilesSampleRate = 1.0;
+  }
+
   await SentryFlutter.init(
     (options) {
-      options.dsn = 'https://bc7b8e77243b57aa0fac687ffc2ed77e@o4506730977689600.ingest.sentry.io/4506730979852288';
+      options.dsn = dotenv.env['SENTRY_DSN'];
       options.tracesSampleRate = 1.0;
+      options.profilesSampleRate = myProfilesSampleRate;
     },
     appRunner: () => runApp(BetterFeedback(child: MainApp())),
   );
