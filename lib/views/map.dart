@@ -181,11 +181,20 @@ class MapView extends StatelessWidget {
 								crossAxisAlignment: CrossAxisAlignment.end,
 								mainAxisAlignment: MainAxisAlignment.spaceAround,
 								children: [
-									FloatingActionButton(
-										onPressed: followOrUnfollowUserLocation,
-										elevation: 4,
-										child: Icon(state.followUserLocation ? CupertinoIcons.location_fill : Icons.lock_rounded),
-									),
+									if (state.followUserLocation) ...[
+                    FloatingActionButton(
+                      onPressed: followOrUnfollowUserLocation,
+                      elevation: 4,
+                      backgroundColor: Color.fromARGB(255, 216, 255, 218),
+                      child: Icon(CupertinoIcons.location_fill),
+                    ),
+                  ] else ...[ 
+                    FloatingActionButton(
+                      onPressed: followOrUnfollowUserLocation,
+                      elevation: 4,
+                      child: Icon(Icons.lock_rounded),
+                    ),
+                  ],
 									SizedBox(height: 10),
 									if (state.isPlacingAlarm) ...[
 										// Show the confirm and cancel buttons when the user is placing an alarm.

@@ -79,7 +79,8 @@ class MainApp extends StatelessWidget {
         builder: (state) {
 
           // Check that everything is initialized before building the app. Right now, the only thing that needs to be initialized is the map tile cache and notification plugin.
-          if (state.mapTileCacheStore == null || !state.notificationPluginIsInitialized) {
+          var appIsInitialized = state.mapTileCacheStore == null || !state.notificationPluginIsInitialized;
+          if (appIsInitialized) {
             return Scaffold(
               body: Center(
                 child: CircularProgressIndicator(),
