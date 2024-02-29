@@ -38,7 +38,6 @@ dependencies:
   latlong2: any
   uuid: ^4.3.3
   vibration: ^1.8.1
-  flutter_map_cancellable_tile_provider: ^2.0.0
   path_provider: ^2.1.2
   flutter_map_cache: ^1.4.3
   feedback: ^3.0.0
