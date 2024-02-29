@@ -1,7 +1,7 @@
-import 'package:fast_color_picker/fast_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
 import 'package:location_alarm/models/alarm.dart';
 import 'package:location_alarm/views/map.dart';
@@ -40,11 +40,11 @@ class AlarmsView extends StatelessWidget {
                 ElevatedButton(
                   child: Text('Add mock alarms'),
                   onPressed: () {
-                    addAlarm(createAlarm(name: 'Montreal', position: LatLng(45.5017, -73.5673), radius: 2000, color: Colors.blue));
-                    addAlarm(createAlarm(name: 'Dublin', position: LatLng(53.3498, -6.2603), radius: 2000, color: Colors.green));
-                    addAlarm(createAlarm(name: 'San Antonio', position: LatLng(29.4241, -98.4936), radius: 2000, color: Colors.orange));
-                    addAlarm(createAlarm(name: 'Saint Petersburg', position: LatLng(59.9310, 30.3609), radius: 2000, color: Colors.red));
-                    addAlarm(createAlarm(name: 'Osaka', position: LatLng(34.6937, 135.5023), radius: 2000, color: Colors.purple));
+                    addAlarm(createAlarm(name: 'Montreal', position: LatLng(45.5017, -73.5673), radius: 2000, color: availableAlarmColors['blue']));
+                    addAlarm(createAlarm(name: 'Dublin', position: LatLng(53.3498, -6.2603), radius: 2000, color: availableAlarmColors['green']));
+                    addAlarm(createAlarm(name: 'San Antonio', position: LatLng(29.4241, -98.4936), radius: 2000, color: availableAlarmColors['orange']));
+                    addAlarm(createAlarm(name: 'Saint Petersburg', position: LatLng(59.9310, 30.3609), radius: 2000, color: availableAlarmColors['redAccent']));
+                    addAlarm(createAlarm(name: 'Osaka', position: LatLng(34.6937, 135.5023), radius: 2000, color: availableAlarmColors['purple']));
                   },
                 ),
               ],
@@ -172,13 +172,32 @@ class EditAlarmDialog extends StatelessWidget {
                 Text('Color', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  child: FastColorPicker(
-                    icon: Icons.pin_drop_rounded,
-                    selectedColor: state.bufferAlarm!.color,
-                    onColorSelected: (newColor) {
-                      state.bufferAlarm!.color = newColor;
-                      state.setState();
-                    },
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: CircleAvatar(
+                          backgroundColor: state.bufferAlarm!.color,
+                          radius: 20,
+                          child: Icon(Icons.pin_drop_rounded, color: Colors.white),
+                        ),
+                      ),
+                      for (var color in availableAlarmColors.values)
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: GestureDetector(
+                            onTap: () {
+                              state.bufferAlarm!.color = color;
+                              state.setState();
+                            },
+                            child: CircleAvatar(
+                              backgroundColor: color,
+                              radius: 20,
+                              child: color.value == state.bufferAlarm!.color.value ? Icon(Icons.check_rounded, color: Colors.white) : null,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 30),

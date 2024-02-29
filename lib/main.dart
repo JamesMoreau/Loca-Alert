@@ -24,14 +24,20 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- - add distance value to off screen alarm.
- - move dsn to environment variable.
- - add build number to app.
+ add distance an name to off screen alarm.
+ change color picker.
 */
 
 void main() async {
+  // Check that we are on a supported platform
+  if ( !(Platform.isIOS || Platform.isAndroid) ) {
+    debugPrint('Error: This app is not supported on this platform. Supported platforms are iOS and Android.');
+    return;
+  }
+  
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Load environment variables
   await dotenv.load();
   
   // Set up Sentry

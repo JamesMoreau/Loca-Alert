@@ -37,7 +37,7 @@ class MapView extends StatelessWidget {
 						),
 					]);
 
-				// If no alarms are currently visible, show an arrow pointing towards the closest alarm (if there is one).
+				// If no alarms are currently visible on screen, show an arrow pointing towards the closest alarm (if there is one).
 				var showClosestAlarmIndicator = state.closestAlarm != null && !state.closestAlarmIsInView && state.showClosestOffScreenAlarm;
 				var arrow = SizedBox.shrink() as Widget;
 				var indicatorAlarmIcon = <Widget>[];
