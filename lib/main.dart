@@ -25,7 +25,7 @@ import 'package:vibration/vibration.dart';
 /*
  TODO:
  add distance an name to off screen alarm.
- change color picker.
+ update deps
 */
 
 void main() async {
