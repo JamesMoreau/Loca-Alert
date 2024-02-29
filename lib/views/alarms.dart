@@ -40,11 +40,11 @@ class AlarmsView extends StatelessWidget {
                 ElevatedButton(
                   child: Text('Add mock alarms'),
                   onPressed: () {
-                    addAlarm(createAlarm(name: 'Montreal', position: LatLng(45.5017, -73.5673), radius: 2000, color: availableAlarmColors['blue']));
-                    addAlarm(createAlarm(name: 'Dublin', position: LatLng(53.3498, -6.2603), radius: 2000, color: availableAlarmColors['green']));
-                    addAlarm(createAlarm(name: 'San Antonio', position: LatLng(29.4241, -98.4936), radius: 2000, color: availableAlarmColors['orange']));
-                    addAlarm(createAlarm(name: 'Saint Petersburg', position: LatLng(59.9310, 30.3609), radius: 2000, color: availableAlarmColors['redAccent']));
-                    addAlarm(createAlarm(name: 'Osaka', position: LatLng(34.6937, 135.5023), radius: 2000, color: availableAlarmColors['purple']));
+                    addAlarm(createAlarm(name: 'Montreal', position: LatLng(45.5017, -73.5673), radius: 2000, color: availableAlarmColors.blue));
+                    addAlarm(createAlarm(name: 'Dublin', position: LatLng(53.3498, -6.2603), radius: 2000, color: availableAlarmColors.green));
+                    addAlarm(createAlarm(name: 'San Antonio', position: LatLng(29.4241, -98.4936), radius: 2000, color: availableAlarmColors.orange));
+                    addAlarm(createAlarm(name: 'Saint Petersburg', position: LatLng(59.9310, 30.3609), radius: 2000, color: availableAlarmColors.redAccent));
+                    addAlarm(createAlarm(name: 'Osaka', position: LatLng(34.6937, 135.5023), radius: 2000, color: availableAlarmColors.purple));
                   },
                 ),
               ],
@@ -182,7 +182,20 @@ class EditAlarmDialog extends StatelessWidget {
                           child: Icon(Icons.pin_drop_rounded, color: Colors.white),
                         ),
                       ),
-                      for (var color in availableAlarmColors.values)
+                      for (var color in [
+                        availableAlarmColors.blue,
+                        availableAlarmColors.green,
+                        availableAlarmColors.orange,
+                        availableAlarmColors.redAccent,
+                        availableAlarmColors.purple,
+                        availableAlarmColors.pink,
+                        availableAlarmColors.teal,
+                        availableAlarmColors.brown,
+                        availableAlarmColors.indigo,
+                        availableAlarmColors.amber,
+                        availableAlarmColors.grey,
+                        availableAlarmColors.black,
+                      ]) ...[
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: GestureDetector(
@@ -197,6 +210,7 @@ class EditAlarmDialog extends StatelessWidget {
                             ),
                           ),
                         ),
+                      ],
                     ],
                   ),
                 ),

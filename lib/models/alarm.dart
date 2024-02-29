@@ -7,7 +7,7 @@ import 'package:location_alarm/location_alarm_state.dart';
 class Alarm {
 	String id = '';
 	String name = '';
-	Color color = availableAlarmColors['redAccent']!;
+	Color color = availableAlarmColors.redAccent;
 	LatLng position = LatLng(0, 0);
 	double radius = 0; // Meters
 	bool active = true;
@@ -17,7 +17,7 @@ Alarm createAlarm({required String name, required LatLng position, required doub
 	var alarm = Alarm();
 	alarm.id = idGenerator.v1(); // time-based unique id
 	alarm.name = name;
-	alarm.color = color ?? availableAlarmColors['redAccent']!;
+	alarm.color = color ?? availableAlarmColors.redAccent;
 	alarm.position = position;
 	alarm.radius = radius;
 	alarm.active = active ?? true;
