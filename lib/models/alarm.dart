@@ -5,27 +5,27 @@ import 'package:location_alarm/constants.dart';
 import 'package:location_alarm/location_alarm_state.dart';
 
 class Alarm {
-	String id = '';
-	String name = '';
-	Color color = availableAlarmColors.redAccent;
-	LatLng position = LatLng(0, 0);
-	double radius = 0; // Meters
-	bool active = true;
-}
+	String id;
+	String name;
+	Color color;
+	LatLng position;
+	double radius; // Meters
+	bool active;
 
-Alarm createAlarm({required String name, required LatLng position, required double radius, Color? color, bool? active}) {
-	var alarm = Alarm();
-	alarm.id = idGenerator.v1(); // time-based unique id
-	alarm.name = name;
-	alarm.color = color ?? availableAlarmColors.redAccent;
-	alarm.position = position;
-	alarm.radius = radius;
-	alarm.active = active ?? true;
-	return alarm;
+  Alarm({
+    required this.name, 
+    required this.position, 
+    required this.radius, 
+    String? id, 
+    Color? color, 
+    this.active = true,
+  }) : id = id ?? idGenerator.v1(),
+       color = color ?? availableAlarmColors.redAccent;
 }
 
 Map<String, dynamic> alarmToMap(Alarm alarm) {
 	return {
+    'id': alarm.id,
 		'name': alarm.name,
 		'color': alarm.color.value,
 		'position': {
@@ -38,7 +38,8 @@ Map<String, dynamic> alarmToMap(Alarm alarm) {
 }
 
 Alarm alarmFromMap(Map<String, dynamic> alarmJson) {
-	return createAlarm(
+	return Alarm(
+    id: alarmJson['id'] as String,
 		name: alarmJson['name'] as String,
 		color: Color(alarmJson['color'] as int),
 		position: LatLng(

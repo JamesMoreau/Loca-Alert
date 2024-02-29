@@ -17,7 +17,7 @@ void showAlarmDialog(BuildContext context, String alarmId) {
 
 	// Callback when the user presses the "Dismiss" button or alarm times out.
 	void deactivateAlarmAndCloseDialog(BuildContext context) {
-		var dismissedAlarm = createAlarm(
+		var dismissedAlarm = Alarm(
 			name: alarm.name,
 			position: alarm.position,
 			radius: alarm.radius,

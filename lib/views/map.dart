@@ -203,7 +203,7 @@ class MapView extends StatelessWidget {
 												// Save alarm
 												var centerOfMap = state.mapController.camera.center;
 												var alarmPlacementPosition = centerOfMap;
-												var alarm = createAlarm(name: 'Alarm', position: alarmPlacementPosition, radius: state.alarmPlacementRadius);
+												var alarm = Alarm(name: 'Alarm', position: alarmPlacementPosition, radius: state.alarmPlacementRadius);
 												addAlarm(alarm);
 												resetAlarmPlacementUIState();
 												state.setState();
