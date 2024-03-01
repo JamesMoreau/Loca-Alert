@@ -50,11 +50,11 @@ class MapView extends StatelessWidget {
 				var showClosestAlarmIndicator = state.closestAlarm != null && !state.closestAlarmIsInView && state.showClosestOffScreenAlarm;
 				if (showClosestAlarmIndicator) {
 					var indicatorColor = state.closestAlarm!.color;
-					arrow = Transform.rotate(angle: -pi / 2 ,child: Icon(Icons.arrow_forward_ios, color: indicatorColor, size: 26));
+					arrow = Transform.rotate(angle: -pi / 2 ,child: Icon(Icons.arrow_forward_ios, color: indicatorColor, size: 28));
 					indicatorAlarmIcon.addAll([
-            Icon(Icons.circle, color: Colors.grey.shade800, size: 36),
-            Icon(Icons.circle, color: paleBlue, size: 34),
-            Icon(Icons.pin_drop_rounded, color: indicatorColor, size: 26),
+            // Icon(Icons.circle, color: Colors.grey.shade800, size: 36),
+            // Icon(Icons.circle, color: paleBlue, size: 34),
+            Icon(Icons.pin_drop_rounded, color: indicatorColor, size: 32),
           ]);
 
 					// Calculate the angle between the center of the map and the closest alarm
@@ -156,7 +156,7 @@ class MapView extends StatelessWidget {
 							IgnorePointer(
                 child: Center(
                   child: Transform.translate(
-                    offset: Offset((ellipseWidth / 2 - 26) * cos(angle), (ellipseHeight / 2 - 26) * sin(angle)),
+                    offset: Offset((ellipseWidth / 2 - 24) * cos(angle), (ellipseHeight / 2 - 24) * sin(angle)),
                     child: Stack(
 											alignment: Alignment.center,
 											children: indicatorAlarmIcon,
@@ -170,7 +170,7 @@ class MapView extends StatelessWidget {
                     offset: Offset((ellipseWidth / 2 - 26) * cos(angle), (ellipseHeight / 2 - 26) * sin(angle)),
                     child: Transform.translate(
                       // Offset the text from the icon to not overlap.
-                      offset: angleIs9to3 ? Offset(0, -24) : Offset(0, 24), // Move the text up or down depending on the angle to now overlap with the arrow.
+                      offset: angleIs9to3 ? Offset(0, -22) : Offset(0, 22), // Move the text up or down depending on the angle to now overlap with the arrow.
                       child: Container(
                         constraints: BoxConstraints(maxWidth: 100),
                         padding: EdgeInsets.symmetric(horizontal: 2),
