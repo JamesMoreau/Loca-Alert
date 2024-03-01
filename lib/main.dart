@@ -24,8 +24,6 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- add distance an name to off screen alarm.
- update deps
 */
 
 void main() async {

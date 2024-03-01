@@ -41,12 +41,13 @@ class LocationAlarmState extends JuneState {
 	CacheStore? mapTileCacheStore;
 	bool followUserLocation = false;
 
-	// Settings
+	// User Settings
 	bool alarmSound = true;
 	bool vibration = true;
 	bool notification = true;
 	bool showClosestOffScreenAlarm = true;
 
+  // Initializations
   bool notificationPluginIsInitialized = false;
 
 	@override

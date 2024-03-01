@@ -38,24 +38,32 @@ class MapView extends StatelessWidget {
 					]);
 
 				// If no alarms are currently visible on screen, show an arrow pointing towards the closest alarm (if there is one).
-				var showClosestAlarmIndicator = state.closestAlarm != null && !state.closestAlarmIsInView && state.showClosestOffScreenAlarm;
 				var arrow = SizedBox.shrink() as Widget;
 				var indicatorAlarmIcon = <Widget>[];
-
 				var angle = 0.0;
+        var angleIs9to3 = false;
 				var arrowRotation = 0.0;
 				var ellipseWidth = screenSize.width * 0.8;
 				var ellipseHeight = screenSize.height * 0.65;
+        var closestAlarmName = '';
 
+				var showClosestAlarmIndicator = state.closestAlarm != null && !state.closestAlarmIsInView && state.showClosestOffScreenAlarm;
 				if (showClosestAlarmIndicator) {
 					var indicatorColor = state.closestAlarm!.color;
 					arrow = Transform.rotate(angle: -pi / 2 ,child: Icon(Icons.arrow_forward_ios, color: indicatorColor, size: 26));
-					indicatorAlarmIcon.addAll([ Icon(Icons.circle, color: Colors.grey.shade800, size: 36), Icon(Icons.circle, color: paleBlue, size: 34), Icon(Icons.pin_drop_rounded, color: indicatorColor, size: 26)]);
+					indicatorAlarmIcon.addAll([
+            Icon(Icons.circle, color: Colors.grey.shade800, size: 36),
+            Icon(Icons.circle, color: paleBlue, size: 34),
+            Icon(Icons.pin_drop_rounded, color: indicatorColor, size: 26),
+          ]);
 
 					// Calculate the angle between the center of the map and the closest alarm
 					var centerOfMap = state.mapController.camera.center;
 					arrowRotation = angle = getAngleBetweenTwoPositions(centerOfMap, state.closestAlarm!.position);
 					angle = (arrowRotation + 3 * pi / 2) % (2 * pi); // Compensate the for y-axis pointing downwards on Transform.translate().
+          angleIs9to3 = angle > (0 * pi) && angle < (1 * pi); // This is used to offset the text from the icon to not overlap with the arrow.
+          
+          closestAlarmName = state.closestAlarm!.name;
 				}
 
 				// Display the alarms as circles on the map.
@@ -153,6 +161,31 @@ class MapView extends StatelessWidget {
 											alignment: Alignment.center,
 											children: indicatorAlarmIcon,
 										),
+                  ),
+                ),
+              ),
+              IgnorePointer(
+                child: Center(
+                  child: Transform.translate(
+                    offset: Offset((ellipseWidth / 2 - 26) * cos(angle), (ellipseHeight / 2 - 26) * sin(angle)),
+                    child: Transform.translate(
+                      // Offset the text from the icon to not overlap.
+                      offset: angleIs9to3 ? Offset(0, -24) : Offset(0, 24), // Move the text up or down depending on the angle to now overlap with the arrow.
+                      child: Container(
+                        constraints: BoxConstraints(maxWidth: 100),
+                        padding: EdgeInsets.symmetric(horizontal: 2),
+                        decoration: BoxDecoration(
+                          color: paleBlue,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          closestAlarmName,
+                          style: TextStyle(fontSize: 10),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),

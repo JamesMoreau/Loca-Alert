@@ -27,21 +27,6 @@ const settingsShowClosestOffScreenAlarmKey = 'showClosestOffScreenAlarm';
 const settingsFilename                     = 'settings.json';
 const alarmsFilename                       = 'alarms.json';
 
-// const Map<String, Color> availableAlarmColors = {
-//   'blue':      Colors.blue,
-//   'green':     Colors.green,
-//   'orange':    Colors.orange,
-//   'redAccent': Colors.redAccent,
-//   'purple':    Colors.purple,
-//   'pink':      Colors.pink,
-//   'teal':      Colors.teal,
-//   'brown':     Colors.brown,
-//   'indigo':    Colors.indigo,
-//   'amber':     Colors.amber,
-//   'grey':      Colors.grey,
-//   'black':     Colors.black,
-// };
-
 const availableAlarmColors = (
   blue:      Colors.blue,
   green:     Colors.green,
