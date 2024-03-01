@@ -19,7 +19,8 @@ class Alarm {
     String? id, 
     Color? color, 
     this.active = true,
-  }) : id = id ?? idGenerator.v1(),
+  }) : assert(radius > 0),
+       id = id ?? idGenerator.v1(),
        color = color ?? availableAlarmColors.redAccent;
 }
 

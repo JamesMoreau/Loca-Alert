@@ -41,6 +41,7 @@ linter:
     prefer_final_in_for_each: false
     prefer_final_locals: false
     unnecessary_lambdas: false
+    prefer_asserts_with_message: false
 
 
 # Additional information about this file can be found at
