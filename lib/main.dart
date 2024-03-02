@@ -24,6 +24,11 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
+ change name to LocaAlarm
+ add scrollbar to settings
+ add clear cache button to settings (and explain what it does)
+ make setting listTiles the same as settings.
+ maybe add info button to map view to explain some things (like map draining battery)
 */
 
 void main() async {
