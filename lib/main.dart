@@ -139,8 +139,8 @@ class MainApp extends StatelessWidget {
 										state.currentView = ProximityAlarmViews.values[index];
 										debugPrint('Navigating to ${state.currentView}.');
 										state.setState();
-										// state.pageController.jumpToPage(index);
-										state.pageController.animateToPage(index,	duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+										state.pageController.jumpToPage(index);
+										// state.pageController.animateToPage(index,	duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
 									},
 									selectedIndex: state.currentView.index,
 									destinations: const [

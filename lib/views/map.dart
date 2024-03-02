@@ -431,7 +431,7 @@ Future<void> navigateToAlarm(Alarm alarm) async {
 	if (state.currentView != ProximityAlarmViews.map) {
 		state.currentView = ProximityAlarmViews.map;
 		
-		// @Hack: This is bad programming, but it works for now. We need to wait for the map widget to load before we can move the map.
+		// @Hack: This works for now. We need to wait for the map widget to load before we can move the map.
 		await state.pageController.animateToPage(state.currentView.index,	duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
 	}
 	
