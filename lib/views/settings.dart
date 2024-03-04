@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:june/june.dart';
-import 'package:location_alarm/constants.dart';
-import 'package:location_alarm/location_alarm_state.dart';
+import 'package:loca_alert/constants.dart';
+import 'package:loca_alert/loca_alert_state.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SettingsView extends StatelessWidget {
@@ -15,7 +15,7 @@ class SettingsView extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return JuneBuilder(
-      () => LocationAlarmState(),
+      () => LocaAlertState(),
 			builder: (state) {
 				return SafeArea(
 					child: ListView(

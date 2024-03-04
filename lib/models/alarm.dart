@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/constants.dart';
-import 'package:location_alarm/location_alarm_state.dart';
+import 'package:loca_alert/constants.dart';
+import 'package:loca_alert/loca_alert_state.dart';
 
 class Alarm {
 	String id;

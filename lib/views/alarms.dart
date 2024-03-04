@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/constants.dart';
-import 'package:location_alarm/location_alarm_state.dart';
-import 'package:location_alarm/models/alarm.dart';
-import 'package:location_alarm/views/map.dart';
+import 'package:loca_alert/constants.dart';
+import 'package:loca_alert/loca_alert_state.dart';
+import 'package:loca_alert/models/alarm.dart';
+import 'package:loca_alert/views/map.dart';
 
 class AlarmsView extends StatelessWidget {
   const AlarmsView({super.key});
@@ -13,7 +13,7 @@ class AlarmsView extends StatelessWidget {
     debugPrint('Editing alarm: ${alarm.name}, id: ${alarm.id}.');
 
     // Copy the alarm to the buffer alarm. We don't do this inside the edit widget because rebuilds will cause the buffer alarm to be reset.
-    var state = June.getState(LocationAlarmState());
+    var state = June.getState(LocaAlertState());
     state.bufferAlarm = Alarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: alarm.active);
     state.nameInputController.text = alarm.name;
 
@@ -29,7 +29,7 @@ class AlarmsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return JuneBuilder(
-      () => LocationAlarmState(),
+      () => LocaAlertState(),
       builder: (state) {
         if (state.alarms.isEmpty) {
           return Center(
@@ -92,7 +92,7 @@ class EditAlarmDialog extends StatelessWidget {
   const EditAlarmDialog({required this.alarmId, super.key});
 
   void saveBufferToAlarm() {
-    var state = June.getState(LocationAlarmState());
+    var state = June.getState(LocaAlertState());
 
     // Replace the actual alarm data with the buffer alarm.
     var alarm = getAlarmById(alarmId);
@@ -113,7 +113,7 @@ class EditAlarmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return JuneBuilder(
-      () => LocationAlarmState(),
+      () => LocaAlertState(),
       builder: (state) {
         if (state.bufferAlarm == null) {
           debugPrint('Error: Buffer alarm is null.');
@@ -266,7 +266,7 @@ class EditAlarmDialog extends StatelessWidget {
   }
 
   void resetEditAlarmState() {
-    var state = June.getState(LocationAlarmState());
+    var state = June.getState(LocaAlertState());
     state.bufferAlarm = null;
     state.nameInputController.clear();
     state.setState();

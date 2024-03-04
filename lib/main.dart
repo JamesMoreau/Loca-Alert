@@ -11,20 +11,19 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/constants.dart';
-import 'package:location_alarm/location_alarm_state.dart';
-import 'package:location_alarm/models/alarm.dart';
-import 'package:location_alarm/views/alarms.dart';
-import 'package:location_alarm/views/map.dart';
-import 'package:location_alarm/views/settings.dart';
-import 'package:location_alarm/views/triggered_alarm_dialog.dart';
+import 'package:loca_alert/constants.dart';
+import 'package:loca_alert/loca_alert_state.dart';
+import 'package:loca_alert/models/alarm.dart';
+import 'package:loca_alert/views/alarms.dart';
+import 'package:loca_alert/views/map.dart';
+import 'package:loca_alert/views/settings.dart';
+import 'package:loca_alert/views/triggered_alarm_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- change name to LocaAlarm
  add scrollbar to settings
  add clear cache button to settings (and explain what it does)
  make setting listTiles the same as settings.
@@ -59,7 +58,7 @@ void main() async {
     appRunner: () => runApp(BetterFeedback(child: MainApp())),
   );
   
-	var state = June.getState(LocationAlarmState());
+	var state = June.getState(LocaAlertState());
 
   // Load saved alarms and settings.
 	await loadSettingsFromStorage();
@@ -96,7 +95,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: JuneBuilder(
-        () => LocationAlarmState(),
+        () => LocaAlertState(),
         builder: (state) {
 
           // Check that everything is initialized before building the app. Right now, the only thing that needs to be initialized is the map tile cache and notification plugin.
@@ -184,7 +183,7 @@ class NavigationService {
 }
 
 Future<void> checkAlarmsOnUserPositionChange() async {
-  var state = June.getState(LocationAlarmState());
+  var state = June.getState(LocaAlertState());
 
   var activeAlarms = state.alarms.where((alarm) => alarm.active).toList();
 

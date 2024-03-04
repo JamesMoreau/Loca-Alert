@@ -1,4 +1,4 @@
-name: location_alarm
+name: loca_alert
 description: A proximity based alarm app.
 
 # The following line prevents the package from being accidentally published to

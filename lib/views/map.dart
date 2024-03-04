@@ -7,10 +7,10 @@ import 'package:flutter_map_cache/flutter_map_cache.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/constants.dart';
-import 'package:location_alarm/location_alarm_state.dart';
-import 'package:location_alarm/main.dart';
-import 'package:location_alarm/models/alarm.dart';
+import 'package:loca_alert/constants.dart';
+import 'package:loca_alert/loca_alert_state.dart';
+import 'package:loca_alert/main.dart';
+import 'package:loca_alert/models/alarm.dart';
 
 class MapView extends StatelessWidget {
   const MapView({super.key});
@@ -18,7 +18,7 @@ class MapView extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return JuneBuilder(
-      () => LocationAlarmState(),
+      () => LocaAlertState(),
 			builder: (state) {
 				var statusBarHeight = MediaQuery.of(context).padding.top;
         var screenSize = MediaQuery.of(context).size;
@@ -122,7 +122,7 @@ class MapView extends StatelessWidget {
 								initialCenter: LatLng(0, 0),
 								initialZoom: initialZoom,
 								interactionOptions: InteractionOptions(flags: myInteractiveFlags),
-								keepAlive: true, // Keep the map alive when it is not visible.
+								// keepAlive: true, // Keep the map alive when it is not visible.
 								onMapEvent: myOnMapEvent,
 								onMapReady: myOnMapReady,
 							),
@@ -317,7 +317,7 @@ class MapView extends StatelessWidget {
 	}
 
 	void myOnMapEvent(MapEvent event) {
-		var state = June.getState(LocationAlarmState());
+		var state = June.getState(LocaAlertState());
 
 		var centerOfMap = state.mapController.camera.center;
 
@@ -379,7 +379,7 @@ class MapView extends StatelessWidget {
 	}
 
   void followOrUnfollowUserLocation() {
-    var state = June.getState(LocationAlarmState());
+    var state = June.getState(LocaAlertState());
     if (state.followUserLocation) {
       state.followUserLocation = false;
 			state.setState();
@@ -409,7 +409,7 @@ class MapView extends StatelessWidget {
 }
 
 Future<void> moveMapToUserLocation() async {
-	var state = June.getState(LocationAlarmState());
+	var state = June.getState(LocaAlertState());
 
 	var userPosition = state.userLocation;
 	if (userPosition == null) {
@@ -426,7 +426,7 @@ Future<void> moveMapToUserLocation() async {
 double getAngleBetweenTwoPositions(LatLng from, LatLng to) => atan2(to.longitude - from.longitude, to.latitude - from.latitude);
 
 Future<void> navigateToAlarm(Alarm alarm) async {
-	var state = June.getState(LocationAlarmState());
+	var state = June.getState(LocaAlertState());
 	
 	if (state.currentView != ProximityAlarmViews.map) {
 		state.currentView = ProximityAlarmViews.map;
