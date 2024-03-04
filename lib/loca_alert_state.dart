@@ -309,7 +309,11 @@ Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
 		});
 
 		state.userLocation = null;
-		var position = await Geolocator.getLastKnownPosition();
+    Position? position;
+    try {
+		  position = await Geolocator.getLastKnownPosition();
+    } catch (e) { debugPrint('Error: Unable to get last known position $e'); }
+
 		if (position != null) state.userLocation = LatLng(position.latitude, position.longitude);
 				
 		state.setState();

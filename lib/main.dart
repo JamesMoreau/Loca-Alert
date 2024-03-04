@@ -44,16 +44,16 @@ void main() async {
   await dotenv.load();
   
   // Set up Sentry
-  var myProfilesSampleRate = 0.1;
-  if (kDebugMode) {
-    myProfilesSampleRate = 1.0;
-  }
+  // var myProfilesSampleRate = 0.1;
+  // if (kDebugMode) {
+  //   myProfilesSampleRate = 1.0;
+  // }
 
   await SentryFlutter.init(
     (options) {
       options.dsn = dotenv.env['SENTRY_DSN'];
-      options.tracesSampleRate = 1.0;
-      options.profilesSampleRate = myProfilesSampleRate;
+      // options.tracesSampleRate = 1.0;
+      // options.profilesSampleRate = myProfilesSampleRate;
     },
     appRunner: () => runApp(BetterFeedback(child: MainApp())),
   );
