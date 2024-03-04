@@ -20,7 +20,6 @@ class SettingsView extends StatelessWidget {
         return SafeArea(
           child: Scrollbar(
             child: ListView(
-              padding: EdgeInsets.all(16),
               children: [
                 /*Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
@@ -34,40 +33,46 @@ class SettingsView extends StatelessWidget {
                   ),
                 ),*/
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: SwitchListTile(
+                  padding: const EdgeInsets.all(8),
+                  child: ListTile(
                     title: Text('Alarm Sound'),
-                    value: state.alarmSound,
-                    onChanged: (value) {
-                      changeAlarmSound(newValue: value);
-                    },
-                    thumbIcon: thumbIcon,
+                    trailing: Switch(
+                      value: state.alarmSound,
+                      thumbIcon: thumbIcon,
+                      onChanged: (value) {
+                        changeAlarmSound(newValue: value);
+                      },
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: SwitchListTile(
+                  padding: const EdgeInsets.all(8),
+                  child: ListTile(
                     title: Text('Vibration'),
-                    value: state.vibration,
-                    onChanged: (value) {
-                      changeVibration(newValue: value);
-                    },
-                    thumbIcon: thumbIcon,
+                    trailing: Switch(
+                      value: state.vibration,
+                      thumbIcon: thumbIcon,
+                      onChanged: (value) {
+                        changeVibration(newValue: value);
+                      },
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: SwitchListTile(
+                  padding: const EdgeInsets.all(8),
+                  child: ListTile(
                     title: Text('Show Closest Off-Screen Alarm'),
-                    value: state.showClosestOffScreenAlarm,
-                    onChanged: (value) {
-                      changeShowClosestOffScreenAlarm(newValue: value);
-                    },
-                    thumbIcon: thumbIcon,
+                    trailing: Switch(
+                      value: state.showClosestOffScreenAlarm,
+                      onChanged: (value) {
+                        changeShowClosestOffScreenAlarm(newValue: value);
+                      },
+                      thumbIcon: thumbIcon,
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.all(8),
                   child: ListTile(
                     title: Text('Location Settings'),
                     trailing: Icon(Icons.keyboard_arrow_right),
@@ -75,7 +80,7 @@ class SettingsView extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.all(8),
                   child: ListTile(
                     title: Text('Give Feedback'),
                     trailing: Icon(Icons.feedback_rounded),
@@ -86,7 +91,7 @@ class SettingsView extends StatelessWidget {
                 ),
                 if (kDebugMode)
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.all(8),
                     child: ListTile(
                       title: Text('Print Alarms In Storage.'),
                       trailing: Icon(Icons.alarm_rounded),
