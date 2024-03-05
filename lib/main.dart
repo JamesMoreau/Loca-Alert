@@ -24,9 +24,6 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- add scrollbar to settings
- add clear cache button to settings (and explain what it does)
- make setting listTiles the same as settings.
  maybe add info button to map view to explain some things (like map draining battery)
  change launch image?
 */
@@ -77,9 +74,10 @@ void main() async {
   HttpOverrides.global = MyHttpOverrides();
 
   // Load map tile cache
-  var cacheDirectory = await getTemporaryDirectory();
+  var cacheDirectory = await getApplicationCacheDirectory();
   var mapTileCachePath = '${cacheDirectory.path}${Platform.pathSeparator}$mapTileCacheFilename';
 	state.mapTileCacheStore = FileCacheStore(mapTileCachePath);
+  // await state.mapTileCacheStore!.;
   state.setState(); // Notify the ui that the map tile cache is loaded.
 }
 

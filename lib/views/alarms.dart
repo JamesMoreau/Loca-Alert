@@ -40,11 +40,11 @@ class AlarmsView extends StatelessWidget {
                 ElevatedButton(
                   child: Text('Add mock alarms'),
                   onPressed: () {
-                    addAlarm(Alarm(name: 'Montreal', position: LatLng(45.5017, -73.5673), radius: 2000, color: availableAlarmColors.blue));
-                    addAlarm(Alarm(name: 'Dublin', position: LatLng(53.3498, -6.2603), radius: 2000, color: availableAlarmColors.green));
-                    addAlarm(Alarm(name: 'San Antonio', position: LatLng(29.4241, -98.4936), radius: 2000, color: availableAlarmColors.orange));
-                    addAlarm(Alarm(name: 'Saint Petersburg', position: LatLng(59.9310, 30.3609), radius: 2000, color: availableAlarmColors.redAccent));
-                    addAlarm(Alarm(name: 'Osaka', position: LatLng(34.6937, 135.5023), radius: 2000, color: availableAlarmColors.purple));
+                    addAlarm(Alarm(name: 'Dublin',           position: LatLng(53.3498,  -6.2603), radius: 2000, color: availableAlarmColors.green));
+                    addAlarm(Alarm(name: 'Montreal',         position: LatLng(45.5017, -73.5673), radius: 2000, color: availableAlarmColors.blue));
+                    addAlarm(Alarm(name: 'Osaka',            position: LatLng(34.6937, 135.5023), radius: 2000, color: availableAlarmColors.purple));
+                    addAlarm(Alarm(name: 'Saint Petersburg', position: LatLng(59.9310,  30.3609), radius: 2000, color: availableAlarmColors.redAccent));
+                    addAlarm(Alarm(name: 'San Antonio',      position: LatLng(29.4241, -98.4936), radius: 2000, color: availableAlarmColors.orange));
                   },
                 ),
               ],

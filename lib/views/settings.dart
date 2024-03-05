@@ -89,6 +89,60 @@ class SettingsView extends StatelessWidget {
                     },
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ListTile(
+                    title: Text('Clear Map Cache'),
+                    subtitle: Text('This can free up storage on your device.'),
+                    trailing: Icon(Icons.delete_rounded),
+                    onTap: () async {
+                      var scaffoldMessenger = ScaffoldMessenger.of(context); // Don't use Scaffold.of(context) across async gaps (according to flutter).
+
+                      // Get size of map tile cache.
+                      var applicationCacheDirectory = await getApplicationCacheDirectory();
+                      if (!applicationCacheDirectory.existsSync()) {
+                        debugPrint('Warning: application cache directory does not exist');
+                        return;
+                      }
+
+                      var mapTileCachePath = '${applicationCacheDirectory.path}${Platform.pathSeparator}$mapTileCacheFilename';
+                      var mapTileCacheDirectory = Directory(mapTileCachePath);
+
+                      var entities = mapTileCacheDirectory.listSync();
+                      var totalDirectorySizeInBytes = 0;
+                      for (var entity in entities) {
+                        var stat = await entity.stat();
+                        totalDirectorySizeInBytes += stat.size;
+                        debugPrint(entity.path);
+                        debugPrint(stat.toString());
+                      }
+
+                      var bytesInAMegabyte = 1048576;
+                      var totalDirectorySizeInMegabytes = totalDirectorySizeInBytes / bytesInAMegabyte;
+
+                      // Clear map tile cache.
+                      if (state.mapTileCacheStore != null) await state.mapTileCacheStore!.clean();
+                      
+                      var megabytesFreed = totalDirectorySizeInMegabytes.toStringAsFixed(0);
+                      if (totalDirectorySizeInMegabytes < 1) {
+                        megabytesFreed = '<1';
+                      }
+                      var message = 'Map tile cache cleared. $megabytesFreed MB(s) freed.';
+                      debugPrint(message);
+
+                      // Show snackbar.
+                      scaffoldMessenger.showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          content: Container(padding: EdgeInsets.all(8), child: Text(message)),
+                          duration: const Duration(seconds: 3),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                      );
+
+                    },
+                  ),
+                ),
                 if (kDebugMode)
                   Padding(
                     padding: const EdgeInsets.all(8),

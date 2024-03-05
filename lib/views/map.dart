@@ -122,7 +122,7 @@ class MapView extends StatelessWidget {
 								initialCenter: LatLng(0, 0),
 								initialZoom: initialZoom,
 								interactionOptions: InteractionOptions(flags: myInteractiveFlags),
-								// keepAlive: true, // Keep the map alive when it is not visible.
+								// keepAlive: true, // Keep the map alive when it is not visible. This uses more battery.
 								onMapEvent: myOnMapEvent,
 								onMapReady: myOnMapReady,
 							),
