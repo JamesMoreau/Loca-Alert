@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:june/june.dart';
 import 'package:loca_alert/constants.dart';
 import 'package:loca_alert/loca_alert_state.dart';
+import 'package:loca_alert/main.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SettingsView extends StatelessWidget {
@@ -84,7 +85,7 @@ class SettingsView extends StatelessWidget {
                     title: Text('Give Feedback'),
                     trailing: Icon(Icons.feedback_rounded),
                     onTap: () {
-                      debugPrint('Feedback currently unsupported.');
+                      inAppReview.openStoreListing(appStoreId: appleID);
                     },
                   ),
                 ),

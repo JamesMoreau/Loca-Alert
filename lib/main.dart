@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:loca_alert/constants.dart';
@@ -219,3 +220,6 @@ class MyHttpOverrides extends HttpOverrides {
     return client;
   }
 }
+
+// Allow the user to review the app.
+final InAppReview inAppReview = InAppReview.instance;

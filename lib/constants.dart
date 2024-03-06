@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-const appName = 'Proximity Alarm';
+const appName = 'Loca Alarm';
 const author = 'James Moreau';
-const myEmail = 'jamiemoreau@live.com';
+const myEmail = 'jp.moreau@aol.com';
 const githubLink = 'www.github.com/jamesmoreau';
+const appleID = '6478944468';
 
 const openStreetMapTemplateUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const mapTileCacheFilename = 'myMapTiles';
