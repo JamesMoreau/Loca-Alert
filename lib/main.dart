@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:dio_cache_interceptor_file_store/dio_cache_interceptor_file_store.dart';
 import 'package:feedback/feedback.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -24,8 +23,6 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- maybe add info button to map view to explain some things (like map draining battery)
- change launch image?
 */
 
 void main() async {
