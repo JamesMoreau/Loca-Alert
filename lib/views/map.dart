@@ -207,7 +207,7 @@ class MapView extends StatelessWidget {
                           children: <Widget>[
                             Icon(Icons.info_outline_rounded, size: 40, color: Theme.of(context).colorScheme.primary),
                             const SizedBox(height: 15),
-                            const Text('Here you can place new alarms by tapping the marker button. You can also follow / unfollow your location by tapping the location button in the top right corner.'),
+                            const Text('Here you can place new alarms by tapping the marker button. You can also follow / unfollow your location by tapping the lock button in the top right corner.'),
                             const SizedBox(height: 15),
                             const Text('Staying on the map view for long periods of time may drain your battery.'),
                             TextButton(
