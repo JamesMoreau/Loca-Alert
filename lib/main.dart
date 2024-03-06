@@ -197,16 +197,16 @@ Future<void> checkAlarmsOnUserPositionChange() async {
       await flutterLocalNotificationsPlugin.show(id++, 'Alarm Triggered', 'You have entered the radius of alarm: ${alarm.name}.', notificationDetails);
     }
 
+    // No alarm is currently triggered, so we can show the dialog.
+    state.alarmIsCurrentlyTriggered = true;
+    showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
+
     if (state.vibration) {
       for (var i = 0; i < numberOfTriggeredAlarmVibrations; i++) {
         await Vibration.vibrate(duration: 1000);
         await Future<void>.delayed(Duration(milliseconds: 1000));
       }
     }
-
-    // No alarm is currently triggered, so we can show the dialog.
-    state.alarmIsCurrentlyTriggered = true;
-    showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
   }
 }
 
