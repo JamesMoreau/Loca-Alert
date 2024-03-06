@@ -23,6 +23,8 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
+ remove sentry + better feedback + dotenv
+ move info to right side of the map
 */
 
 void main() async {
