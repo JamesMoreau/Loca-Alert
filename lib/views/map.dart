@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cache/flutter_map_cache.dart';
@@ -193,36 +192,7 @@ class MapView extends StatelessWidget {
             Positioned(
               top: statusBarHeight + 10,
               left: 15,
-              child: FloatingActionButton(
-                child: Icon(Icons.info_outline_rounded),
-                onPressed: () => showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) => Dialog(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(Icons.info_outline_rounded, size: 40, color: Theme.of(context).colorScheme.primary),
-                            const SizedBox(height: 15),
-                            const Text('Here you can place new alarms by tapping the marker button. You can also follow / unfollow your location by tapping the lock button in the top right corner.'),
-                            const SizedBox(height: 15),
-                            const Text('Staying on the map view for long periods of time may drain your battery.'),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Close'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              child: SizedBox.shrink(),
             ),
             Positioned(
               // Attribution to OpenStreetMap
@@ -247,13 +217,46 @@ class MapView extends StatelessWidget {
 							child: Column(
 								crossAxisAlignment: CrossAxisAlignment.end,
 								mainAxisAlignment: MainAxisAlignment.spaceAround,
-								children: [
+                children: [
+                  FloatingActionButton(
+                    child: Icon(Icons.info_outline_rounded),
+                    onPressed: () => showDialog<void>(
+                      context: context,
+                      builder: (BuildContext context) => Dialog(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(Icons.info_outline_rounded, size: 40, color: Theme.of(context).colorScheme.primary),
+                                const SizedBox(height: 15),
+                                const Text(
+                                  'Here you can place new alarms by tapping the marker button. You can also follow / unfollow your location by tapping the lock button.',
+                                ),
+                                const SizedBox(height: 15),
+                                const Text('Staying on the map view for long periods of time may drain your battery.'),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Close'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
 									if (state.followUserLocation) ...[
                     FloatingActionButton(
                       onPressed: followOrUnfollowUserLocation,
                       elevation: 4,
                       backgroundColor: Color.fromARGB(255, 216, 255, 218),
-                      child: Icon(CupertinoIcons.location_fill),
+                      child: Icon(Icons.near_me_rounded),
                     ),
                   ] else ...[ 
                     FloatingActionButton(

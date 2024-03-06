@@ -2,10 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dio_cache_interceptor_file_store/dio_cache_interceptor_file_store.dart';
-import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:june/june.dart';
@@ -18,13 +16,10 @@ import 'package:loca_alert/views/map.dart';
 import 'package:loca_alert/views/settings.dart';
 import 'package:loca_alert/views/triggered_alarm_dialog.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- remove sentry + better feedback + dotenv
- move info to right side of the map
 */
 
 void main() async {
@@ -34,26 +29,9 @@ void main() async {
     return;
   }
   
-  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MainApp());
 
-  // Load environment variables
-  await dotenv.load();
-  
-  // Set up Sentry
-  // var myProfilesSampleRate = 0.1;
-  // if (kDebugMode) {
-  //   myProfilesSampleRate = 1.0;
-  // }
-
-  await SentryFlutter.init(
-    (options) {
-      options.dsn = dotenv.env['SENTRY_DSN'];
-      // options.tracesSampleRate = 1.0;
-      // options.profilesSampleRate = myProfilesSampleRate;
-    },
-    appRunner: () => runApp(BetterFeedback(child: MainApp())),
-  );
-  
+  // Setup state
 	var state = June.getState(LocaAlertState());
 
   // Load saved alarms and settings.
@@ -76,7 +54,6 @@ void main() async {
   var cacheDirectory = await getApplicationCacheDirectory();
   var mapTileCachePath = '${cacheDirectory.path}${Platform.pathSeparator}$mapTileCacheFilename';
 	state.mapTileCacheStore = FileCacheStore(mapTileCachePath);
-  // await state.mapTileCacheStore!.;
   state.setState(); // Notify the ui that the map tile cache is loaded.
 }
 

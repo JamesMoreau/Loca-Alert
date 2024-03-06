@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -85,7 +84,7 @@ class SettingsView extends StatelessWidget {
                     title: Text('Give Feedback'),
                     trailing: Icon(Icons.feedback_rounded),
                     onTap: () {
-                      BetterFeedback.of(context).showAndUploadToSentry();
+                      debugPrint('Feedback currently unsupported.');
                     },
                   ),
                 ),

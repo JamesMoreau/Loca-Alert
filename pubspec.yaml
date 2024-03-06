@@ -29,7 +29,6 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  cupertino_icons: ^1.0.5
   flutter:
     sdk: flutter
   flutter_local_notifications: ^16.2.0
@@ -40,14 +39,9 @@ dependencies:
   vibration: ^1.8.1
   path_provider: ^2.1.2
   flutter_map_cache: ^1.4.3
-  feedback: ^3.0.0
-  sentry_flutter: ^7.16.0
-  flutter_email_sender: ^6.0.2
-  feedback_sentry: ^3.0.0
   dio_cache_interceptor_file_store: ^1.2.3
   dio_cache_interceptor: ^3.5.0
   june: ^0.8.5
-  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:

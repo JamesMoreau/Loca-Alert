@@ -2,74 +2,44 @@ PODS:
   - device_info_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
-  - flutter_email_sender (0.0.1):
-    - Flutter
   - flutter_local_notifications (0.0.1):
     - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
-  - package_info_plus (0.4.5):
-    - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - Sentry/HybridSDK (8.20.0):
-    - SentryPrivate (= 8.20.0)
-  - sentry_flutter (0.0.1):
-    - Flutter
-    - FlutterMacOS
-    - Sentry/HybridSDK (= 8.20.0)
-  - SentryPrivate (8.20.0)
   - vibration (1.7.5):
     - Flutter
 
 DEPENDENCIES:
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
-  - flutter_email_sender (from `.symlinks/plugins/flutter_email_sender/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
-  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
-  - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
-
-SPEC REPOS:
-  trunk:
-    - Sentry
-    - SentryPrivate
 
 EXTERNAL SOURCES:
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
     :path: Flutter
-  flutter_email_sender:
-    :path: ".symlinks/plugins/flutter_email_sender/ios"
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
-  package_info_plus:
-    :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
-  sentry_flutter:
-    :path: ".symlinks/plugins/sentry_flutter/ios"
   vibration:
     :path: ".symlinks/plugins/vibration/ios"
 
 SPEC CHECKSUMS:
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_email_sender: 02d7443217d8c41483223627972bfdc09f74276b
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   geolocator_apple: 9157311f654584b9bb72686c55fc02a97b73f461
-  package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
-  Sentry: a8d7b373b9f9868442b02a0c425192f693103cbf
-  sentry_flutter: 03e7660857a8cdb236e71456a7e8447b65c8a788
-  SentryPrivate: 006b24af16828441f70e2ab6adf241bd0a8ad130
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
