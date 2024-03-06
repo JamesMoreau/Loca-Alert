@@ -21,6 +21,7 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
+ figure out what's wrong with background modes.
 */
 
 void main() async {
@@ -187,25 +188,24 @@ Future<void> checkAlarmsOnUserPositionChange() async {
   // If an alarm is already triggered, don't show another dialog.
   if (state.alarmIsCurrentlyTriggered) return;
 
-  for (var alarm in triggeredAlarms) {
-    if (state.notification) {
-      // the notification boolean is always set to true but we might want to add user control later.
-      debugPrint('Alarm Check: Sending the user a notification for alarm ${alarm.name}.');
-      var notificationDetails = NotificationDetails(
-        iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentBanner: true, presentSound: true),
-      );
-      await flutterLocalNotificationsPlugin.show(id++, 'Alarm Triggered', 'You have entered the radius of alarm: ${alarm.name}.', notificationDetails);
-    }
+  var triggeredAlarm = triggeredAlarms[0];
+  if (state.notification) {
+    // the notification boolean is always set to true but we might want to add user control later.
+    debugPrint('Alarm Check: Sending the user a notification for alarm ${triggeredAlarm.name}.');
+    var notificationDetails = NotificationDetails(
+      iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentBanner: true, presentSound: true),
+    );
+    await flutterLocalNotificationsPlugin.show(id++, 'Alarm Triggered', 'You have entered the radius of alarm: ${triggeredAlarm.name}.', notificationDetails);
+  }
 
-    // No alarm is currently triggered, so we can show the dialog.
-    state.alarmIsCurrentlyTriggered = true;
-    showAlarmDialog(NavigationService.navigatorKey.currentContext!, alarm.id);
+  // No alarm is currently triggered, so we can show the dialog.
+  state.alarmIsCurrentlyTriggered = true;
+  showAlarmDialog(NavigationService.navigatorKey.currentContext!, triggeredAlarm.id);
 
-    if (state.vibration) {
-      for (var i = 0; i < numberOfTriggeredAlarmVibrations; i++) {
-        await Vibration.vibrate(duration: 1000);
-        await Future<void>.delayed(Duration(milliseconds: 1000));
-      }
+  if (state.vibration) {
+    for (var i = 0; i < numberOfTriggeredAlarmVibrations; i++) {
+      await Vibration.vibrate(duration: 1000);
+      await Future<void>.delayed(Duration(milliseconds: 1000));
     }
   }
 }
