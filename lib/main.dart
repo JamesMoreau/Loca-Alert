@@ -33,6 +33,8 @@ void main() async {
   
   runApp(MainApp());
 
+  Timer.periodic(Duration(seconds: 5), (timer) => sayHello());
+
   // Setup state
 	var state = June.getState(LocaAlertState());
 
@@ -160,7 +162,6 @@ class NavigationService {
 
 Future<void> checkAlarmsOnUserPositionChange() async {
   var state = June.getState(LocaAlertState());
-
   var activeAlarms = state.alarms.where((alarm) => alarm.active).toList();
 
   var permission = await Geolocator.checkPermission();
@@ -175,22 +176,20 @@ Future<void> checkAlarmsOnUserPositionChange() async {
     return;
   }
 
-  var userLatLng = LatLng(userPosition.latitude, userPosition.longitude);
-
-  var triggeredAlarms = checkIfUserTriggersAlarms(userLatLng, activeAlarms);
+  var triggeredAlarms = checkIfUserTriggersAlarms(userPosition, activeAlarms);
   if (triggeredAlarms.isEmpty) {
     debugPrint('Alarm Check: No alarms triggered.');
     return;
   }
 
-  for (var alarm in triggeredAlarms) debugPrint('Alarm Check: Triggered alarm ${alarm.name}');
+  for (var alarm in triggeredAlarms) debugPrint('Alarm Check: Triggered alarm ${alarm.name} at timestamp ${DateTime.now()}.');
 
-  // If an alarm is already triggered, don't show another dialog.
+  // If another alarm is already triggered, ignore the new alarm.
   if (state.alarmIsCurrentlyTriggered) return;
 
-  var triggeredAlarm = triggeredAlarms[0];
-  if (state.notification) {
-    // the notification boolean is always set to true but we might want to add user control later.
+  var triggeredAlarm = triggeredAlarms[0]; // For now, we only handle one triggered alarm at a time.
+  triggeredAlarm.active = false; // Deactivate the alarm so it doesn't trigger again upon user location changing.
+  if (state.notification) { // the notification boolean is always set to true but we might want to add user control later.
     debugPrint('Alarm Check: Sending the user a notification for alarm ${triggeredAlarm.name}.');
     var notificationDetails = NotificationDetails(
       iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentBanner: true, presentSound: true),
@@ -223,3 +222,7 @@ class MyHttpOverrides extends HttpOverrides {
 
 // Allow the user to review the app.
 final InAppReview inAppReview = InAppReview.instance;
+
+void sayHello() {
+  debugPrint('Periodically saying hello!');
+}
