@@ -6,7 +6,6 @@ import 'package:background_location/background_location.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:loca_alert/constants.dart';
@@ -21,7 +20,6 @@ class LocaAlertState extends JuneState {
 
 	// User Location Stuff
 	LatLng? userLocation;
-	StreamSubscription<Position>? positionStream; //TODO remove
 
 	// EditAlarmDialog Stuff
 	Alarm? bufferAlarm;
@@ -271,67 +269,4 @@ Future<void> saveSettingsToStorage() async {
 	await settingsFile.writeAsString(settingsJson);
 
 	debugPrint('Saved settings to storage.');
-}
-
-Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
-	var state = June.getState(LocaAlertState());
-
-	var permission = await Geolocator.checkPermission();
-	var locationPermissionIsGranted = permission == LocationPermission.whileInUse || permission == LocationPermission.always;
-	var positionStreamIsInitialized = state.positionStream != null;
-
-	if (!locationPermissionIsGranted && !positionStreamIsInitialized) {
-		debugPrint('Location permission denied and position stream uninitialized. Cannot initialize user location stream.');
-		return;
-	}
-
-	if (!locationPermissionIsGranted && positionStreamIsInitialized) {
-		debugPrint('Location permission denied and position stream initialized. Cancelling user location stream.');
-		await state.positionStream!.cancel();
-		state.positionStream = null;
-		state.userLocation = null;
-		state.setState(); // Trigger a rebuild when the user location stream is cancelled so the user no longer shows on the map.
-		return;
-	}
-
-	if (locationPermissionIsGranted && !positionStreamIsInitialized) { // TODO refactor
-		debugPrint('Location permission granted and position stream uninitialized. Initializing user location stream.');
-    
-    BackgroundLocation.getLocationUpdates((location) async {
-      if (location.latitude == null || location.longitude == null) return; // This shouldn't happen, but just in case.
-
-      debugPrint('Location update: ${location.latitude}, ${location.longitude}.');
-      state.userLocation = LatLng(location.latitude!, location.longitude!);
-
-      await checkAlarms(); // Check if the user has entered the radius of any alarms.
-
-    	// Update the map camera position to the user's location
-			if (state.followUserLocation)	await moveMapToUserLocation();
-    });
-
-		// state.positionStream = Geolocator.getPositionStream( 
-		// 	locationSettings: LocationSettings(accuracy: LocationAccuracy.bestForNavigation, distanceFilter: 10),
-		// ).listen((Position position) async {
-		// 	state.userLocation = LatLng(position.latitude, position.longitude);
-			
-		// 	await checkAlarmsOnUserPositionChange(); // Check if the user has entered the radius of any alarms.
-			
-		// 	// Update the map camera position to the user's location
-		// 	if (state.followUserLocation)	await moveMapToUserLocation();
-			
-		// 	state.setState(); // Trigger a rebuild when the user location is updated.
-		// });
-
-		// state.userLocation = null;
-    // Position? position;
-    // try {
-		//   position = await Geolocator.getLastKnownPosition();
-    // } catch (e) { debugPrint('Error: Unable to get last known position $e'); }
-
-		// if (position != null) state.userLocation = LatLng(position.latitude, position.longitude);
-				
-		state.setState();
-	}
-
-	// The remaining case is locationPermissionIsGranted && positionStreamIsInitialized. In which case, do nothing.
 }

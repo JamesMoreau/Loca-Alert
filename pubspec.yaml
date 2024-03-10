@@ -44,6 +44,7 @@ dependencies:
   june: ^0.8.5
   in_app_review: ^2.0.8
   background_location: ^0.13.0
+  permission_handler: ^11.3.0
 
 dev_dependencies:
   flutter_test:

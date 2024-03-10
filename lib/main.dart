@@ -9,6 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:june/june.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:loca_alert/constants.dart';
 import 'package:loca_alert/loca_alert_state.dart';
 import 'package:loca_alert/models/alarm.dart';
@@ -35,12 +36,9 @@ void main() async {
 
   // Timer.periodic(Duration(seconds: 5), (timer) => sayHello());
 
-  BackgroundLocation.stopLocationService(); // To ensure that previously started services have been stopped, if desired
-  BackgroundLocation.startLocationService(distanceFilter: 10);
-
   // Setup state
 	var state = June.getState(LocaAlertState());
-
+  
   // Load saved alarms and settings.
 	await loadSettingsFromStorage();
   await loadAlarmsFromStorage();
@@ -51,8 +49,8 @@ void main() async {
   state.setState(); // Notify the ui that the notifications plugin is intialized.
 
   // Start a timer for periodic location permission checks
-  Timer.periodic(locationPermissionCheckPeriod, (Timer timer) => checkPermissionAndMaybeInitializeUserPositionStream());
-	await checkPermissionAndMaybeInitializeUserPositionStream();
+  // Timer.periodic(locationPermissionCheckPeriod, (Timer timer) => checkPermission());
+	// await checkPermission();
 
   // Set up http overrides. This is needed to increase the number of concurrent http requests allowed. This helps with the map tiles loading.
   HttpOverrides.global = MyHttpOverrides();
@@ -228,4 +226,17 @@ final InAppReview inAppReview = InAppReview.instance;
 
 void sayHello() {
   debugPrint('Periodically saying hello!');
+}
+
+Future<void> locationUpdateCallback(Location location) async {
+    if (location.latitude == null || location.longitude == null) return; // This shouldn't happen, but just in case.
+    debugPrint('Location update: ${location.latitude}, ${location.longitude}.');
+    
+    var state = June.getState(LocaAlertState());
+    state.userLocation = LatLng(location.latitude!, location.longitude!);
+
+    await checkAlarms(); // Check if the user has entered the radius of any alarms.
+
+    // Update the map camera position to the user's location
+    if (state.followUserLocation)	await moveMapToUserLocation();
 }

@@ -13,6 +13,8 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - permission_handler_apple (9.3.0):
+    - Flutter
   - url_launcher_ios (0.0.1):
     - Flutter
   - vibration (1.7.5):
@@ -26,6 +28,7 @@ DEPENDENCIES:
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
 
@@ -44,6 +47,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/in_app_review/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   vibration:
@@ -57,9 +62,10 @@ SPEC CHECKSUMS:
   geolocator_apple: 9157311f654584b9bb72686c55fc02a97b73f461
   in_app_review: 318597b3a06c22bb46dc454d56828c85f444f99d
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
+  permission_handler_apple: 036b856153a2b1f61f21030ff725f3e6fece2b78
   url_launcher_ios: 6116280ddcfe98ab8820085d8d76ae7449447586
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
 
-PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
+PODFILE CHECKSUM: 7b51096741c31f11433919048f57cd5015b2ba7b
 
 COCOAPODS: 1.13.0

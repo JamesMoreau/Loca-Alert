@@ -1,15 +1,16 @@
 import 'dart:math';
 
+import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cache/flutter_map_cache.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:loca_alert/constants.dart';
 import 'package:loca_alert/loca_alert_state.dart';
 import 'package:loca_alert/main.dart';
 import 'package:loca_alert/models/alarm.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MapView extends StatelessWidget {
   const MapView({super.key});
@@ -384,24 +385,33 @@ class MapView extends StatelessWidget {
 
 	Future<void> myOnMapReady() async {
 		// Check location permission and request it if necessary.
-		var permission = await Geolocator.checkPermission();
-		if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
-			await checkPermissionAndMaybeInitializeUserPositionStream();
+		var permission = await Permission.location.status;
+    debugPrint('Permission: $permission');
+		if (permission.isGranted) {
+      BackgroundLocation.stopLocationService(); // To ensure that previously started services have been stopped.
+      BackgroundLocation.startLocationService(distanceFilter: 10);
+      BackgroundLocation.getLocationUpdates(locationUpdateCallback);
+
 			await moveMapToUserLocation();
 			return; // the user has already granted location permissions.
 		}
 
-		if (permission == LocationPermission.denied) {
+		if (permission.isDenied) {
 			// The user has denied location permissions. We can ask for them again.
-			var permission = await Geolocator.requestPermission();
-			if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
-				await checkPermissionAndMaybeInitializeUserPositionStream();
-				await moveMapToUserLocation();
+			var newPermission = await Permission.location.request();
+      debugPrint('New Permission: $newPermission');
+			if (newPermission.isGranted) {
+        BackgroundLocation.stopLocationService();
+        BackgroundLocation.startLocationService(distanceFilter: 10);
+        BackgroundLocation.getLocationUpdates(locationUpdateCallback);
+				
+        await moveMapToUserLocation();
 			}
-			return;
+			
+      return;
 		}
 
-		if (permission == LocationPermission.deniedForever) {
+		if (permission.isPermanentlyDenied) {
 			debugPrint('Warning: User has denied location permissions forever.');
 			ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
 				SnackBar(
@@ -410,7 +420,7 @@ class MapView extends StatelessWidget {
 						padding: const EdgeInsets.all(8),
 						child: Text('Location permissions are required to use this app.'),
 					),
-					action: SnackBarAction(label: 'Settings', onPressed: Geolocator.openAppSettings),
+					action: SnackBarAction(label: 'Settings', onPressed: () {}), // TODO: Open settings.
 					shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
 				),
 			);
