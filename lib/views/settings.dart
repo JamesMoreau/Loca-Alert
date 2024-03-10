@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+// import 'package:geolocator/geolocator.dart';
 import 'package:june/june.dart';
 import 'package:loca_alert/constants.dart';
 import 'package:loca_alert/loca_alert_state.dart';
@@ -76,7 +76,7 @@ class SettingsView extends StatelessWidget {
                   child: ListTile(
                     title: Text('Location Settings'),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: Geolocator.openLocationSettings,
+                    // onTap: Geolocator.openLocationSettings, TODO
                   ),
                 ),
                 Padding(

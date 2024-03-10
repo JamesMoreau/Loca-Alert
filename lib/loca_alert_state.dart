@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:background_location/background_location.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -20,7 +21,7 @@ class LocaAlertState extends JuneState {
 
 	// User Location Stuff
 	LatLng? userLocation;
-	StreamSubscription<Position>? positionStream;
+	StreamSubscription<Position>? positionStream; //TODO remove
 
 	// EditAlarmDialog Stuff
 	Alarm? bufferAlarm;
@@ -64,7 +65,7 @@ class LocaAlertState extends JuneState {
 
 	@override
 	void onClose() {
-		if (positionStream != null) positionStream!.cancel();
+		// if (positionStream != null) positionStream!.cancel();
 		pageController.dispose();
 		mapController.dispose();
 		if (mapTileCacheStore != null) mapTileCacheStore!.close();
@@ -293,28 +294,41 @@ Future<void> checkPermissionAndMaybeInitializeUserPositionStream() async {
 		return;
 	}
 
-	if (locationPermissionIsGranted && !positionStreamIsInitialized) {
+	if (locationPermissionIsGranted && !positionStreamIsInitialized) { // TODO refactor
 		debugPrint('Location permission granted and position stream uninitialized. Initializing user location stream.');
-		state.positionStream = Geolocator.getPositionStream(
-			locationSettings: LocationSettings(accuracy: LocationAccuracy.bestForNavigation, distanceFilter: 10),
-		).listen((Position position) async {
-			state.userLocation = LatLng(position.latitude, position.longitude);
-			
-			await checkAlarmsOnUserPositionChange(); // Check if the user has entered the radius of any alarms.
-			
-			// Update the map camera position to the user's location
+    
+    BackgroundLocation.getLocationUpdates((location) async {
+      if (location.latitude == null || location.longitude == null) return; // This shouldn't happen, but just in case.
+
+      debugPrint('Location update: ${location.latitude}, ${location.longitude}.');
+      state.userLocation = LatLng(location.latitude!, location.longitude!);
+
+      await checkAlarms(); // Check if the user has entered the radius of any alarms.
+
+    	// Update the map camera position to the user's location
 			if (state.followUserLocation)	await moveMapToUserLocation();
+    });
+
+		// state.positionStream = Geolocator.getPositionStream( 
+		// 	locationSettings: LocationSettings(accuracy: LocationAccuracy.bestForNavigation, distanceFilter: 10),
+		// ).listen((Position position) async {
+		// 	state.userLocation = LatLng(position.latitude, position.longitude);
 			
-			state.setState(); // Trigger a rebuild when the user location is updated.
-		});
+		// 	await checkAlarmsOnUserPositionChange(); // Check if the user has entered the radius of any alarms.
+			
+		// 	// Update the map camera position to the user's location
+		// 	if (state.followUserLocation)	await moveMapToUserLocation();
+			
+		// 	state.setState(); // Trigger a rebuild when the user location is updated.
+		// });
 
-		state.userLocation = null;
-    Position? position;
-    try {
-		  position = await Geolocator.getLastKnownPosition();
-    } catch (e) { debugPrint('Error: Unable to get last known position $e'); }
+		// state.userLocation = null;
+    // Position? position;
+    // try {
+		//   position = await Geolocator.getLastKnownPosition();
+    // } catch (e) { debugPrint('Error: Unable to get last known position $e'); }
 
-		if (position != null) state.userLocation = LatLng(position.latitude, position.longitude);
+		// if (position != null) state.userLocation = LatLng(position.latitude, position.longitude);
 				
 		state.setState();
 	}

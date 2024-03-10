@@ -237,6 +237,8 @@ class MapView extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 15),
                                 const Text('Staying on the map view for long periods of time may drain your battery.'),
+                                const SizedBox(height: 15),
+                                const Text('Set location permissions to "Always" to use the app in the background.'),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);

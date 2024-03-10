@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:background_location/background_location.dart';
 import 'package:dio_cache_interceptor_file_store/dio_cache_interceptor_file_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,7 +33,10 @@ void main() async {
   
   runApp(MainApp());
 
-  Timer.periodic(Duration(seconds: 5), (timer) => sayHello());
+  // Timer.periodic(Duration(seconds: 5), (timer) => sayHello());
+
+  BackgroundLocation.stopLocationService(); // To ensure that previously started services have been stopped, if desired
+  BackgroundLocation.startLocationService(distanceFilter: 10);
 
   // Setup state
 	var state = June.getState(LocaAlertState());
@@ -159,7 +163,7 @@ class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
 
-Future<void> checkAlarmsOnUserPositionChange() async {
+Future<void> checkAlarms() async {
   var state = June.getState(LocaAlertState());
   var activeAlarms = state.alarms.where((alarm) => alarm.active).toList();
 

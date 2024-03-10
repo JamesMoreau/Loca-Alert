@@ -1,4 +1,6 @@
 PODS:
+  - background_location (0.0.1):
+    - Flutter
   - device_info_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
@@ -17,6 +19,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - background_location (from `.symlinks/plugins/background_location/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
@@ -27,6 +30,8 @@ DEPENDENCIES:
   - vibration (from `.symlinks/plugins/vibration/ios`)
 
 EXTERNAL SOURCES:
+  background_location:
+    :path: ".symlinks/plugins/background_location/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
@@ -45,6 +50,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/vibration/ios"
 
 SPEC CHECKSUMS:
+  background_location: 1b80c1fe3abd9912bca298618f6e365abf6f588f
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
