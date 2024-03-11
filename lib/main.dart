@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:in_app_review/in_app_review.dart';
 import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:loca_alert/constants.dart';
@@ -22,8 +21,8 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- remove in app review package and just use the url_launcher package to open the app store page.
- map.dart tabs to spaces
+ change open location settings callbacks
+ cancel user location if location permission is denied during app usage. use a timed checker.
 */
 
 void main() async {
@@ -152,13 +151,29 @@ class MainApp extends StatelessWidget {
   }
 }
 
-// Notification stuff
+/* GLOBALS */
+
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 int id = 0;
 
 class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
+
+class MyHttpOverrides extends HttpOverrides {
+  final int maxConnections = 8;
+
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    var client = super.createHttpClient(context);
+    client.maxConnectionsPerHost = maxConnections;
+    return client;
+  }
+}
+
+Location location = Location();
+
+/* END GLOBALS */
 
 Future<void> checkAlarms() async {
   var state = June.getState(LocaAlertState());
@@ -208,23 +223,6 @@ Future<void> checkAlarms() async {
     }
   }
 }
-
-class MyHttpOverrides extends HttpOverrides {
-  final int maxConnections = 8;
-
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    var client = super.createHttpClient(context);
-    client.maxConnectionsPerHost = maxConnections;
-    return client;
-  }
-}
-
-// Allow the user to review the app.
-final InAppReview inAppReview = InAppReview.instance;
-
-// Global location object
-Location location = Location();
 
 Future<void> locationUpdateCallback(LocationData location) async {
   if (location.latitude == null || location.longitude == null) return; // This shouldn't happen, but just in case.

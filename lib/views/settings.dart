@@ -8,6 +8,7 @@ import 'package:loca_alert/constants.dart';
 import 'package:loca_alert/loca_alert_state.dart';
 import 'package:loca_alert/main.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -76,7 +77,7 @@ class SettingsView extends StatelessWidget {
                   child: ListTile(
                     title: Text('Location Settings'),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    // onTap: Geolocator.openLocationSettings, TODO
+                    // onTap: location.,
                   ),
                 ),
                 Padding(
@@ -84,8 +85,17 @@ class SettingsView extends StatelessWidget {
                   child: ListTile(
                     title: Text('Give Feedback'),
                     trailing: Icon(Icons.feedback_rounded),
-                    onTap: () {
-                      inAppReview.openStoreListing(appStoreId: appleID);
+                    onTap: () async {
+                      var url = 'https://apps.apple.com/app/id$appleID';
+                      var uri = Uri.parse(url);
+                      var canLaunch = await canLaunchUrl(uri);
+                      if (!canLaunch) {
+                        if (kDebugMode) print('Cannot launch url.');
+                        return;
+                      }
+
+                      debugPrint('Opening app store page for feedback.');
+                      await launchUrl(uri);
                     },
                   ),
                 ),
