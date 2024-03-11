@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cache/flutter_map_cache.dart';
@@ -383,6 +384,7 @@ class MapView extends StatelessWidget {
   }
 
   Future<void> myOnMapReady() async {
+    debugPrint('myOnMapReady() called.');
     // Check that location services do exist.
     var serviceIsEnabled = await location.serviceEnabled();
     if (!serviceIsEnabled) {
@@ -395,6 +397,7 @@ class MapView extends StatelessWidget {
 
     // Check location permission and request it if necessary.
     var permission = await location.hasPermission();
+    debugPrint('Location permission status: $permission');
     
     // If the user has denied location permissions or it's the first time opening the app, we can ask for them.
     if (permission == PermissionStatus.denied) {
@@ -416,7 +419,7 @@ class MapView extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: Text('Location permissions are required to use this app.'),
           ),
-          action: SnackBarAction(label: 'Settings', onPressed: () {}), // TODO: Open settings.
+          action: SnackBarAction(label: 'Settings', onPressed: () => AppSettings.openAppSettings(type: AppSettingsType.location)), 
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );

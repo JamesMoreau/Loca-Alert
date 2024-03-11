@@ -38,7 +38,7 @@ class AlarmsView extends StatelessWidget {
               children: [
                 Text('No alarms.'),
                 ElevatedButton(
-                  child: Text('Add mock alarms'),
+                  child: Text('Add some alarms...'),
                   onPressed: () {
                     addAlarm(Alarm(name: 'Dublin',           position: LatLng(53.3498,  -6.2603), radius: 2000, color: availableAlarmColors.green));
                     addAlarm(Alarm(name: 'Montreal',         position: LatLng(45.5017, -73.5673), radius: 2000, color: availableAlarmColors.blue));

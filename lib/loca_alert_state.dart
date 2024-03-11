@@ -144,7 +144,7 @@ Future<void> saveAlarmsToStorage() async {
 
 	var json = jsonEncode(alarmJsons);
 	await file.writeAsString(json);
-	debugPrint('Saved alarms to storage: $alarmJsons');
+	debugPrint('Saved alarms to storage: $alarmJsons.');
 }
 
 Future<void> loadAlarmsFromStorage() async {
@@ -173,7 +173,7 @@ Future<void> loadAlarmsFromStorage() async {
 	}
 
 	state.setState();
-	debugPrint('Loaded alarms from storage');
+	debugPrint('Loaded alarms from storage.');
 }
 
 Future<void> loadSettingsFromStorage() async {
@@ -199,7 +199,7 @@ Future<void> loadSettingsFromStorage() async {
 	state.vibration = settingsMap[settingsAlarmVibrationKey] as bool;
 	state.notification = settingsMap[settingsAlarmNotificationKey] as bool;
 	state.showClosestOffScreenAlarm = settingsMap[settingsShowClosestOffScreenAlarmKey] as bool;
-	debugPrint('Loaded settings from storage');
+	debugPrint('Loaded settings from storage.');
 }
 
 Future<void> clearAlarmsFromStorage() async {

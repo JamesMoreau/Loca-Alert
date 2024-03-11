@@ -21,8 +21,7 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- change open location settings callbacks
- cancel user location if location permission is denied during app usage. use a timed checker.
+ see if i can remove dio_cache_interceptor.
 */
 
 void main() async {
@@ -34,12 +33,33 @@ void main() async {
   
   runApp(MainApp());
 
-  // Set up location
-  location.onLocationChanged.listen(locationUpdateCallback); // Register the location update callback.
-  await location.enableBackgroundMode();
-
   // Setup state
 	var state = June.getState(LocaAlertState());
+
+  // Set up location
+  await location.enableBackgroundMode();
+  location.onLocationChanged.listen((location) async {  // Register the location update callback
+    if (location.latitude == null || location.longitude == null) return; // This shouldn't happen, but just in case.
+    
+    var state = June.getState(LocaAlertState());
+    state.userLocation = LatLng(location.latitude!, location.longitude!);
+    state.setState();
+
+    await checkAlarms(); // Check if the user has entered the radius of any alarms.
+
+    // Update the map camera position to the user's location
+    if (state.followUserLocation && state.currentView == ProximityAlarmViews.map)	await moveMapToUserLocation();
+  });
+  Timer.periodic(Duration(seconds: 20), (timer) async { // Check periodically if the location permission has been denied. If so, cancel the location updates.
+    var state = June.getState(LocaAlertState());
+    var permission = await location.hasPermission();
+
+    if (permission == PermissionStatus.denied || permission == PermissionStatus.deniedForever) {
+      state.userLocation = null;
+      state.followUserLocation = false;
+      state.setState();
+    }
+  });
   
   // Load saved alarms and settings.
 	await loadSettingsFromStorage();
@@ -222,19 +242,4 @@ Future<void> checkAlarms() async {
       await Future<void>.delayed(Duration(milliseconds: 1000));
     }
   }
-}
-
-Future<void> locationUpdateCallback(LocationData location) async {
-  if (location.latitude == null || location.longitude == null) return; // This shouldn't happen, but just in case.
-  debugPrint('Location update: ${location.latitude}, ${location.longitude}.');
-  
-  var state = June.getState(LocaAlertState());
-  state.userLocation = LatLng(location.latitude!, location.longitude!);
-  state.setState();
-
-  await checkAlarms(); // Check if the user has entered the radius of any alarms.
-
-  // Update the map camera position to the user's location
-  if (state.followUserLocation)	await moveMapToUserLocation();
-
 }
