@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:background_location/background_location.dart';
 import 'package:dio_cache_interceptor_file_store/dio_cache_interceptor_file_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,12 +16,14 @@ import 'package:loca_alert/views/alarms.dart';
 import 'package:loca_alert/views/map.dart';
 import 'package:loca_alert/views/settings.dart';
 import 'package:loca_alert/views/triggered_alarm_dialog.dart';
+import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- figure out what's wrong with background modes.
+ remove in app review package and just use the url_launcher package to open the app store page.
+ map.dart tabs to spaces
 */
 
 void main() async {
@@ -34,7 +35,9 @@ void main() async {
   
   runApp(MainApp());
 
-  // Timer.periodic(Duration(seconds: 5), (timer) => sayHello());
+  // Set up location
+  location.onLocationChanged.listen(locationUpdateCallback); // Register the location update callback.
+  await location.enableBackgroundMode();
 
   // Setup state
 	var state = June.getState(LocaAlertState());
@@ -47,10 +50,6 @@ void main() async {
   var initializationSettings = InitializationSettings(iOS: DarwinInitializationSettings());
   state.notificationPluginIsInitialized = await flutterLocalNotificationsPlugin.initialize(initializationSettings) ?? false;
   state.setState(); // Notify the ui that the notifications plugin is intialized.
-
-  // Start a timer for periodic location permission checks
-  // Timer.periodic(locationPermissionCheckPeriod, (Timer timer) => checkPermission());
-	// await checkPermission();
 
   // Set up http overrides. This is needed to increase the number of concurrent http requests allowed. This helps with the map tiles loading.
   HttpOverrides.global = MyHttpOverrides();
@@ -224,19 +223,20 @@ class MyHttpOverrides extends HttpOverrides {
 // Allow the user to review the app.
 final InAppReview inAppReview = InAppReview.instance;
 
-void sayHello() {
-  debugPrint('Periodically saying hello!');
-}
+// Global location object
+Location location = Location();
 
-Future<void> locationUpdateCallback(Location location) async {
-    if (location.latitude == null || location.longitude == null) return; // This shouldn't happen, but just in case.
-    debugPrint('Location update: ${location.latitude}, ${location.longitude}.');
-    
-    var state = June.getState(LocaAlertState());
-    state.userLocation = LatLng(location.latitude!, location.longitude!);
+Future<void> locationUpdateCallback(LocationData location) async {
+  if (location.latitude == null || location.longitude == null) return; // This shouldn't happen, but just in case.
+  debugPrint('Location update: ${location.latitude}, ${location.longitude}.');
+  
+  var state = June.getState(LocaAlertState());
+  state.userLocation = LatLng(location.latitude!, location.longitude!);
+  state.setState();
 
-    await checkAlarms(); // Check if the user has entered the radius of any alarms.
+  await checkAlarms(); // Check if the user has entered the radius of any alarms.
 
-    // Update the map camera position to the user's location
-    if (state.followUserLocation)	await moveMapToUserLocation();
+  // Update the map camera position to the user's location
+  if (state.followUserLocation)	await moveMapToUserLocation();
+
 }

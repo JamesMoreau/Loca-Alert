@@ -28,15 +28,12 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We also need to access your location to alert you when you have triggered an alarm while the app is running in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need your location to alert you when you have triggered an alarm while the app is in use.</string>
+	<string>We need your location to alert you when you have triggered an alarm.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>fetch</string>
 		<string>location</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

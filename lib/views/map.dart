@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cache/flutter_map_cache.dart';
@@ -10,7 +9,7 @@ import 'package:loca_alert/constants.dart';
 import 'package:loca_alert/loca_alert_state.dart';
 import 'package:loca_alert/main.dart';
 import 'package:loca_alert/models/alarm.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:location/location.dart';
 
 class MapView extends StatelessWidget {
   const MapView({super.key});
@@ -129,7 +128,7 @@ class MapView extends StatelessWidget {
 							children: [
                 TileLayer(
                   urlTemplate: openStreetMapTemplateUrl,
-                  userAgentPackageName: 'com.location_alarm.app',
+                  userAgentPackageName: 'com.locaalarm.app',
                   tileProvider: CachedTileProvider(
                     maxStale: const Duration(days: 30),
                     store: state.mapTileCacheStore!,
@@ -239,7 +238,7 @@ class MapView extends StatelessWidget {
                                 const SizedBox(height: 15),
                                 const Text('Staying on the map view for long periods of time may drain your battery.'),
                                 const SizedBox(height: 15),
-                                const Text('Set location permissions to "Always" to use the app in the background.'),
+                                const Text('Set location permissions to "Always" and enable notifications to use the app in the background.'),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
@@ -384,34 +383,31 @@ class MapView extends StatelessWidget {
 	}
 
 	Future<void> myOnMapReady() async {
+    // Check that location services do exist.
+    var serviceIsEnabled = await location.serviceEnabled();
+    if (!serviceIsEnabled) {
+      var newIsServiceEnabled = await location.requestService();
+      if (!newIsServiceEnabled) {
+        debugPrint('Error: Location services are not enabled.');
+        return;
+      }
+    }
+
 		// Check location permission and request it if necessary.
-		var permission = await Permission.location.status;
-    debugPrint('Permission: $permission');
-		if (permission.isGranted) {
-      BackgroundLocation.stopLocationService(); // To ensure that previously started services have been stopped.
-      BackgroundLocation.startLocationService(distanceFilter: 10);
-      BackgroundLocation.getLocationUpdates(locationUpdateCallback);
-
-			await moveMapToUserLocation();
-			return; // the user has already granted location permissions.
+		var permission = await location.hasPermission();
+    
+    // If the user has denied location permissions or it's the first time opening the app, we can ask for them.
+		if (permission == PermissionStatus.denied) {
+		  var newPermission = await location.requestPermission();
+      if (newPermission == PermissionStatus.granted || newPermission == PermissionStatus.grantedLimited) {
+        debugPrint('Location permissions granted.');
+      }
+      
+			return;
 		}
 
-		if (permission.isDenied) {
-			// The user has denied location permissions. We can ask for them again.
-			var newPermission = await Permission.location.request();
-      debugPrint('New Permission: $newPermission');
-			if (newPermission.isGranted) {
-        BackgroundLocation.stopLocationService();
-        BackgroundLocation.startLocationService(distanceFilter: 10);
-        BackgroundLocation.getLocationUpdates(locationUpdateCallback);
-				
-        await moveMapToUserLocation();
-			}
-			
-      return;
-		}
-
-		if (permission.isPermanentlyDenied) {
+    // If the user has denied location permissions forever, we can't request them, so we show a snackbar.
+		if (permission == PermissionStatus.deniedForever) {
 			debugPrint('Warning: User has denied location permissions forever.');
 			ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
 				SnackBar(
@@ -424,7 +420,12 @@ class MapView extends StatelessWidget {
 					shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
 				),
 			);
+
+      return;
 		}
+
+    // The remaining case is that the user has granted location permissions, so we can move the map to their location.
+    await moveMapToUserLocation();
 	}
 
   void followOrUnfollowUserLocation() {

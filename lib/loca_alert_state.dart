@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:background_location/background_location.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -11,7 +10,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:loca_alert/constants.dart';
 import 'package:loca_alert/main.dart';
 import 'package:loca_alert/models/alarm.dart';
-import 'package:loca_alert/views/map.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -259,9 +257,9 @@ Future<void> saveSettingsToStorage() async {
 	var settingsFile = File(settingsPath);
 
 	var settingsMap = <String, dynamic>{
-		settingsAlarmSoundKey: state.alarmSound,
-		settingsAlarmVibrationKey: state.vibration,
-		settingsAlarmNotificationKey: state.notification,
+		settingsAlarmSoundKey:                state.alarmSound,
+		settingsAlarmVibrationKey:            state.vibration,
+		settingsAlarmNotificationKey:         state.notification,
 		settingsShowClosestOffScreenAlarmKey: state.showClosestOffScreenAlarm,
 	};
 

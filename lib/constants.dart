@@ -5,6 +5,7 @@ const author = 'James Moreau';
 const myEmail = 'jp.moreau@aol.com';
 const githubLink = 'www.github.com/jamesmoreau';
 const appleID = '6478944468';
+const bundleID = 'com.locaalert.app';
 
 const openStreetMapTemplateUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const mapTileCacheFilename = 'myMapTiles';
