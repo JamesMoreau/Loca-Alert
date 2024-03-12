@@ -22,6 +22,7 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
+ add sound to alarm notification
 */
 
 void main() async {
