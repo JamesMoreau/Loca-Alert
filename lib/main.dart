@@ -22,11 +22,6 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- see if i can remove dio_cache_interceptor.
- remove mapReady navigate to user location.
- use package_info_plus 
- put app version and app name in the settings.
- remove clear cache size.
 */
 
 void main() async {

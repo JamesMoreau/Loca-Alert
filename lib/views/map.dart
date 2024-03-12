@@ -20,6 +20,8 @@ class MapView extends StatelessWidget {
     return JuneBuilder(
       () => LocaAlertState(),
       builder: (state) {
+        var initalCenter = state.userLocation ?? LatLng(0, 0);
+
         var statusBarHeight = MediaQuery.of(context).padding.top;
         var screenSize = MediaQuery.of(context).size;
 
@@ -39,7 +41,7 @@ class MapView extends StatelessWidget {
 
         // If no alarms are currently visible on screen, show an arrow pointing towards the closest alarm (if there is one).
         var arrow = SizedBox.shrink() as Widget;
-        var indicatorAlarmIcon = <Widget>[];
+        var indicatorAlarmIcon = SizedBox.shrink() as Widget;
         var angle = 0.0;
         var angleIs9to3 = false;
         var arrowRotation = 0.0;
@@ -51,11 +53,7 @@ class MapView extends StatelessWidget {
         if (showClosestAlarmIndicator) {
           var indicatorColor = state.closestAlarm!.color;
           arrow = Transform.rotate(angle: -pi / 2 ,child: Icon(Icons.arrow_forward_ios, color: indicatorColor, size: 28));
-          indicatorAlarmIcon.addAll([
-            // Icon(Icons.circle, color: Colors.grey.shade800, size: 36),
-            // Icon(Icons.circle, color: paleBlue, size: 34),
-            Icon(Icons.pin_drop_rounded, color: indicatorColor, size: 32),
-          ]);
+          indicatorAlarmIcon = Icon(Icons.pin_drop_rounded, color: indicatorColor, size: 32);
 
           // Calculate the angle between the center of the map and the closest alarm
           var centerOfMap = state.mapController.camera.center;
@@ -119,7 +117,7 @@ class MapView extends StatelessWidget {
             FlutterMap(
               mapController: state.mapController,
               options: MapOptions(
-                initialCenter: LatLng(0, 0),
+                initialCenter: initalCenter,
                 initialZoom: initialZoom,
                 interactionOptions: InteractionOptions(flags: myInteractiveFlags),
                 // keepAlive: true, // Keep the map alive when it is not visible. This uses more battery.
@@ -157,10 +155,7 @@ class MapView extends StatelessWidget {
                 child: Center(
                   child: Transform.translate(
                     offset: Offset((ellipseWidth / 2 - 24) * cos(angle), (ellipseHeight / 2 - 24) * sin(angle)),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: indicatorAlarmIcon,
-                    ),
+                    child: indicatorAlarmIcon,
                   ),
                 ),
               ),
@@ -427,8 +422,7 @@ class MapView extends StatelessWidget {
       return;
     }
 
-    // The remaining case is that the user has granted location permissions, so we can move the map to their location.
-    await moveMapToUserLocation();
+    // The remaining case is that the user has granted location permissions, so we do nothing.
   }
 
   void followOrUnfollowUserLocation() {
@@ -489,7 +483,7 @@ Future<void> navigateToAlarm(Alarm alarm) async {
     // @Hack: This works for now. We need to wait for the map widget to load before we can move the map.
     await state.pageController.animateToPage(state.currentView.index,	duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
-    
+
   state.setState();
 
   state.mapController.move(alarm.position, initialZoom);
