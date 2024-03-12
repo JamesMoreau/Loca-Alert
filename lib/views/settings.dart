@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:june/june.dart';
 import 'package:loca_alert/constants.dart';
 import 'package:loca_alert/loca_alert_state.dart';
+import 'package:loca_alert/main.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,6 +18,9 @@ class SettingsView extends StatelessWidget {
     return JuneBuilder(
       () => LocaAlertState(),
       builder: (state) {
+        var versionString = version ?? 'Unknown';
+        var appNameString = appName ?? 'Unknown';
+
         return SafeArea(
           child: Scrollbar(
             child: ListView(
@@ -32,6 +36,14 @@ class SettingsView extends StatelessWidget {
                     thumbIcon: thumbIcon,
                   ),
                 ),*/
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ListTile(
+                    title: Text(appNameString),
+                    subtitle: Text('Version: $versionString'),
+                    trailing: Icon(Icons.info_rounded),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: ListTile(
@@ -107,43 +119,16 @@ class SettingsView extends StatelessWidget {
                     onTap: () async {
                       var scaffoldMessenger = ScaffoldMessenger.of(context); // Don't use Scaffold.of(context) across async gaps (according to flutter).
 
-                      // Get size of map tile cache.
-                      var applicationCacheDirectory = await getApplicationCacheDirectory();
-                      if (!applicationCacheDirectory.existsSync()) {
-                        debugPrint('Warning: application cache directory does not exist');
-                        return;
-                      }
-
-                      var mapTileCachePath = '${applicationCacheDirectory.path}${Platform.pathSeparator}$mapTileCacheFilename';
-                      var mapTileCacheDirectory = Directory(mapTileCachePath);
-
-                      var entities = mapTileCacheDirectory.listSync();
-                      var totalDirectorySizeInBytes = 0;
-                      for (var entity in entities) {
-                        var stat = await entity.stat();
-                        totalDirectorySizeInBytes += stat.size;
-                        debugPrint(entity.path);
-                        debugPrint(stat.toString());
-                      }
-
-                      var bytesInAMegabyte = 1048576;
-                      var totalDirectorySizeInMegabytes = totalDirectorySizeInBytes / bytesInAMegabyte;
-
                       // Clear map tile cache.
                       if (state.mapTileCacheStore != null) await state.mapTileCacheStore!.clean();
                       
-                      var megabytesFreed = totalDirectorySizeInMegabytes.toStringAsFixed(0);
-                      if (totalDirectorySizeInMegabytes < 1) {
-                        megabytesFreed = '<1';
-                      }
-                      var message = 'Map tile cache cleared. $megabytesFreed MB(s) freed.';
-                      debugPrint(message);
+                      debugPrint('Map tile cache cleared.');
 
                       // Show snackbar.
                       scaffoldMessenger.showSnackBar(
                         SnackBar(
                           behavior: SnackBarBehavior.floating,
-                          content: Container(padding: EdgeInsets.all(8), child: Text(message)),
+                          content: Container(padding: EdgeInsets.all(8), child: Text('Map tile cache cleared.')),
                           duration: const Duration(seconds: 3),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
@@ -156,7 +141,7 @@ class SettingsView extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8),
                     child: ListTile(
-                      title: Text('Print Alarms In Storage.'),
+                      title: Text('DEBUG: Print Alarms In Storage.'),
                       trailing: Icon(Icons.alarm_rounded),
                       onTap: () async {
                         var directory = await getApplicationDocumentsDirectory();

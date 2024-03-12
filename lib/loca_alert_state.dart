@@ -61,7 +61,6 @@ class LocaAlertState extends JuneState {
 
 	@override
 	void onClose() {
-		// if (positionStream != null) positionStream!.cancel();
 		pageController.dispose();
 		mapController.dispose();
 		if (mapTileCacheStore != null) mapTileCacheStore!.close();

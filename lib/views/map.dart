@@ -481,14 +481,15 @@ double getAngleBetweenTwoPositions(LatLng from, LatLng to) => atan2(to.longitude
 Future<void> navigateToAlarm(Alarm alarm) async {
   var state = June.getState(LocaAlertState());
   
+  state.followUserLocation = false; // Stop following the user's location before moving the map.
+
   if (state.currentView != ProximityAlarmViews.map) {
     state.currentView = ProximityAlarmViews.map;
     
     // @Hack: This works for now. We need to wait for the map widget to load before we can move the map.
     await state.pageController.animateToPage(state.currentView.index,	duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
-  
-  state.followUserLocation = false; // Stop following the user's location before moving the map.
+    
   state.setState();
 
   state.mapController.move(alarm.position, initialZoom);

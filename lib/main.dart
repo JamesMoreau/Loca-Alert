@@ -16,12 +16,17 @@ import 'package:loca_alert/views/map.dart';
 import 'package:loca_alert/views/settings.dart';
 import 'package:loca_alert/views/triggered_alarm_dialog.dart';
 import 'package:location/location.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vibration/vibration.dart';
 
 /*
  TODO:
  see if i can remove dio_cache_interceptor.
+ remove mapReady navigate to user location.
+ use package_info_plus 
+ put app version and app name in the settings.
+ remove clear cache size.
 */
 
 void main() async {
@@ -36,7 +41,13 @@ void main() async {
   // Setup state
 	var state = June.getState(LocaAlertState());
 
-  // Set up location
+  var packageInfo = await PackageInfo.fromPlatform();
+  appName = packageInfo.appName;
+  packageName = packageInfo.packageName;
+  version = packageInfo.version;
+  buildNumber = packageInfo.buildNumber;
+
+  // Set up location stuff
   await location.enableBackgroundMode();
   location.onLocationChanged.listen((location) async {  // Register the location update callback
     if (location.latitude == null || location.longitude == null) return; // This shouldn't happen, but just in case.
@@ -192,6 +203,11 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 Location location = Location();
+
+String? appName;
+String? packageName;
+String? version;
+String? buildNumber;
 
 /* END GLOBALS */
 
