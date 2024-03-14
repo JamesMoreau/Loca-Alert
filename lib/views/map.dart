@@ -379,7 +379,6 @@ class MapView extends StatelessWidget {
   }
 
   Future<void> myOnMapReady() async {
-    debugPrint('myOnMapReady() called.');
     // Check that location services do exist.
     var serviceIsEnabled = await location.serviceEnabled();
     if (!serviceIsEnabled) {

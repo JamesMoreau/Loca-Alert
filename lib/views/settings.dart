@@ -47,19 +47,6 @@ class SettingsView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: ListTile(
-                    title: Text('Alarm Sound'),
-                    trailing: Switch(
-                      value: state.alarmSound,
-                      thumbIcon: thumbIcon,
-                      onChanged: (value) {
-                        changeAlarmSound(newValue: value);
-                      },
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: ListTile(
                     title: Text('Vibration'),
                     trailing: Switch(
                       value: state.vibration,

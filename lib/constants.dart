@@ -19,7 +19,6 @@ const alarmColorOpacity = 0.5;
 const alarmCheckPeriod = Duration(seconds: 5);
 const numberOfTriggeredAlarmVibrations = 6;
 
-const settingsAlarmSoundKey                = 'alarmSound';
 const settingsAlarmVibrationKey            = 'alarmVibration';
 const settingsAlarmNotificationKey         = 'alarmNotification';
 const settingsShowClosestOffScreenAlarmKey = 'showClosestOffScreenAlarm';

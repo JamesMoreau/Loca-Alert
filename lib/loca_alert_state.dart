@@ -39,7 +39,6 @@ class LocaAlertState extends JuneState {
 	bool followUserLocation = false;
 
 	// User Settings
-	bool alarmSound = true;
 	bool vibration = true;
 	bool notification = true;
 	bool showClosestOffScreenAlarm = true;
@@ -194,7 +193,6 @@ Future<void> loadSettingsFromStorage() async {
 	}
 
 	var settingsMap = jsonDecode(settingsJson) as Map<String, dynamic>;
-	state.alarmSound = settingsMap[settingsAlarmSoundKey] as bool;
 	state.vibration = settingsMap[settingsAlarmVibrationKey] as bool;
 	state.notification = settingsMap[settingsAlarmNotificationKey] as bool;
 	state.showClosestOffScreenAlarm = settingsMap[settingsShowClosestOffScreenAlarmKey] as bool;
@@ -219,13 +217,6 @@ void resetAlarmPlacementUIState() {
 	var state = June.getState(LocaAlertState());
 	state.isPlacingAlarm = false;
 	state.alarmPlacementRadius = 100;
-}
-
-void changeAlarmSound({required bool newValue}) {
-	var state = June.getState(LocaAlertState());
-	state.alarmSound = newValue;
-	state.setState();
-	saveSettingsToStorage();
 }
 
 void changeVibration({required bool newValue}) {
@@ -256,7 +247,6 @@ Future<void> saveSettingsToStorage() async {
 	var settingsFile = File(settingsPath);
 
 	var settingsMap = <String, dynamic>{
-		settingsAlarmSoundKey:                state.alarmSound,
 		settingsAlarmVibrationKey:            state.vibration,
 		settingsAlarmNotificationKey:         state.notification,
 		settingsShowClosestOffScreenAlarmKey: state.showClosestOffScreenAlarm,

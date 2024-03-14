@@ -22,7 +22,6 @@ import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- add sound to alarm notification
 */
 
 void main() async {
@@ -205,7 +204,7 @@ String? packageName;
 String? version;
 String? buildNumber;
 
-/* END GLOBALS */
+/* END OF GLOBALS */
 
 Future<void> checkAlarms() async {
   var state = June.getState(LocaAlertState());
@@ -234,8 +233,9 @@ Future<void> checkAlarms() async {
   // If another alarm is already triggered, ignore the new alarm.
   if (state.alarmIsCurrentlyTriggered) return;
 
-  var triggeredAlarm = triggeredAlarms[0]; // For now, we only handle one triggered alarm at a time.
+  var triggeredAlarm = triggeredAlarms[0]; // For now, we only handle one triggered alarm at a time. Although it is possible to have multiple alarms triggered at the same time.
   triggeredAlarm.active = false; // Deactivate the alarm so it doesn't trigger again upon user location changing.
+
   if (state.notification) { // the notification boolean is always set to true but we might want to add user control later.
     debugPrint('Alarm Check: Sending the user a notification for alarm ${triggeredAlarm.name}.');
     var notificationDetails = NotificationDetails(
