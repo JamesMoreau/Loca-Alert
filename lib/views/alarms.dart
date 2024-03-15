@@ -3,6 +3,7 @@ import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:loca_alert/constants.dart';
 import 'package:loca_alert/loca_alert_state.dart';
+import 'package:loca_alert/main.dart';
 import 'package:loca_alert/models/alarm.dart';
 import 'package:loca_alert/views/map.dart';
 
@@ -97,13 +98,13 @@ class EditAlarmDialog extends StatelessWidget {
     // Replace the actual alarm data with the buffer alarm.
     var alarm = getAlarmById(alarmId);
     if (alarm == null) {
-      debugPrint('Error: Unable to save alarm changes.');
+      debugPrintError('Unable to save alarm changes.');
       return;
     }
 
     var bufferAlarmReference = state.bufferAlarm;
     if (bufferAlarmReference == null) {
-      debugPrint('Error: Buffer alarm is null.');
+      debugPrintError('Buffer alarm is null.');
       return;
     }
 
@@ -118,7 +119,7 @@ class EditAlarmDialog extends StatelessWidget {
       builder: (state) {
         var bufferAlarmReference = state.bufferAlarm;
         if (bufferAlarmReference == null) {
-          debugPrint('Error: Buffer alarm is null.');
+          debugPrintError('Buffer alarm is null.');
           return const SizedBox();
         }
 

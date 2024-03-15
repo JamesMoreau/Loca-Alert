@@ -16,18 +16,18 @@ import 'package:loca_alert/views/map.dart';
 import 'package:loca_alert/views/settings.dart';
 import 'package:loca_alert/views/triggered_alarm_dialog.dart';
 import 'package:location/location.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vibration/vibration.dart';
 
 /*
  TODO:
+ create constants globals and utility file.
 */
 
 void main() async {
   // Check that we are on a supported platform
   if ( !(Platform.isIOS || Platform.isAndroid) ) {
-    debugPrint('Error: This app is not supported on this platform. Supported platforms are iOS and Android.');
+    debugPrintError('This app is not supported on this platform. Supported platforms are iOS and Android.');
     return;
   }
   
@@ -35,13 +35,6 @@ void main() async {
 
   // Setup state
 	var state = June.getState(LocaAlertState());
-
-  // Save the app info to globals
-  var packageInfo = await PackageInfo.fromPlatform();
-  appName     = packageInfo.appName;
-  packageName = packageInfo.packageName;
-  version     = packageInfo.version;
-  buildNumber = packageInfo.buildNumber;
 
   // Set up location stuff
   await location.enableBackgroundMode();
@@ -202,11 +195,6 @@ class MyHttpOverrides extends HttpOverrides {
 
 Location location = Location();
 
-String? appName;
-String? packageName;
-String? version;
-String? buildNumber;
-
 /* END OF GLOBALS */
 
 Future<void> checkAlarms() async {
@@ -258,3 +246,9 @@ Future<void> checkAlarms() async {
     }
   }
 }
+
+void debugPrintWarning(String message) => debugPrint('📙: $message');
+
+void debugPrintError(String message) => debugPrint('📕: $message');
+
+void debugPrintSuccess(String message) => debugPrint('📗: $message');

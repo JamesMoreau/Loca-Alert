@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:june/june.dart';
 import 'package:loca_alert/constants.dart';
 import 'package:loca_alert/loca_alert_state.dart';
+import 'package:loca_alert/main.dart';
 import 'package:loca_alert/models/alarm.dart';
 import 'package:vibration/vibration.dart';
 
@@ -10,7 +11,7 @@ void showAlarmDialog(BuildContext context, String alarmId) {
 	var alarm = getAlarmById(alarmId);
 
 	if (alarm == null) {
-		debugPrint('Error: Unable to retrieve triggered alarm.');
+		debugPrintError('Unable to retrieve triggered alarm.');
 		state.alarmIsCurrentlyTriggered = false;
 		return;
 	}

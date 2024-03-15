@@ -18,9 +18,6 @@ class SettingsView extends StatelessWidget {
     return JuneBuilder(
       () => LocaAlertState(),
       builder: (state) {
-        var versionString = version ?? 'Unknown';
-        var appNameString = appName ?? 'Unknown';
-
         return SafeArea(
           child: Scrollbar(
             child: ListView(
@@ -39,8 +36,8 @@ class SettingsView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: ListTile(
-                    title: Text(appNameString),
-                    subtitle: Text('Version: $versionString'),
+                    title: Text(state.appName),
+                    subtitle: Text('Version: ${state.version}'),
                     trailing: const Icon(Icons.info_rounded),
                   ),
                 ),
@@ -137,7 +134,7 @@ class SettingsView extends StatelessWidget {
                         var alarmsFile = File(alarmsPath);
 
                         if (!alarmsFile.existsSync()) {
-                          debugPrint('Warning: No alarms file found in storage.');
+                          debugPrintWarning('No alarms file found in storage.');
                           return;
                         }
 

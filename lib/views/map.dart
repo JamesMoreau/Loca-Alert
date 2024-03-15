@@ -136,7 +136,7 @@ class MapView extends StatelessWidget {
               children: [
                 TileLayer(
                   urlTemplate: openStreetMapTemplateUrl,
-                  userAgentPackageName: 'com.locaalarm.app',
+                  userAgentPackageName: state.packageName,
                   tileProvider: CachedTileProvider(
                     maxStale: const Duration(days: 30),
                     store: mapTileCacheStoreReference,
@@ -394,7 +394,7 @@ class MapView extends StatelessWidget {
     if (!serviceIsEnabled) {
       var newIsServiceEnabled = await location.requestService();
       if (!newIsServiceEnabled) {
-        debugPrint('Error: Location services are not enabled.');
+        debugPrintError('Location services are not enabled.');
         return;
       }
     }
@@ -415,7 +415,7 @@ class MapView extends StatelessWidget {
 
     // If the user has denied location permissions forever, we can't request them, so we show a snackbar.
     if (permission == PermissionStatus.deniedForever) {
-      debugPrint('Warning: User has denied location permissions forever.');
+      debugPrintWarning('User has denied location permissions forever.');
       ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
@@ -444,7 +444,7 @@ class MapView extends StatelessWidget {
 
     // Check if we actually can follow the user's location. If not, show a snackbar.
     if (state.userLocation == null) {
-      debugPrint("Error: Unable to follow the user's location.");
+      debugPrintError("Unable to follow the user's location.");
       ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
@@ -469,7 +469,7 @@ Future<void> moveMapToUserLocation() async {
 
   var userPosition = state.userLocation;
   if (userPosition == null) {
-    debugPrint('Error: Unable to move map to user location.');
+    debugPrintError('Unable to move map to user location.');
     return;
   }
 

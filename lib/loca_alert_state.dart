@@ -10,6 +10,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:loca_alert/constants.dart';
 import 'package:loca_alert/main.dart';
 import 'package:loca_alert/models/alarm.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -21,7 +22,7 @@ class LocaAlertState extends JuneState {
 
 	// EditAlarmDialog Stuff
 	Alarm? bufferAlarm;
-	late TextEditingController nameInputController;
+	TextEditingController nameInputController = TextEditingController();
 
 	// View Stuff
 	ProximityAlarmViews currentView = ProximityAlarmViews.alarms;
@@ -29,7 +30,7 @@ class LocaAlertState extends JuneState {
 	bool alarmIsCurrentlyTriggered = false;
 
 	// MapView stuff
-	late MapController mapController;
+	MapController mapController = MapController();
 	bool isPlacingAlarm = false;
 	double alarmPlacementRadius = 100;
 	bool showMarkersInsteadOfCircles = false;
@@ -46,16 +47,23 @@ class LocaAlertState extends JuneState {
   // Initializations
   bool notificationPluginIsInitialized = false;
 
+  // App Info
+  late String appName;
+  late String packageName;
+  late String version;
+  late String buildNumber;
+
 	@override
-	void onInit() {
-		nameInputController = TextEditingController();
-
+	Future<void> onInit() async {
 		pageController = PageController(initialPage: currentView.index);
-
-		mapController = MapController();
+    
+    var packageInfo = await PackageInfo.fromPlatform();
+    appName     = packageInfo.appName;
+    packageName = packageInfo.packageName;
+    version     = packageInfo.version;
+    buildNumber = packageInfo.buildNumber;
 
 		super.onInit();
-		debugPrint('LocaAlert state initialized.');
 	}
 
 	@override
@@ -67,7 +75,6 @@ class LocaAlertState extends JuneState {
 		if (mapTileCacheStoreReference != null) mapTileCacheStoreReference.close();
 		
 		super.onClose();
-		debugPrint('LocaAlert state disposed.');
 	}
 }
 
@@ -85,7 +92,7 @@ bool deleteAlarmById(String id) {
 		}
 	}
 
-	debugPrint('Error: no alarm $id found to be deleted.');
+	debugPrintError('no alarm $id found to be deleted.');
 	return false;
 }
 
@@ -155,13 +162,13 @@ Future<void> loadAlarmsFromStorage() async {
 	var file = File(alarmsPath);
 
 	if (!file.existsSync()) {
-		debugPrint('Warning: No alarms file found in storage.');
+		debugPrintWarning('No alarms file found in storage.');
 		return;
 	}
 
 	var alarmJsons = await file.readAsString();
 	if (alarmJsons.isEmpty) {
-		debugPrint('Warning: No alarms found in storage.');
+		debugPrintWarning('No alarms found in storage.');
 		return;
 	}
 
@@ -184,13 +191,13 @@ Future<void> loadSettingsFromStorage() async {
 	var settingsFile = File(settingsPath);
 
 	if (!settingsFile.existsSync()) {
-		debugPrint('Warning: No settings file found in storage.');
+		debugPrintWarning('No settings file found in storage.');
 		return;
 	}
 
 	var settingsJson = await settingsFile.readAsString();
 	if (settingsJson.isEmpty) {
-		debugPrint('Error: No settings found in storage.');
+		debugPrintError('No settings found in storage.');
 		return;
 	}
 
@@ -207,7 +214,7 @@ Future<void> clearAlarmsFromStorage() async {
 	var alarmsFile = File(alarmsPath);
 
 	if (!alarmsFile.existsSync()) {
-		debugPrint('Warning: No alarms file found in storage. Cannot clear alarms.');
+		debugPrintWarning('No alarms file found in storage. Cannot clear alarms.');
 		return;
 	}
 
