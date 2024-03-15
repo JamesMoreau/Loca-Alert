@@ -101,13 +101,14 @@ class EditAlarmDialog extends StatelessWidget {
       return;
     }
 
-    if (state.bufferAlarm == null) {
+    var bufferAlarm = state.bufferAlarm;
+    if (bufferAlarm == null) {
       debugPrint('Error: Buffer alarm is null.');
       return;
     }
 
-    state.bufferAlarm!.name = state.nameInputController.text.trim();
-    updateAlarmById(alarmId, state.bufferAlarm!);
+    bufferAlarm.name = state.nameInputController.text.trim();
+    updateAlarmById(alarmId, bufferAlarm);
   }
 
   @override
@@ -115,7 +116,8 @@ class EditAlarmDialog extends StatelessWidget {
     return JuneBuilder(
       () => LocaAlertState(),
       builder: (state) {
-        if (state.bufferAlarm == null) {
+        var bufferAlarm = state.bufferAlarm;
+        if (bufferAlarm == null) {
           debugPrint('Error: Buffer alarm is null.');
           return const SizedBox();
         }
@@ -177,7 +179,7 @@ class EditAlarmDialog extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(8),
                         child: CircleAvatar(
-                          backgroundColor: state.bufferAlarm!.color,
+                          backgroundColor: bufferAlarm.color,
                           radius: 20,
                           child: Icon(Icons.pin_drop_rounded, color: Colors.white),
                         ),
@@ -200,13 +202,13 @@ class EditAlarmDialog extends StatelessWidget {
                           padding: const EdgeInsets.all(8),
                           child: GestureDetector(
                             onTap: () {
-                              state.bufferAlarm!.color = color;
+                              bufferAlarm.color = color;
                               state.setState();
                             },
                             child: CircleAvatar(
                               backgroundColor: color,
                               radius: 20,
-                              child: color.value == state.bufferAlarm!.color.value ? Icon(Icons.check_rounded, color: Colors.white) : null,
+                              child: color.value == bufferAlarm.color.value ? Icon(Icons.check_rounded, color: Colors.white) : null,
                             ),
                           ),
                         ),
@@ -216,7 +218,7 @@ class EditAlarmDialog extends StatelessWidget {
                 ),
                 SizedBox(height: 30),
                 Text('Position', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
-                Text(state.bufferAlarm!.position.toSexagesimal(), style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(bufferAlarm.position.toSexagesimal(), style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -225,7 +227,7 @@ class EditAlarmDialog extends StatelessWidget {
                       onPressed: () async {
                         // Needs to be async since we have to wait for navigateToAlarm to finish before we can reset the state.
                         Navigator.pop(context);
-                        await navigateToAlarm(state.bufferAlarm!);
+                        await navigateToAlarm(bufferAlarm);
                         resetEditAlarmState();
                       },
                       icon: Icon(Icons.navigate_next_rounded),
@@ -235,7 +237,7 @@ class EditAlarmDialog extends StatelessWidget {
                 ),
                 SizedBox(height: 30),
                 Text('Radius / Size (in meters)', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
-                Text(state.bufferAlarm!.radius.toInt().toString(), style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(bufferAlarm.radius.toInt().toString(), style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
