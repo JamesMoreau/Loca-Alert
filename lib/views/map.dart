@@ -66,7 +66,7 @@ class MapView extends StatelessWidget {
 
           // Calculate the angle between the center of the map and the closest alarm
           var centerOfMap = state.mapController.camera.center;
-          arrowRotation = angle = getAngleBetweenTwoPositions(centerOfMap, state.closestAlarm!.position);
+          arrowRotation = angle = getAngleBetweenTwoPositions(centerOfMap, closestAlarmReference.position);
           angle = (arrowRotation + 3 * pi / 2) % (2 * pi); // Compensate the for y-axis pointing downwards on Transform.translate().
           angleIs9to3 = angle > (0 * pi) && angle < (1 * pi); // This is used to offset the text from the icon to not overlap with the arrow.
           
