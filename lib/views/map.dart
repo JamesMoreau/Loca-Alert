@@ -6,7 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cache/flutter_map_cache.dart';
 import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:loca_alert/constants.dart';
+import 'package:loca_alert/globals_constants_and_utility.dart';
 import 'package:loca_alert/loca_alert_state.dart';
 import 'package:loca_alert/main.dart';
 import 'package:loca_alert/models/alarm.dart';

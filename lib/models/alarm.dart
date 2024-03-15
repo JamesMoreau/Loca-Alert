@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:loca_alert/constants.dart';
+import 'package:loca_alert/globals_constants_and_utility.dart';
 import 'package:loca_alert/loca_alert_state.dart';
 
 class Alarm {
@@ -50,33 +49,4 @@ Alarm alarmFromMap(Map<String, dynamic> alarmJson) {
 		radius: alarmJson['radius'] as double,
 		active: alarmJson['active'] as bool,
 	);
-}
-
-// This function returns the alarms that the user's position is currently intersected with.
-List<Alarm> checkIfUserTriggersAlarms(LatLng userPosition, List<Alarm> alarms) {
-	var triggeredAlarms = <Alarm>[];
-
-	for (var alarm in alarms) {
-		var distance = Geolocator.distanceBetween(alarm.position.latitude, alarm.position.longitude, userPosition.latitude, userPosition.longitude);
-		if (distance <= alarm.radius) triggeredAlarms.add(alarm);
-	}
-
-	return triggeredAlarms;
-}
-
-Alarm? getClosestAlarmToPosition(LatLng position, List<Alarm> alarms) {
-	Alarm? closestAlarm;
-	var closestDistance = double.infinity;
-
-	if (alarms.isEmpty) return null;
-
-	for (var alarm in alarms) {
-		var distance = Geolocator.distanceBetween(alarm.position.latitude, alarm.position.longitude, position.latitude, position.longitude);
-		if (distance < closestDistance) {
-			closestAlarm = alarm;
-			closestDistance = distance;
-		}
-	}
-
-	return closestAlarm;
 }

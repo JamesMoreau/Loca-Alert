@@ -4,15 +4,19 @@ import 'dart:io';
 
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:loca_alert/constants.dart';
+import 'package:loca_alert/globals_constants_and_utility.dart';
 import 'package:loca_alert/main.dart';
 import 'package:loca_alert/models/alarm.dart';
+import 'package:loca_alert/views/triggered_alarm_dialog.dart';
+import 'package:location/location.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:vibration/vibration.dart';
 
 class LocaAlertState extends JuneState {
 	List<Alarm> alarms = <Alarm>[];
@@ -265,4 +269,83 @@ Future<void> saveSettingsToStorage() async {
 	await settingsFile.writeAsString(settingsJson);
 
 	debugPrint('Saved settings to storage.');
+}
+
+Future<void> checkAlarms() async {
+  var state = June.getState(LocaAlertState());
+  var activeAlarms = state.alarms.where((alarm) => alarm.active).toList();
+
+  var permission = await location.hasPermission();
+  if (permission == PermissionStatus.denied || permission == PermissionStatus.deniedForever) {
+    debugPrint('Alarm Check: Location permission denied. Cannot check for triggered alarms.');
+    return;
+  }
+
+  var userPositionReference = state.userLocation;
+  if (userPositionReference == null) {
+    debugPrint('Alarm Check: No user position found.');
+    return;
+  }
+
+  var triggeredAlarms = checkIfUserTriggersAlarms(userPositionReference, activeAlarms);
+  if (triggeredAlarms.isEmpty) {
+    debugPrint('Alarm Check: No alarms triggered.');
+    return;
+  }
+
+  for (var alarm in triggeredAlarms) debugPrint('Alarm Check: Triggered alarm ${alarm.name} at timestamp ${DateTime.now()}.');
+
+  // If another alarm is already triggered, ignore the new alarm.
+  if (state.alarmIsCurrentlyTriggered) return;
+
+  var triggeredAlarm = triggeredAlarms[0]; // For now, we only handle one triggered alarm at a time. Although it is possible to have multiple alarms triggered at the same time.
+  triggeredAlarm.active = false; // Deactivate the alarm so it doesn't trigger again upon user location changing.
+
+  if (state.notification) { // the notification boolean is always set to true but we might want to add user control later.
+    debugPrint('Alarm Check: Sending the user a notification for alarm ${triggeredAlarm.name}.');
+    var notificationDetails = const NotificationDetails(
+      iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentBanner: true, presentSound: true),
+    );
+    await flutterLocalNotificationsPlugin.show(id++, 'Alarm Triggered', 'You have entered the radius of alarm: ${triggeredAlarm.name}.', notificationDetails);
+  }
+
+  // No alarm is currently triggered, so we can show the dialog.
+  state.alarmIsCurrentlyTriggered = true;
+  showAlarmDialog(NavigationService.navigatorKey.currentContext!, triggeredAlarm.id);
+
+  if (state.vibration) {
+    for (var i = 0; i < numberOfTriggeredAlarmVibrations; i++) {
+      await Vibration.vibrate(duration: 1000);
+      await Future<void>.delayed(const Duration(milliseconds: 1000));
+    }
+  }
+}
+
+// This function returns the alarms that the user's position is currently intersected with.
+List<Alarm> checkIfUserTriggersAlarms(LatLng userPosition, List<Alarm> alarms) {
+	var triggeredAlarms = <Alarm>[];
+
+	for (var alarm in alarms) {
+		var distance = distanceBetween(alarm.position.latitude, alarm.position.longitude, userPosition.latitude, userPosition.longitude);
+		if (distance <= alarm.radius) triggeredAlarms.add(alarm);
+	}
+
+	return triggeredAlarms;
+}
+
+Alarm? getClosestAlarmToPosition(LatLng position, List<Alarm> alarms) {
+	Alarm? closestAlarm;
+	var closestDistance = double.infinity;
+
+	if (alarms.isEmpty) return null;
+
+	for (var alarm in alarms) {
+		var distance = distanceBetween(alarm.position.latitude, alarm.position.longitude, position.latitude, position.longitude);
+		if (distance < closestDistance) {
+			closestAlarm = alarm;
+			closestDistance = distance;
+		}
+	}
+
+	return closestAlarm;
 }

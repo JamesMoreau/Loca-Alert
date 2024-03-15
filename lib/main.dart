@@ -5,23 +5,18 @@ import 'package:dio_cache_interceptor_file_store/dio_cache_interceptor_file_stor
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:june/june.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:loca_alert/constants.dart';
+import 'package:loca_alert/globals_constants_and_utility.dart';
 import 'package:loca_alert/loca_alert_state.dart';
-import 'package:loca_alert/models/alarm.dart';
 import 'package:loca_alert/views/alarms.dart';
 import 'package:loca_alert/views/map.dart';
 import 'package:loca_alert/views/settings.dart';
-import 'package:loca_alert/views/triggered_alarm_dialog.dart';
 import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:vibration/vibration.dart';
 
 /*
  TODO:
- create constants globals and utility file.
 */
 
 void main() async {
@@ -38,7 +33,7 @@ void main() async {
 
   // Set up location stuff
   await location.enableBackgroundMode();
-  location.onLocationChanged.listen((location) async {  // Register the location update callback
+  location.onLocationChanged.listen((location) async { // Register the location update callback
     var latitude = location.latitude;
     var longitude = location.longitude;
     if (latitude == null || longitude == null) return; // This shouldn't happen, but just in case.
@@ -144,7 +139,7 @@ class MainApp extends StatelessWidget {
 										debugPrint('Navigating to ${state.currentView}.');
 										state.setState();
 										state.pageController.jumpToPage(index);
-										// state.pageController.animateToPage(index,	duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+										// state.pageController.animateToPage(index, duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
 									},
 									selectedIndex: state.currentView.index,
 									destinations: const [
@@ -172,83 +167,3 @@ class MainApp extends StatelessWidget {
     );
   }
 }
-
-/* GLOBALS */
-
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-int id = 0;
-
-class NavigationService {
-  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-}
-
-class MyHttpOverrides extends HttpOverrides {
-  final int maxConnections = 8;
-
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    var client = super.createHttpClient(context);
-    client.maxConnectionsPerHost = maxConnections;
-    return client;
-  }
-}
-
-Location location = Location();
-
-/* END OF GLOBALS */
-
-Future<void> checkAlarms() async {
-  var state = June.getState(LocaAlertState());
-  var activeAlarms = state.alarms.where((alarm) => alarm.active).toList();
-
-  var permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    debugPrint('Alarm Check: Location permission denied. Cannot check for triggered alarms.');
-    return;
-  }
-
-  var userPositionReference = state.userLocation;
-  if (userPositionReference == null) {
-    debugPrint('Alarm Check: No user position found.');
-    return;
-  }
-
-  var triggeredAlarms = checkIfUserTriggersAlarms(userPositionReference, activeAlarms);
-  if (triggeredAlarms.isEmpty) {
-    debugPrint('Alarm Check: No alarms triggered.');
-    return;
-  }
-
-  for (var alarm in triggeredAlarms) debugPrint('Alarm Check: Triggered alarm ${alarm.name} at timestamp ${DateTime.now()}.');
-
-  // If another alarm is already triggered, ignore the new alarm.
-  if (state.alarmIsCurrentlyTriggered) return;
-
-  var triggeredAlarm = triggeredAlarms[0]; // For now, we only handle one triggered alarm at a time. Although it is possible to have multiple alarms triggered at the same time.
-  triggeredAlarm.active = false; // Deactivate the alarm so it doesn't trigger again upon user location changing.
-
-  if (state.notification) { // the notification boolean is always set to true but we might want to add user control later.
-    debugPrint('Alarm Check: Sending the user a notification for alarm ${triggeredAlarm.name}.');
-    var notificationDetails = const NotificationDetails(
-      iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentBanner: true, presentSound: true),
-    );
-    await flutterLocalNotificationsPlugin.show(id++, 'Alarm Triggered', 'You have entered the radius of alarm: ${triggeredAlarm.name}.', notificationDetails);
-  }
-
-  // No alarm is currently triggered, so we can show the dialog.
-  state.alarmIsCurrentlyTriggered = true;
-  showAlarmDialog(NavigationService.navigatorKey.currentContext!, triggeredAlarm.id);
-
-  if (state.vibration) {
-    for (var i = 0; i < numberOfTriggeredAlarmVibrations; i++) {
-      await Vibration.vibrate(duration: 1000);
-      await Future<void>.delayed(const Duration(milliseconds: 1000));
-    }
-  }
-}
-
-void debugPrintWarning(String message) => debugPrint('📙: $message');
-
-void debugPrintError(String message) => debugPrint('📕: $message');
-
-void debugPrintSuccess(String message) => debugPrint('📗: $message');

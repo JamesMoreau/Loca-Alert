@@ -1,4 +1,9 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:location/location.dart';
 
 const author = 'James Moreau';
 const myEmail = 'jp.moreau@aol.com';
@@ -39,6 +44,26 @@ const availableAlarmColors = (
   grey:      Colors.grey,
   black:     Colors.black
 );
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+int id = 0;
+
+class NavigationService {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  final int maxConnections = 8;
+
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    var client = super.createHttpClient(context);
+    client.maxConnectionsPerHost = maxConnections;
+    return client;
+  }
+}
+
+Location location = Location();
 
 ThemeData locationAlarmTheme = ThemeData(
 	colorScheme: scheme,
@@ -88,3 +113,28 @@ ColorScheme scheme = const ColorScheme(
 );
 
 const paleBlue = Color(0xffeaf0f5);
+
+void debugPrintWarning(String message) => debugPrint('📙: $message');
+
+void debugPrintError(String message) => debugPrint('📕: $message');
+
+void debugPrintSuccess(String message) => debugPrint('📗: $message');
+
+// Calculates the distance between two points on the Earth's surface using the Haversine formula.
+double distanceBetween(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
+  var earthRadius = 6378137.0;
+  var dLat = toRadians(endLatitude - startLatitude);
+  var dLon = toRadians(endLongitude - startLongitude);
+
+  var a = pow(sin(dLat / 2), 2) +
+          pow(sin(dLon / 2), 2) *
+          cos(toRadians(startLatitude)) *
+          cos(toRadians(endLatitude));
+  var c = 2 * asin(sqrt(a));
+
+  return earthRadius * c;
+}
+
+double toRadians(double degree) {
+  return degree * pi / 180;
+}

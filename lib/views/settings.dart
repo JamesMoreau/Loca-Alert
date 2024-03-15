@@ -4,9 +4,8 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:june/june.dart';
-import 'package:loca_alert/constants.dart';
+import 'package:loca_alert/globals_constants_and_utility.dart';
 import 'package:loca_alert/loca_alert_state.dart';
-import 'package:loca_alert/main.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,17 +21,6 @@ class SettingsView extends StatelessWidget {
           child: Scrollbar(
             child: ListView(
               children: [
-                /*Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: SwitchListTile(
-                    title: Text('Alarm Notification'),
-                    value: state.notification,
-                    onChanged: (value) {
-                      changeAlarmNotification(newValue: value);
-                    },
-                    thumbIcon: thumbIcon,
-                  ),
-                ),*/
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: ListTile(
