@@ -37,7 +37,7 @@ void showAlarmDialog(BuildContext context, String alarmId) {
 				width: MediaQuery.of(context).size.width,
 				height: MediaQuery.of(context).size.height,
 				color: paleBlue,
-				padding: EdgeInsets.all(20),
+				padding: const EdgeInsets.all(20),
 				child: SafeArea(
 					child: Column(
 						children: [
@@ -46,12 +46,12 @@ void showAlarmDialog(BuildContext context, String alarmId) {
 								child: Column(
 									mainAxisAlignment: MainAxisAlignment.center,
 									children: [
-										Text(
+										const Text(
 											'Alarm Triggered',
 											style: TextStyle(fontSize: 30, fontWeight: FontWeight.w300),
 										),
-										SizedBox(height: 16),
-										Text(
+										const SizedBox(height: 16),
+										const Text(
 											'You have entered the radius of an alarm.',
 											textAlign: TextAlign.center,
 											style: TextStyle(
@@ -59,7 +59,7 @@ void showAlarmDialog(BuildContext context, String alarmId) {
 												fontWeight: FontWeight.w300,
 											),
 										),
-										SizedBox(height: 16),
+										const SizedBox(height: 16),
 										Icon(Icons.alarm, size: 100, color: alarm.color),
 									],
 								),
@@ -68,17 +68,17 @@ void showAlarmDialog(BuildContext context, String alarmId) {
 								flex: 2,
 								child: Column(
 									children: [
-										Text(alarm.name, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-										SizedBox(height: 16),
+										Text(alarm.name, style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+										const SizedBox(height: 16),
 										ElevatedButton(
 											onPressed: () => deactivateAlarmAndCloseDialog(context),
 											style: ElevatedButton.styleFrom(
 												backgroundColor: Colors.blueGrey,
 												foregroundColor: Colors.white,
-												minimumSize: Size(225, 70),
-												textStyle: TextStyle(fontSize: 25),
+												minimumSize: const Size(225, 70),
+												textStyle: const TextStyle(fontSize: 25),
 											),
-											child: Text('Dismiss'),
+											child: const Text('Dismiss'),
 										),
 									],
 								),

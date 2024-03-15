@@ -72,7 +72,7 @@ class LocaAlertState extends JuneState {
 }
 
 // This is used to produce unique ids. Only one instantiation is needed.
-final Uuid idGenerator = Uuid();
+const Uuid idGenerator = Uuid();
 
 bool deleteAlarmById(String id) {
 	var state = June.getState(LocaAlertState());

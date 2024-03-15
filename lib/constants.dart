@@ -44,18 +44,18 @@ ThemeData locationAlarmTheme = ThemeData(
 	colorScheme: scheme,
 	listTileTheme: ListTileThemeData(
 		contentPadding: const EdgeInsets.all(25),
-		tileColor: Color.fromARGB(255, 234, 239, 246), // Background color of the ListTile
+		tileColor: const Color.fromARGB(255, 234, 239, 246), // Background color of the ListTile
 		shape: RoundedRectangleBorder(
 			borderRadius: BorderRadius.circular(8),
 		),
 	),
-	sliderTheme: SliderThemeData(
+	sliderTheme: const SliderThemeData(
 		thumbShape: RoundSliderThumbShape(enabledThumbRadius: 13),
 	),
-	iconTheme: IconThemeData(color: Color(0xff50606e)),
+	iconTheme: const IconThemeData(color: Color(0xff50606e)),
 );
 
-ColorScheme scheme = ColorScheme(
+ColorScheme scheme = const ColorScheme(
 	brightness:           Brightness.light,
 	primary:              Color(0xff006493),
 	onPrimary:            Colors.white,

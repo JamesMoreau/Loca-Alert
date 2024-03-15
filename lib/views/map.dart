@@ -27,7 +27,7 @@ class MapView extends StatelessWidget {
           );
         }
 
-        var initalCenter = state.userLocation ?? LatLng(0, 0);
+        var initalCenter = state.userLocation ?? const LatLng(0, 0);
 
         var statusBarHeight = MediaQuery.of(context).padding.top;
         var screenSize = MediaQuery.of(context).size;
@@ -39,18 +39,18 @@ class MapView extends StatelessWidget {
           userLocationMarker.addAll([
             Marker(
               point: myUserLocation,
-              child: Icon(Icons.circle, color: Colors.blue),
+              child: const Icon(Icons.circle, color: Colors.blue),
             ),
             Marker(
               point: myUserLocation,
-              child: Icon(Icons.person_rounded, color: Colors.white, size: 18),
+              child: const Icon(Icons.person_rounded, color: Colors.white, size: 18),
             ),
           ]);
 
         // If no alarms are currently visible on screen, show an arrow pointing towards the closest alarm (if there is one).
         var myClosestAlarm = state.closestAlarm;
-        var arrow = SizedBox.shrink() as Widget;
-        var indicatorAlarmIcon = SizedBox.shrink() as Widget;
+        var arrow = const SizedBox.shrink() as Widget;
+        var indicatorAlarmIcon = const SizedBox.shrink() as Widget;
         var angle = 0.0;
         var angleIs9to3 = false;
         var arrowRotation = 0.0;
@@ -174,17 +174,17 @@ class MapView extends StatelessWidget {
                     offset: Offset((ellipseWidth / 2 - 26) * cos(angle), (ellipseHeight / 2 - 26) * sin(angle)),
                     child: Transform.translate(
                       // Offset the text from the icon to not overlap.
-                      offset: angleIs9to3 ? Offset(0, -22) : Offset(0, 22), // Move the text up or down depending on the angle to now overlap with the arrow.
+                      offset: angleIs9to3 ? const Offset(0, -22) : const Offset(0, 22), // Move the text up or down depending on the angle to now overlap with the arrow.
                       child: Container(
-                        constraints: BoxConstraints(maxWidth: 100),
-                        padding: EdgeInsets.symmetric(horizontal: 2),
+                        constraints: const BoxConstraints(maxWidth: 100),
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
                         decoration: BoxDecoration(
                           color: paleBlue,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           closestAlarmName,
-                          style: TextStyle(fontSize: 10),
+                          style: const TextStyle(fontSize: 10),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
@@ -197,19 +197,19 @@ class MapView extends StatelessWidget {
             Positioned(
               top: statusBarHeight + 10,
               left: 15,
-              child: SizedBox.shrink(),
+              child: const SizedBox.shrink(),
             ),
             Positioned(
               // Attribution to OpenStreetMap
               top: statusBarHeight + 5,
               child: Align(
                 child: Container(
-                  padding: EdgeInsets.all(3),
+                  padding: const EdgeInsets.all(3),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(
+                  child: const Text(
                     '© OpenStreetMap contributors',
                   ),
                 ),
@@ -224,7 +224,7 @@ class MapView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   FloatingActionButton(
-                    child: Icon(Icons.info_outline_rounded),
+                    child: const Icon(Icons.info_outline_rounded),
                     onPressed: () => showDialog<void>(
                       context: context,
                       builder: (BuildContext context) => Dialog(
@@ -257,22 +257,22 @@ class MapView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   if (state.followUserLocation) ...[
                     FloatingActionButton(
                       onPressed: followOrUnfollowUserLocation,
                       elevation: 4,
-                      backgroundColor: Color.fromARGB(255, 216, 255, 218),
-                      child: Icon(Icons.near_me_rounded),
+                      backgroundColor: const Color.fromARGB(255, 216, 255, 218),
+                      child: const Icon(Icons.near_me_rounded),
                     ),
                   ] else ...[ 
                     FloatingActionButton(
                       onPressed: followOrUnfollowUserLocation,
                       elevation: 4,
-                      child: Icon(Icons.lock_rounded),
+                      child: const Icon(Icons.lock_rounded),
                     ),
                   ],
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   if (state.isPlacingAlarm) ...[
                     // Show the confirm and cancel buttons when the user is placing an alarm.
                     FloatingActionButton(
@@ -286,16 +286,16 @@ class MapView extends StatelessWidget {
                         state.setState();
                       },
                       elevation: 4,
-                      child: Icon(Icons.check),
+                      child: const Icon(Icons.check),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     FloatingActionButton(
                       onPressed: () {
                         resetAlarmPlacementUIState();
                         state.setState();
                       },
                       elevation: 4,
-                      child: Icon(Icons.cancel_rounded),
+                      child: const Icon(Icons.cancel_rounded),
                     ),
                   ] else ...[
                     // Show the place alarm button when the user is not placing an alarm.
@@ -306,10 +306,10 @@ class MapView extends StatelessWidget {
                         state.setState();
                       },
                       elevation: 4,
-                      child: Icon(Icons.pin_drop_rounded),
+                      child: const Icon(Icons.pin_drop_rounded),
                     ),
                   ],
-                  SizedBox.shrink(),
+                  const SizedBox.shrink(),
                 ],
               ),
             ),
@@ -320,13 +320,13 @@ class MapView extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.9,
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    borderRadius: const BorderRadius.all(Radius.circular(15)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 2,
                         blurRadius: 5,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
@@ -334,7 +334,7 @@ class MapView extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                     child: Row(
                       children: [
-                        Text('Size:', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Text('Size:', style: TextStyle(fontWeight: FontWeight.bold)),
                         Expanded(
                           child: Slider(
                             value: state.alarmPlacementRadius,
@@ -353,7 +353,7 @@ class MapView extends StatelessWidget {
                 ),
               )
             else
-              SizedBox.shrink(),
+              const SizedBox.shrink(),
           ],
         );
       },
@@ -421,7 +421,7 @@ class MapView extends StatelessWidget {
           behavior: SnackBarBehavior.floating,
           content: Container(
             padding: const EdgeInsets.all(8),
-            child: Text('Location permissions are required to use this app.'),
+            child: const Text('Location permissions are required to use this app.'),
           ),
           action: SnackBarAction(label: 'Settings', onPressed: () => AppSettings.openAppSettings(type: AppSettingsType.location)), 
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -450,7 +450,7 @@ class MapView extends StatelessWidget {
           behavior: SnackBarBehavior.floating,
           content: Container(
             padding: const EdgeInsets.all(8),
-            child: Text('Unable to follow your location. Are location services permitted?'),
+            child: const Text('Unable to follow your location. Are location services permitted?'),
           ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),

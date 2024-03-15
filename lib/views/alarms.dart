@@ -36,15 +36,15 @@ class AlarmsView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('No alarms.'),
+                const Text('No alarms.'),
                 ElevatedButton(
-                  child: Text('Add Some Alarms'),
+                  child: const Text('Add Some Alarms'),
                   onPressed: () {
-                    addAlarm(Alarm(name: 'Dublin',           position: LatLng(53.3498,  -6.2603), radius: 2000, color: availableAlarmColors.green));
-                    addAlarm(Alarm(name: 'Montreal',         position: LatLng(45.5017, -73.5673), radius: 2000, color: availableAlarmColors.blue));
-                    addAlarm(Alarm(name: 'Osaka',            position: LatLng(34.6937, 135.5023), radius: 2000, color: availableAlarmColors.purple));
-                    addAlarm(Alarm(name: 'Saint Petersburg', position: LatLng(59.9310,  30.3609), radius: 2000, color: availableAlarmColors.redAccent));
-                    addAlarm(Alarm(name: 'San Antonio',      position: LatLng(29.4241, -98.4936), radius: 2000, color: availableAlarmColors.orange));
+                    addAlarm(Alarm(name: 'Dublin',           position: const LatLng(53.3498,  -6.2603), radius: 2000, color: availableAlarmColors.green));
+                    addAlarm(Alarm(name: 'Montreal',         position: const LatLng(45.5017, -73.5673), radius: 2000, color: availableAlarmColors.blue));
+                    addAlarm(Alarm(name: 'Osaka',            position: const LatLng(34.6937, 135.5023), radius: 2000, color: availableAlarmColors.purple));
+                    addAlarm(Alarm(name: 'Saint Petersburg', position: const LatLng(59.9310,  30.3609), radius: 2000, color: availableAlarmColors.redAccent));
+                    addAlarm(Alarm(name: 'San Antonio',      position: const LatLng(29.4241, -98.4936), radius: 2000, color: availableAlarmColors.orange));
                   },
                 ),
               ],
@@ -140,7 +140,7 @@ class EditAlarmDialog extends StatelessWidget {
                         resetEditAlarmState();
                       },
                     ),
-                    Text(
+                    const Text(
                       'Edit Alarm',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
@@ -154,7 +154,7 @@ class EditAlarmDialog extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Text('Name', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
                 TextFormField(
                   textAlign: TextAlign.center,
@@ -162,7 +162,7 @@ class EditAlarmDialog extends StatelessWidget {
                   onChanged: (value) => state.setState(),
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.clear_rounded),
+                      icon: const Icon(Icons.clear_rounded),
                       onPressed: () {
                         state.nameInputController.clear();
                         state.setState();
@@ -170,7 +170,7 @@ class EditAlarmDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Text('Color', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -181,7 +181,7 @@ class EditAlarmDialog extends StatelessWidget {
                         child: CircleAvatar(
                           backgroundColor: bufferAlarm.color,
                           radius: 20,
-                          child: Icon(Icons.pin_drop_rounded, color: Colors.white),
+                          child: const Icon(Icons.pin_drop_rounded, color: Colors.white),
                         ),
                       ),
                       for (var color in [
@@ -208,7 +208,7 @@ class EditAlarmDialog extends StatelessWidget {
                             child: CircleAvatar(
                               backgroundColor: color,
                               radius: 20,
-                              child: color.value == bufferAlarm.color.value ? Icon(Icons.check_rounded, color: Colors.white) : null,
+                              child: color.value == bufferAlarm.color.value ? const Icon(Icons.check_rounded, color: Colors.white) : null,
                             ),
                           ),
                         ),
@@ -216,10 +216,10 @@ class EditAlarmDialog extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Text('Position', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
-                Text(bufferAlarm.position.toSexagesimal(), style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
+                Text(bufferAlarm.position.toSexagesimal(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -230,15 +230,15 @@ class EditAlarmDialog extends StatelessWidget {
                         await navigateToAlarm(bufferAlarm);
                         resetEditAlarmState();
                       },
-                      icon: Icon(Icons.navigate_next_rounded),
-                      label: Text('Go To Alarm'),
+                      icon: const Icon(Icons.navigate_next_rounded),
+                      label: const Text('Go To Alarm'),
                     ),
                   ],
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Text('Radius / Size (in meters)', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
-                Text(bufferAlarm.radius.toInt().toString(), style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 30),
+                Text(bufferAlarm.radius.toInt().toString(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -247,7 +247,7 @@ class EditAlarmDialog extends StatelessWidget {
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
-                          side: BorderSide(color: Colors.redAccent, width: 2),
+                          side: const BorderSide(color: Colors.redAccent, width: 2),
                         ),
                       ),
                       onPressed: () {
@@ -255,7 +255,7 @@ class EditAlarmDialog extends StatelessWidget {
                         Navigator.pop(context);
                         resetEditAlarmState();
                       },
-                      child: Text('Delete Alarm', style: TextStyle(color: Colors.redAccent)),
+                      child: const Text('Delete Alarm', style: TextStyle(color: Colors.redAccent)),
                     ),
                   ],
                 ),

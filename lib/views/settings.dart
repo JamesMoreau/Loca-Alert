@@ -41,13 +41,13 @@ class SettingsView extends StatelessWidget {
                   child: ListTile(
                     title: Text(appNameString),
                     subtitle: Text('Version: $versionString'),
-                    trailing: Icon(Icons.info_rounded),
+                    trailing: const Icon(Icons.info_rounded),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: ListTile(
-                    title: Text('Vibration'),
+                    title: const Text('Vibration'),
                     trailing: Switch(
                       value: state.vibration,
                       thumbIcon: thumbIcon,
@@ -60,7 +60,7 @@ class SettingsView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: ListTile(
-                    title: Text('Show Closest Off-Screen Alarm'),
+                    title: const Text('Show Closest Off-Screen Alarm'),
                     trailing: Switch(
                       value: state.showClosestOffScreenAlarm,
                       onChanged: (value) {
@@ -73,16 +73,16 @@ class SettingsView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: ListTile(
-                    title: Text('Location Settings'),
-                    trailing: Icon(Icons.keyboard_arrow_right),
+                    title: const Text('Location Settings'),
+                    trailing: const Icon(Icons.keyboard_arrow_right),
                     onTap: () => AppSettings.openAppSettings(type: AppSettingsType.location),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: ListTile(
-                    title: Text('Give Feedback'),
-                    trailing: Icon(Icons.feedback_rounded),
+                    title: const Text('Give Feedback'),
+                    trailing: const Icon(Icons.feedback_rounded),
                     onTap: () async {
                       var url = 'https://apps.apple.com/app/id$appleID';
                       var uri = Uri.parse(url);
@@ -100,9 +100,9 @@ class SettingsView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: ListTile(
-                    title: Text('Clear Map Cache'),
-                    subtitle: Text('This can free up storage on your device.'),
-                    trailing: Icon(Icons.delete_rounded),
+                    title: const Text('Clear Map Cache'),
+                    subtitle: const Text('This can free up storage on your device.'),
+                    trailing: const Icon(Icons.delete_rounded),
                     onTap: () async {
                       var scaffoldMessenger = ScaffoldMessenger.of(context); // Don't use Scaffold.of(context) across async gaps (according to flutter).
 
@@ -116,7 +116,7 @@ class SettingsView extends StatelessWidget {
                       scaffoldMessenger.showSnackBar(
                         SnackBar(
                           behavior: SnackBarBehavior.floating,
-                          content: Container(padding: EdgeInsets.all(8), child: Text('Map tile cache cleared.')),
+                          content: Container(padding: const EdgeInsets.all(8), child: const Text('Map tile cache cleared.')),
                           duration: const Duration(seconds: 3),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
@@ -129,8 +129,8 @@ class SettingsView extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8),
                     child: ListTile(
-                      title: Text('DEBUG: Print Alarms In Storage.'),
-                      trailing: Icon(Icons.alarm_rounded),
+                      title: const Text('DEBUG: Print Alarms In Storage.'),
+                      trailing: const Icon(Icons.alarm_rounded),
                       onTap: () async {
                         var directory = await getApplicationDocumentsDirectory();
                         var alarmsPath = '${directory.path}${Platform.pathSeparator}$alarmsFilename';

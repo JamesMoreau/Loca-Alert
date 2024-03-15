@@ -31,7 +31,7 @@ void main() async {
     return;
   }
   
-  runApp(MainApp());
+  runApp(const MainApp());
 
   // Setup state
 	var state = June.getState(LocaAlertState());
@@ -58,7 +58,7 @@ void main() async {
     // Update the map camera position to the user's location
     if (state.followUserLocation && state.currentView == ProximityAlarmViews.map)	await moveMapToUserLocation();
   });
-  Timer.periodic(Duration(seconds: 20), (timer) async { // Check periodically if the location permission has been denied. If so, cancel the location updates.
+  Timer.periodic(const Duration(seconds: 20), (timer) async { // Check periodically if the location permission has been denied. If so, cancel the location updates.
     var state = June.getState(LocaAlertState());
     var permission = await location.hasPermission();
 
@@ -74,7 +74,7 @@ void main() async {
   await loadAlarmsFromStorage();
 
   // Set up local notifications. This needs to be done before alarms are checked.
-  var initializationSettings = InitializationSettings(iOS: DarwinInitializationSettings());
+  var initializationSettings = const InitializationSettings(iOS: DarwinInitializationSettings());
   state.notificationPluginIsInitialized = await flutterLocalNotificationsPlugin.initialize(initializationSettings) ?? false;
   state.setState(); // Notify the ui that the notifications plugin is intialized.
 
@@ -106,7 +106,7 @@ class MainApp extends StatelessWidget {
           // Check that everything is initialized before building the app. Right now, the only thing that needs to be initialized is the map tile cache and notification plugin.
           var appIsInitialized = state.mapTileCacheStore == null || !state.notificationPluginIsInitialized;
           if (appIsInitialized) {
-            return Scaffold(
+            return const Scaffold(
               body: Center(
                 child: CircularProgressIndicator(),
               ),
@@ -116,11 +116,11 @@ class MainApp extends StatelessWidget {
           return Scaffold(
             body: PageView(
               controller: state.pageController,
-              physics: NeverScrollableScrollPhysics(), // Disable swipe gesture to change pages
+              physics: const NeverScrollableScrollPhysics(), // Disable swipe gesture to change pages
               children: [
-                AlarmsView(),
-                MapView(),
-                SettingsView(),
+                const AlarmsView(),
+                const MapView(),
+                const SettingsView(),
               ],
             ),
             extendBody: true,
@@ -133,13 +133,13 @@ class MainApp extends StatelessWidget {
                     blurRadius: 5,
                   ),
                 ],
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(50),
                   topRight: Radius.circular(50),
                 ),
               ),
 							child: ClipRRect(
-								borderRadius: BorderRadius.only(
+								borderRadius: const BorderRadius.only(
 									topLeft: Radius.circular(50),
 									topRight: Radius.circular(50),
 								),
@@ -240,7 +240,7 @@ Future<void> checkAlarms() async {
 
   if (state.notification) { // the notification boolean is always set to true but we might want to add user control later.
     debugPrint('Alarm Check: Sending the user a notification for alarm ${triggeredAlarm.name}.');
-    var notificationDetails = NotificationDetails(
+    var notificationDetails = const NotificationDetails(
       iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentBanner: true, presentSound: true),
     );
     await flutterLocalNotificationsPlugin.show(id++, 'Alarm Triggered', 'You have entered the radius of alarm: ${triggeredAlarm.name}.', notificationDetails);
@@ -253,7 +253,7 @@ Future<void> checkAlarms() async {
   if (state.vibration) {
     for (var i = 0; i < numberOfTriggeredAlarmVibrations; i++) {
       await Vibration.vibrate(duration: 1000);
-      await Future<void>.delayed(Duration(milliseconds: 1000));
+      await Future<void>.delayed(const Duration(milliseconds: 1000));
     }
   }
 }
