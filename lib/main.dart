@@ -45,10 +45,12 @@ void main() async {
   // Set up location stuff
   await location.enableBackgroundMode();
   location.onLocationChanged.listen((location) async {  // Register the location update callback
-    if (location.latitude == null || location.longitude == null) return; // This shouldn't happen, but just in case.
+    var myLatitute = location.latitude;
+    var myLongitude = location.longitude;
+    if (myLatitute == null || myLongitude == null) return; // This shouldn't happen, but just in case.
     
     var state = June.getState(LocaAlertState());
-    state.userLocation = LatLng(location.latitude!, location.longitude!);
+    state.userLocation = LatLng(myLatitute, myLongitude);
     state.setState();
 
     await checkAlarms(); // Check if the user has entered the radius of any alarms.

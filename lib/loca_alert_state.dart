@@ -62,7 +62,9 @@ class LocaAlertState extends JuneState {
 	void onClose() {
 		pageController.dispose();
 		mapController.dispose();
-		if (mapTileCacheStore != null) mapTileCacheStore!.close();
+    
+    var myMapTileCacheStore = mapTileCacheStore;
+		if (myMapTileCacheStore != null) myMapTileCacheStore.close();
 		
 		super.onClose();
 		debugPrint('LocaAlert state disposed.');

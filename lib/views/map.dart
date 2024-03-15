@@ -20,26 +20,35 @@ class MapView extends StatelessWidget {
     return JuneBuilder(
       () => LocaAlertState(),
       builder: (state) {
+        var myMapTileCacheStore = state.mapTileCacheStore;
+        if (myMapTileCacheStore == null) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
         var initalCenter = state.userLocation ?? LatLng(0, 0);
 
         var statusBarHeight = MediaQuery.of(context).padding.top;
         var screenSize = MediaQuery.of(context).size;
 
         // Display user's location on the map.
+        var myUserLocation = state.userLocation;
         var userLocationMarker = <Marker>[];
-        if (state.userLocation != null)
+        if (myUserLocation != null)
           userLocationMarker.addAll([
             Marker(
-              point: state.userLocation!,
+              point: myUserLocation,
               child: Icon(Icons.circle, color: Colors.blue),
             ),
             Marker(
-              point: state.userLocation!,
+              point: myUserLocation,
               child: Icon(Icons.person_rounded, color: Colors.white, size: 18),
             ),
           ]);
 
         // If no alarms are currently visible on screen, show an arrow pointing towards the closest alarm (if there is one).
+        var myClosestAlarm = state.closestAlarm;
         var arrow = SizedBox.shrink() as Widget;
         var indicatorAlarmIcon = SizedBox.shrink() as Widget;
         var angle = 0.0;
@@ -49,9 +58,9 @@ class MapView extends StatelessWidget {
         var ellipseHeight = screenSize.height * 0.65;
         var closestAlarmName = '';
 
-        var showClosestAlarmIndicator = state.closestAlarm != null && !state.closestAlarmIsInView && state.showClosestOffScreenAlarm;
+        var showClosestAlarmIndicator = myClosestAlarm != null && !state.closestAlarmIsInView && state.showClosestOffScreenAlarm;
         if (showClosestAlarmIndicator) {
-          var indicatorColor = state.closestAlarm!.color;
+          var indicatorColor = myClosestAlarm.color;
           arrow = Transform.rotate(angle: -pi / 2 ,child: Icon(Icons.arrow_forward_ios, color: indicatorColor, size: 28));
           indicatorAlarmIcon = Icon(Icons.pin_drop_rounded, color: indicatorColor, size: 32);
 
@@ -61,7 +70,7 @@ class MapView extends StatelessWidget {
           angle = (arrowRotation + 3 * pi / 2) % (2 * pi); // Compensate the for y-axis pointing downwards on Transform.translate().
           angleIs9to3 = angle > (0 * pi) && angle < (1 * pi); // This is used to offset the text from the icon to not overlap with the arrow.
           
-          closestAlarmName = state.closestAlarm!.name;
+          closestAlarmName = myClosestAlarm.name;
         }
 
         // Display the alarms as circles on the map.
@@ -130,7 +139,7 @@ class MapView extends StatelessWidget {
                   userAgentPackageName: 'com.locaalarm.app',
                   tileProvider: CachedTileProvider(
                     maxStale: const Duration(days: 30),
-                    store: state.mapTileCacheStore!,
+                    store: myMapTileCacheStore,
                   ),
                 ),
                 if (state.showMarkersInsteadOfCircles) MarkerLayer(markers: alarmMarkers) else CircleLayer(circles: alarmCircles),
@@ -361,9 +370,10 @@ class MapView extends StatelessWidget {
     state.closestAlarm = getClosestAlarmToPosition(centerOfMap, alarms);
 
     // Update whether the closest alarm is in view.
-    if (state.closestAlarm != null) {
+    var myClosestAlarm = state.closestAlarm;
+    if (myClosestAlarm != null) {
       var cameraBounds = state.mapController.camera.visibleBounds;
-      if (cameraBounds.contains(state.closestAlarm!.position))
+      if (cameraBounds.contains(myClosestAlarm.position))
         state.closestAlarmIsInView = true;
       else
         state.closestAlarmIsInView = false;
