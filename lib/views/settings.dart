@@ -81,7 +81,7 @@ class SettingsView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: ListTile(
-                    title: const Text('Give Feedback'),
+                    title: const Text('Review App'),
                     trailing: const Icon(Icons.feedback_rounded),
                     onTap: () async {
                       var url = 'https://apps.apple.com/app/id$appleID';
@@ -107,8 +107,8 @@ class SettingsView extends StatelessWidget {
                       var scaffoldMessenger = ScaffoldMessenger.of(context); // Don't use Scaffold.of(context) across async gaps (according to flutter).
 
                       // Clear map tile cache.
-                      var myMapTileCacheStore = state.mapTileCacheStore;
-                      if (myMapTileCacheStore != null) await myMapTileCacheStore.clean();
+                      var mapTileCacheStoreReference = state.mapTileCacheStore;
+                      if (mapTileCacheStoreReference != null) await mapTileCacheStoreReference.clean();
                       
                       debugPrint('Map tile cache cleared.');
 

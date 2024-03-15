@@ -101,14 +101,14 @@ class EditAlarmDialog extends StatelessWidget {
       return;
     }
 
-    var bufferAlarm = state.bufferAlarm;
-    if (bufferAlarm == null) {
+    var bufferAlarmReference = state.bufferAlarm;
+    if (bufferAlarmReference == null) {
       debugPrint('Error: Buffer alarm is null.');
       return;
     }
 
-    bufferAlarm.name = state.nameInputController.text.trim();
-    updateAlarmById(alarmId, bufferAlarm);
+    bufferAlarmReference.name = state.nameInputController.text.trim();
+    updateAlarmById(alarmId, bufferAlarmReference);
   }
 
   @override
@@ -116,8 +116,8 @@ class EditAlarmDialog extends StatelessWidget {
     return JuneBuilder(
       () => LocaAlertState(),
       builder: (state) {
-        var bufferAlarm = state.bufferAlarm;
-        if (bufferAlarm == null) {
+        var bufferAlarmReference = state.bufferAlarm;
+        if (bufferAlarmReference == null) {
           debugPrint('Error: Buffer alarm is null.');
           return const SizedBox();
         }
@@ -179,7 +179,7 @@ class EditAlarmDialog extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(8),
                         child: CircleAvatar(
-                          backgroundColor: bufferAlarm.color,
+                          backgroundColor: bufferAlarmReference.color,
                           radius: 20,
                           child: const Icon(Icons.pin_drop_rounded, color: Colors.white),
                         ),
@@ -202,13 +202,13 @@ class EditAlarmDialog extends StatelessWidget {
                           padding: const EdgeInsets.all(8),
                           child: GestureDetector(
                             onTap: () {
-                              bufferAlarm.color = color;
+                              bufferAlarmReference.color = color;
                               state.setState();
                             },
                             child: CircleAvatar(
                               backgroundColor: color,
                               radius: 20,
-                              child: color.value == bufferAlarm.color.value ? const Icon(Icons.check_rounded, color: Colors.white) : null,
+                              child: color.value == bufferAlarmReference.color.value ? const Icon(Icons.check_rounded, color: Colors.white) : null,
                             ),
                           ),
                         ),
@@ -218,7 +218,7 @@ class EditAlarmDialog extends StatelessWidget {
                 ),
                 const SizedBox(height: 30),
                 Text('Position', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
-                Text(bufferAlarm.position.toSexagesimal(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(bufferAlarmReference.position.toSexagesimal(), style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -227,7 +227,7 @@ class EditAlarmDialog extends StatelessWidget {
                       onPressed: () async {
                         // Needs to be async since we have to wait for navigateToAlarm to finish before we can reset the state.
                         Navigator.pop(context);
-                        await navigateToAlarm(bufferAlarm);
+                        await navigateToAlarm(bufferAlarmReference);
                         resetEditAlarmState();
                       },
                       icon: const Icon(Icons.navigate_next_rounded),
@@ -237,7 +237,7 @@ class EditAlarmDialog extends StatelessWidget {
                 ),
                 const SizedBox(height: 30),
                 Text('Radius / Size (in meters)', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
-                Text(bufferAlarm.radius.toInt().toString(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(bufferAlarmReference.radius.toInt().toString(), style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

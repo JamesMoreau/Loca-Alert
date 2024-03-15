@@ -36,21 +36,22 @@ void main() async {
   // Setup state
 	var state = June.getState(LocaAlertState());
 
+  // Save the app info to globals
   var packageInfo = await PackageInfo.fromPlatform();
-  appName = packageInfo.appName;
+  appName     = packageInfo.appName;
   packageName = packageInfo.packageName;
-  version = packageInfo.version;
+  version     = packageInfo.version;
   buildNumber = packageInfo.buildNumber;
 
   // Set up location stuff
   await location.enableBackgroundMode();
   location.onLocationChanged.listen((location) async {  // Register the location update callback
-    var myLatitute = location.latitude;
-    var myLongitude = location.longitude;
-    if (myLatitute == null || myLongitude == null) return; // This shouldn't happen, but just in case.
+    var latitude = location.latitude;
+    var longitude = location.longitude;
+    if (latitude == null || longitude == null) return; // This shouldn't happen, but just in case.
     
     var state = June.getState(LocaAlertState());
-    state.userLocation = LatLng(myLatitute, myLongitude);
+    state.userLocation = LatLng(latitude, longitude);
     state.setState();
 
     await checkAlarms(); // Check if the user has entered the radius of any alarms.
@@ -218,13 +219,13 @@ Future<void> checkAlarms() async {
     return;
   }
 
-  var userPosition = state.userLocation;
-  if (userPosition == null) {
+  var userPositionReference = state.userLocation;
+  if (userPositionReference == null) {
     debugPrint('Alarm Check: No user position found.');
     return;
   }
 
-  var triggeredAlarms = checkIfUserTriggersAlarms(userPosition, activeAlarms);
+  var triggeredAlarms = checkIfUserTriggersAlarms(userPositionReference, activeAlarms);
   if (triggeredAlarms.isEmpty) {
     debugPrint('Alarm Check: No alarms triggered.');
     return;
