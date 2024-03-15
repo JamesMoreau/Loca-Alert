@@ -25,6 +25,8 @@ void main() async {
     debugPrintError('This app is not supported on this platform. Supported platforms are iOS and Android.');
     return;
   }
+
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.black));
   
   runApp(const MainApp());
 
