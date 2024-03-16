@@ -94,7 +94,7 @@ class MapView extends StatelessWidget {
                       constraints: const BoxConstraints(maxWidth: 100),
                       padding: const EdgeInsets.symmetric(horizontal: 2),
                       decoration: BoxDecoration(
-                        color: paleBlue,
+                        color: paleBlue.withOpacity(0.7),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -206,7 +206,7 @@ class MapView extends StatelessWidget {
                           constraints: const BoxConstraints(maxWidth: 100),
                           padding: const EdgeInsets.symmetric(horizontal: 2),
                           decoration: BoxDecoration(
-                            color: paleBlue,
+                            color: paleBlue.withOpacity(0.7),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(

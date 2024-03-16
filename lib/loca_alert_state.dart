@@ -33,11 +33,12 @@ class LocaAlertState extends JuneState {
 	late PageController pageController;
 	bool alarmIsCurrentlyTriggered = false;
 
-	// MapView stuff
+	// MapView stuff. The booleans such as showMarkersInsteadOfCircles and closestAlarmIsInView are necessary because mapController
+  // cannot be accessed within the build method of the map view. So instead we update these booleans using myOnMapEvent.
 	MapController mapController = MapController();
 	bool isPlacingAlarm = false;
 	double alarmPlacementRadius = 100;
-	bool showMarkersInsteadOfCircles = false; // TODO: see if we can get rid of this
+	bool showMarkersInsteadOfCircles = false; 
 	Alarm? closestAlarm;
 	bool closestAlarmIsInView = false;
 	CacheStore? mapTileCacheStore;
@@ -48,7 +49,7 @@ class LocaAlertState extends JuneState {
 	bool notification = true;
 	bool showClosestOffScreenAlarm = true;
 
-  // Initializations
+  // Initializations. These are use to check if the app is ready to be shown to the user.
   bool notificationPluginIsInitialized = false;
 
   // App Info
@@ -116,11 +117,11 @@ bool updateAlarmById(String id, Alarm newAlarmData) {
 
 	for (var alarm in state.alarms) {
 		if (alarm.id == id) {
-			alarm.name = newAlarmData.name;
+			alarm.name     = newAlarmData.name;
 			alarm.position = newAlarmData.position;
-			alarm.radius = newAlarmData.radius;
-			alarm.color = newAlarmData.color;
-			alarm.active = newAlarmData.active;
+			alarm.radius   = newAlarmData.radius;
+			alarm.color    = newAlarmData.color;
+			alarm.active   = newAlarmData.active;
 			state.setState();
 			saveAlarmsToStorage();
 			return true;
