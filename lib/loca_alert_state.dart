@@ -37,7 +37,7 @@ class LocaAlertState extends JuneState {
 	MapController mapController = MapController();
 	bool isPlacingAlarm = false;
 	double alarmPlacementRadius = 100;
-	bool showMarkersInsteadOfCircles = false;
+	bool showMarkersInsteadOfCircles = false; // TODO: see if we can get rid of this
 	Alarm? closestAlarm;
 	bool closestAlarmIsInView = false;
 	CacheStore? mapTileCacheStore;

@@ -73,15 +73,40 @@ class MapView extends StatelessWidget {
           closestAlarmName = closestAlarmReference.name;
         }
 
-        // Display the alarms as circles on the map.
+        // Display the alarms as circles or markers on the map. We create a set of markers or circles 
+        // representing the same alarms. The markers are only visible when the user is zoomed out 
+        // beyond (below) circleToMarkerZoomThreshold.
         var alarmCircles = <CircleMarker>[];
         var alarmMarkers = <Marker>[];
-        if (state.showMarkersInsteadOfCircles) {
-          // These are the same alarms as the circles, but they are markers instead. They are only visible when the user is zoomed out beyond circleToMarkerZoomThreshold.
+        if (state.showMarkersInsteadOfCircles) { 
           for (var alarm in state.alarms) {
             var marker = Marker(
+              width: 100,
+              height: 65,
               point: alarm.position,
-              child: Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Icon(Icons.pin_drop_rounded, color: alarm.color, size: 30),
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 100),
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      decoration: BoxDecoration(
+                        color: paleBlue,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        alarm.name,
+                        style: const TextStyle(fontSize: 10),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
 
             alarmMarkers.add(marker);
@@ -90,9 +115,9 @@ class MapView extends StatelessWidget {
           for (var alarm in state.alarms) {
             var circle = CircleMarker(
               point: alarm.position,
-              color: alarm.color.withOpacity(alarmColorOpacity),
-              borderColor: alarmBorderColor,
-              borderStrokeWidth: alarmBorderWidth,
+              color: alarm.color.withOpacity(0.5),
+              borderColor: const Color(0xff2b2b2b),
+              borderStrokeWidth: 2,
               radius: alarm.radius,
               useRadiusInMeter: true,
             );
@@ -167,32 +192,34 @@ class MapView extends StatelessWidget {
                     child: indicatorAlarmIcon,
                   ),
                 ),
-              ),
-              IgnorePointer(
-                child: Center(
-                  child: Transform.translate(
-                    offset: Offset((ellipseWidth / 2 - 26) * cos(angle), (ellipseHeight / 2 - 26) * sin(angle)),
+              ), 
+              if (closestAlarmName.isNotEmpty)
+                IgnorePointer(
+                  child: Center(
                     child: Transform.translate(
-                      // Offset the text from the icon to not overlap.
-                      offset: angleIs9to3 ? const Offset(0, -22) : const Offset(0, 22), // Move the text up or down depending on the angle to now overlap with the arrow.
-                      child: Container(
-                        constraints: const BoxConstraints(maxWidth: 100),
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        decoration: BoxDecoration(
-                          color: paleBlue,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          closestAlarmName,
-                          style: const TextStyle(fontSize: 10),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+                      offset: Offset((ellipseWidth / 2 - 26) * cos(angle), (ellipseHeight / 2 - 26) * sin(angle)),
+                      child: Transform.translate(
+                        // Offset the text from the icon to not overlap.
+                        offset:
+                            angleIs9to3 ? const Offset(0, -22) : const Offset(0, 22), // Move the text up or down depending on the angle to now overlap with the arrow.
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 100),
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          decoration: BoxDecoration(
+                            color: paleBlue,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            closestAlarmName,
+                            style: const TextStyle(fontSize: 10),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
             ],
             Positioned(
               top: statusBarHeight + 10,

@@ -17,6 +17,7 @@ import 'package:path_provider/path_provider.dart';
 
 /*
  TODO:
+ fix status bar color
 */
 
 void main() async {
@@ -27,6 +28,7 @@ void main() async {
   }
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.black));
+  // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   
   runApp(const MainApp());
 

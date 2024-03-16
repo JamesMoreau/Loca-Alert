@@ -17,10 +17,6 @@ const initialZoom = 15.0;
 const circleToMarkerZoomThreshold = 10.0;
 const maxZoomSupported = 18.0;
 
-const alarmBorderColor = Color(0xff2b2b2b);
-const alarmBorderWidth = 2.0;
-const alarmColorOpacity = 0.5;
-
 const alarmCheckPeriod = Duration(seconds: 5);
 const numberOfTriggeredAlarmVibrations = 6;
 
