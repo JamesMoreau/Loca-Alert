@@ -46,7 +46,6 @@ class LocaAlertState extends JuneState {
 
 	// User Settings
 	bool vibration = true;
-	bool notification = true;
 	bool showClosestOffScreenAlarm = true;
 
   // App Info
@@ -205,7 +204,6 @@ Future<void> loadSettingsFromStorage() async {
 
 	var settingsMap = jsonDecode(settingsJson) as Map<String, dynamic>;
 	state.vibration = settingsMap[settingsAlarmVibrationKey] as bool;
-	state.notification = settingsMap[settingsAlarmNotificationKey] as bool;
 	state.showClosestOffScreenAlarm = settingsMap[settingsShowClosestOffScreenAlarmKey] as bool;
 	debugPrint('Loaded settings from storage.');
 }
@@ -237,13 +235,6 @@ void changeVibration({required bool newValue}) {
 	saveSettingsToStorage();
 }
 
-void changeAlarmNotification({required bool newValue}) {
-	var state = June.getState(LocaAlertState());
-	state.notification = newValue;
-	state.setState();
-	saveSettingsToStorage();
-}
-
 void changeShowClosestOffScreenAlarm({required bool newValue}) {
 	var state = June.getState(LocaAlertState());
 	state.showClosestOffScreenAlarm = newValue;
@@ -259,7 +250,6 @@ Future<void> saveSettingsToStorage() async {
 
 	var settingsMap = <String, dynamic>{
 		settingsAlarmVibrationKey:            state.vibration,
-		settingsAlarmNotificationKey:         state.notification,
 		settingsShowClosestOffScreenAlarmKey: state.showClosestOffScreenAlarm,
 	};
 
@@ -299,13 +289,11 @@ Future<void> checkAlarms() async {
   var triggeredAlarm = triggeredAlarms[0]; // For now, we only handle one triggered alarm at a time. Although it is possible to have multiple alarms triggered at the same time.
   triggeredAlarm.active = false; // Deactivate the alarm so it doesn't trigger again upon user location changing.
 
-  if (state.notification) { // the notification boolean is always set to true but we might want to add user control later.
-    debugPrint('Alarm Check: Sending the user a notification for alarm ${triggeredAlarm.name}.');
-    var notificationDetails = const NotificationDetails(
-      iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentBanner: true, presentSound: true),
-    );
-    await flutterLocalNotificationsPlugin.show(id++, 'Alarm Triggered', 'You have entered the radius of alarm: ${triggeredAlarm.name}.', notificationDetails);
-  }
+  debugPrint('Alarm Check: Sending the user a notification for alarm ${triggeredAlarm.name}.');
+  var notificationDetails = const NotificationDetails(
+    iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentBanner: true, presentSound: true),
+  );
+  await flutterLocalNotificationsPlugin.show(id++, 'Alarm Triggered', 'You have entered the radius of alarm: ${triggeredAlarm.name}.', notificationDetails);
 
   // No alarm is currently triggered, so we can show the dialog.
   state.alarmIsCurrentlyTriggered = true;
