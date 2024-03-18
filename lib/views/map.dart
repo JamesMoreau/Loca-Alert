@@ -61,7 +61,7 @@ class MapView extends StatelessWidget {
         var showClosestAlarmIndicator = closestAlarmReference != null && !state.closestAlarmIsInView && state.showClosestOffScreenAlarm;
         if (showClosestAlarmIndicator) {
           var indicatorColor = closestAlarmReference.color;
-          arrow = Transform.rotate(angle: -pi / 2 ,child: Icon(Icons.arrow_forward_ios, color: indicatorColor, size: 28));
+          arrow = Transform.rotate(angle: -pi / 2, child: Icon(Icons.arrow_forward_ios, color: indicatorColor, size: 28));
           indicatorAlarmIcon = Icon(Icons.pin_drop_rounded, color: indicatorColor, size: 32);
 
           // Calculate the angle between the center of the map and the closest alarm
@@ -69,16 +69,16 @@ class MapView extends StatelessWidget {
           arrowRotation = angle = getAngleBetweenTwoPositions(centerOfMap, closestAlarmReference.position);
           angle = (arrowRotation + 3 * pi / 2) % (2 * pi); // Compensate the for y-axis pointing downwards on Transform.translate().
           angleIs9to3 = angle > (0 * pi) && angle < (1 * pi); // This is used to offset the text from the icon to not overlap with the arrow.
-          
+
           closestAlarmName = closestAlarmReference.name;
         }
 
-        // Display the alarms as circles or markers on the map. We create a set of markers or circles 
-        // representing the same alarms. The markers are only visible when the user is zoomed out 
+        // Display the alarms as circles or markers on the map. We create a set of markers or circles
+        // representing the same alarms. The markers are only visible when the user is zoomed out
         // beyond (below) circleToMarkerZoomThreshold.
         var alarmCircles = <CircleMarker>[];
         var alarmMarkers = <Marker>[];
-        if (state.showMarkersInsteadOfCircles) { 
+        if (state.showMarkersInsteadOfCircles) {
           for (var alarm in state.alarms) {
             var marker = Marker(
               width: 100,
@@ -192,7 +192,7 @@ class MapView extends StatelessWidget {
                     child: indicatorAlarmIcon,
                   ),
                 ),
-              ), 
+              ),
               if (closestAlarmName.isNotEmpty)
                 IgnorePointer(
                   child: Center(
@@ -222,22 +222,19 @@ class MapView extends StatelessWidget {
                 ),
             ],
             Positioned(
-              top: statusBarHeight + 10,
-              left: 15,
-              child: const SizedBox.shrink(),
-            ),
-            Positioned(
               // Attribution to OpenStreetMap
               top: statusBarHeight + 5,
-              child: Align(
-                child: Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text(
-                    '© OpenStreetMap contributors',
+              child: IgnorePointer(
+                child: Align(
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      '© OpenStreetMap contributors',
+                    ),
                   ),
                 ),
               ),
@@ -266,11 +263,15 @@ class MapView extends StatelessWidget {
                                 const SizedBox(height: 15),
                                 const Text(
                                   'Here you can place new alarms by tapping the marker button. You can also follow / unfollow your location by tapping the lock button.',
+                                  textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 15),
-                                const Text('Staying on the map view for long periods of time may drain your battery.'),
+                                const Text('Staying on the map view for long periods of time may drain your battery.', textAlign: TextAlign.center),
                                 const SizedBox(height: 15),
-                                const Text('Set location permissions to "Always" and enable notifications to use the app in the background.'),
+                                const Text(
+                                  'Set location permissions to "While Using" or "Always" and enable notifications to use the app when running in background.',
+                                  textAlign: TextAlign.center,
+                                ),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
@@ -292,7 +293,7 @@ class MapView extends StatelessWidget {
                       backgroundColor: const Color.fromARGB(255, 216, 255, 218),
                       child: const Icon(Icons.near_me_rounded),
                     ),
-                  ] else ...[ 
+                  ] else ...[
                     FloatingActionButton(
                       onPressed: followOrUnfollowUserLocation,
                       elevation: 4,
@@ -430,19 +431,19 @@ class MapView extends StatelessWidget {
     var permission = await location.hasPermission();
     debugPrint('Location permission status: $permission');
     
-    // If the user has denied location permissions or it's the first time opening the app, we can ask for them.
-    if (permission == PermissionStatus.denied) {
-      var newPermission = await location.requestPermission();
-      if (newPermission == PermissionStatus.granted || newPermission == PermissionStatus.grantedLimited) {
-        debugPrint('Location permissions granted.');
-      }
+    // If the user has denied location permissions we can ask for them.
+    // if (permission == PermissionStatus.denied) {
+    //   var newPermission = await location.requestPermission();
+    //   if (newPermission == PermissionStatus.granted || newPermission == PermissionStatus.grantedLimited) {
+    //     debugPrint('Location permissions granted.');
+    //   }
       
-      return;
-    }
+    //   return;
+    // }
 
     // If the user has denied location permissions forever, we can't request them, so we show a snackbar.
-    if (permission == PermissionStatus.deniedForever) {
-      debugPrintWarning('User has denied location permissions forever.');
+    if (permission == PermissionStatus.denied || permission == PermissionStatus.deniedForever) {
+      debugPrintWarning('User has denied location permissions.');
       ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
@@ -457,6 +458,7 @@ class MapView extends StatelessWidget {
 
       return;
     }
+
 
     // The remaining case is that the user has granted location permissions, so we do nothing.
   }
@@ -510,14 +512,14 @@ double getAngleBetweenTwoPositions(LatLng from, LatLng to) => atan2(to.longitude
 
 Future<void> navigateToAlarm(Alarm alarm) async {
   var state = June.getState(LocaAlertState());
-  
+
   state.followUserLocation = false; // Stop following the user's location before moving the map.
 
   if (state.currentView != ProximityAlarmViews.map) {
     state.currentView = ProximityAlarmViews.map;
-    
+
     // @Hack: This works for now. We need to wait for the map widget to load before we can move the map.
-    await state.pageController.animateToPage(state.currentView.index,	duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    await state.pageController.animateToPage(state.currentView.index, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   state.setState();

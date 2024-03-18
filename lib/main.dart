@@ -31,6 +31,10 @@ void main() async {
   // Setup state
 	var state = June.getState(LocaAlertState());
 
+  // Set up local notifications.
+  var initializationSettings = const InitializationSettings(iOS: DarwinInitializationSettings());
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
   // Set up location stuff
   await location.enableBackgroundMode();
   location.onLocationChanged.listen((location) async { // Register the location update callback
@@ -62,11 +66,6 @@ void main() async {
 	await loadSettingsFromStorage();
   await loadAlarmsFromStorage();
 
-  // Set up local notifications. This needs to be done before alarms are checked.
-  var initializationSettings = const InitializationSettings(iOS: DarwinInitializationSettings());
-  state.notificationPluginIsInitialized = await flutterLocalNotificationsPlugin.initialize(initializationSettings) ?? false;
-  state.setState(); // Notify the ui that the notifications plugin is intialized.
-
   // Set up http overrides. This is needed to increase the number of concurrent http requests allowed. This helps with the map tiles loading.
   HttpOverrides.global = MyHttpOverrides();
 
@@ -92,9 +91,9 @@ class MainApp extends StatelessWidget {
         () => LocaAlertState(),
         builder: (state) {
 
-          // Check that everything is initialized before building the app. Right now, the only thing that needs to be initialized is the map tile cache and notification plugin.
-          var appIsInitialized = state.mapTileCacheStore == null || !state.notificationPluginIsInitialized;
-          if (appIsInitialized) {
+          // Check that everything is initialized before building the app. Right now, the only thing that needs to be initialized is the map tile cache.
+          var appIsInitialized = state.mapTileCacheStore != null;
+          if (!appIsInitialized) {
             return const Scaffold(
               body: Center(
                 child: CircularProgressIndicator(),

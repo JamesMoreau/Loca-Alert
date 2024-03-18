@@ -49,9 +49,6 @@ class LocaAlertState extends JuneState {
 	bool notification = true;
 	bool showClosestOffScreenAlarm = true;
 
-  // Initializations. These are use to check if the app is ready to be shown to the user.
-  bool notificationPluginIsInitialized = false;
-
   // App Info
   late String appName;
   late String packageName;
