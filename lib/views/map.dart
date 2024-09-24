@@ -32,7 +32,6 @@ class MapView extends StatelessWidget {
         var statusBarHeight = MediaQuery.of(context).padding.top;
         var screenSize = MediaQuery.of(context).size;
 
-        // Display user's location on the map.
         var userLocationReference = state.userLocation;
         var userLocationMarker = <Marker>[];
         if (userLocationReference != null)
@@ -64,7 +63,6 @@ class MapView extends StatelessWidget {
           arrow = Transform.rotate(angle: -pi / 2, child: Icon(Icons.arrow_forward_ios, color: indicatorColor, size: 28));
           indicatorAlarmIcon = Icon(Icons.pin_drop_rounded, color: indicatorColor, size: 32);
 
-          // Calculate the angle between the center of the map and the closest alarm
           var centerOfMap = state.mapController.camera.center;
           arrowRotation = angle = getAngleBetweenTwoPositions(centerOfMap, closestAlarmReference.position);
           angle = (arrowRotation + 3 * pi / 2) % (2 * pi); // Compensate the for y-axis pointing downwards on Transform.translate().
@@ -126,7 +124,6 @@ class MapView extends StatelessWidget {
           }
         }
 
-        // Overlay the alarm placement ui on top of the map. This is only visible when the user is placing an alarm.
         CircleMarker? alarmPlacementCircle;
         if (state.isPlacingAlarm) {
           var centerOfMap = state.mapController.camera.center;
@@ -173,11 +170,10 @@ class MapView extends StatelessWidget {
               ],
             ),
             if (showClosestAlarmIndicator) ...[
-              // Display the arrow pointing towards the closest alarm.
               IgnorePointer(
                 child: Center(
                   child: Transform.translate(
-                    offset: Offset((ellipseWidth / 2) * cos(angle), (ellipseHeight / 2) * sin(angle)), // Move the arrow to the edge of the ellipse.
+                    offset: Offset((ellipseWidth / 2) * cos(angle), (ellipseHeight / 2) * sin(angle)),
                     child: Transform.rotate(
                       angle: arrowRotation,
                       child: arrow,
@@ -199,9 +195,8 @@ class MapView extends StatelessWidget {
                     child: Transform.translate(
                       offset: Offset((ellipseWidth / 2 - 26) * cos(angle), (ellipseHeight / 2 - 26) * sin(angle)),
                       child: Transform.translate(
-                        // Offset the text from the icon to not overlap.
-                        offset:
-                            angleIs9to3 ? const Offset(0, -22) : const Offset(0, 22), // Move the text up or down depending on the angle to now overlap with the arrow.
+                        // Move the text up or down depending on the angle to now overlap with the arrow.
+                        offset: angleIs9to3 ? const Offset(0, -22) : const Offset(0, 22),
                         child: Container(
                           constraints: const BoxConstraints(maxWidth: 100),
                           padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -221,8 +216,8 @@ class MapView extends StatelessWidget {
                   ),
                 ),
             ],
+            // Attribution to OpenStreetMap
             Positioned(
-              // Attribution to OpenStreetMap
               top: statusBarHeight + 5,
               child: IgnorePointer(
                 child: Align(
@@ -240,7 +235,6 @@ class MapView extends StatelessWidget {
               ),
             ),
             Positioned(
-              // Place the alarm placement buttons in the top right corner.
               top: statusBarHeight + 10,
               right: 15,
               child: Column(
@@ -302,10 +296,8 @@ class MapView extends StatelessWidget {
                   ],
                   const SizedBox(height: 10),
                   if (state.isPlacingAlarm) ...[
-                    // Show the confirm and cancel buttons when the user is placing an alarm.
                     FloatingActionButton(
                       onPressed: () {
-                        // Save alarm
                         var centerOfMap = state.mapController.camera.center;
                         var alarmPlacementPosition = centerOfMap;
                         var alarm = Alarm(name: 'Alarm', position: alarmPlacementPosition, radius: state.alarmPlacementRadius);
@@ -326,7 +318,6 @@ class MapView extends StatelessWidget {
                       child: const Icon(Icons.cancel_rounded),
                     ),
                   ] else ...[
-                    // Show the place alarm button when the user is not placing an alarm.
                     FloatingActionButton(
                       onPressed: () {
                         state.isPlacingAlarm = true;
@@ -341,7 +332,7 @@ class MapView extends StatelessWidget {
                 ],
               ),
             ),
-            if (state.isPlacingAlarm) // Show the slider to adjust the new alarm's radius.
+            if (state.isPlacingAlarm)
               Positioned(
                 bottom: 150,
                 child: Container(
@@ -389,15 +380,13 @@ class MapView extends StatelessWidget {
   }
 
   void myOnMapEvent(MapEvent event) {
-    var state = June.getState(LocaAlertState());
+    var state = June.getState(() => LocaAlertState());
 
     var centerOfMap = state.mapController.camera.center;
 
-    // Update the closest alarm stuff.
     var alarms = state.alarms;
     state.closestAlarm = getClosestAlarmToPosition(centerOfMap, alarms);
 
-    // Update whether the closest alarm is in view.
     var closestAlarmReference = state.closestAlarm;
     if (closestAlarmReference != null) {
       var cameraBounds = state.mapController.camera.visibleBounds;
@@ -407,7 +396,6 @@ class MapView extends StatelessWidget {
         state.closestAlarmIsInView = false;
     }
 
-    // If the user is zoomed out, show the alarms as markers instead of circles.
     if (state.mapController.camera.zoom < circleToMarkerZoomThreshold)
       state.showMarkersInsteadOfCircles = true;
     else
@@ -417,7 +405,6 @@ class MapView extends StatelessWidget {
   }
 
   Future<void> myOnMapReady() async {
-    // Check that location services do exist.
     var serviceIsEnabled = await location.serviceEnabled();
     if (!serviceIsEnabled) {
       var newIsServiceEnabled = await location.requestService();
@@ -427,17 +414,16 @@ class MapView extends StatelessWidget {
       }
     }
 
-    // Check location permission and request it if necessary.
     var permission = await location.hasPermission();
     debugPrint('Location permission status: $permission');
-    
+
     // If the user has denied location permissions we can ask for them.
     // if (permission == PermissionStatus.denied) {
     //   var newPermission = await location.requestPermission();
     //   if (newPermission == PermissionStatus.granted || newPermission == PermissionStatus.grantedLimited) {
     //     debugPrint('Location permissions granted.');
     //   }
-      
+
     //   return;
     // }
 
@@ -451,7 +437,7 @@ class MapView extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: const Text('Location permissions are required to use this app.'),
           ),
-          action: SnackBarAction(label: 'Settings', onPressed: () => AppSettings.openAppSettings(type: AppSettingsType.location)), 
+          action: SnackBarAction(label: 'Settings', onPressed: () => AppSettings.openAppSettings(type: AppSettingsType.location)),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
@@ -459,12 +445,11 @@ class MapView extends StatelessWidget {
       return;
     }
 
-
     // The remaining case is that the user has granted location permissions, so we do nothing.
   }
 
   void followOrUnfollowUserLocation() {
-    var state = June.getState(LocaAlertState());
+    var state = June.getState(() => LocaAlertState());
     if (state.followUserLocation) {
       state.followUserLocation = false;
       state.setState();
@@ -494,7 +479,7 @@ class MapView extends StatelessWidget {
 }
 
 Future<void> moveMapToUserLocation() async {
-  var state = June.getState(LocaAlertState());
+  var state = June.getState(() => LocaAlertState());
 
   var userPosition = state.userLocation;
   if (userPosition == null) {
@@ -511,7 +496,7 @@ Future<void> moveMapToUserLocation() async {
 double getAngleBetweenTwoPositions(LatLng from, LatLng to) => atan2(to.longitude - from.longitude, to.latitude - from.latitude);
 
 Future<void> navigateToAlarm(Alarm alarm) async {
-  var state = June.getState(LocaAlertState());
+  var state = June.getState(() => LocaAlertState());
 
   state.followUserLocation = false; // Stop following the user's location before moving the map.
 

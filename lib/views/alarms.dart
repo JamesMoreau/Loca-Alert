@@ -13,7 +13,7 @@ class AlarmsView extends StatelessWidget {
     debugPrint('Editing alarm: ${alarm.name}, id: ${alarm.id}.');
 
     // Copy the alarm to the buffer alarm. We don't do this inside the edit widget because rebuilds will cause the buffer alarm to be reset.
-    var state = June.getState(LocaAlertState());
+    var state = June.getState(() =>LocaAlertState());
     state.bufferAlarm = Alarm(name: alarm.name, position: alarm.position, radius: alarm.radius, color: alarm.color, active: alarm.active);
     state.nameInputController.text = alarm.name;
 
@@ -92,7 +92,7 @@ class EditAlarmDialog extends StatelessWidget {
   const EditAlarmDialog({required this.alarmId, super.key});
 
   void saveBufferToAlarm() {
-    var state = June.getState(LocaAlertState());
+    var state = June.getState(() =>LocaAlertState());
 
     // Replace the actual alarm data with the buffer alarm.
     var alarm = getAlarmById(alarmId);
@@ -268,7 +268,7 @@ class EditAlarmDialog extends StatelessWidget {
   }
 
   void resetEditAlarmState() {
-    var state = June.getState(LocaAlertState());
+    var state = June.getState(() =>LocaAlertState());
     state.bufferAlarm = null;
     state.nameInputController.clear();
     state.setState();
@@ -276,8 +276,8 @@ class EditAlarmDialog extends StatelessWidget {
 }
 
 // for switch icons.
-final MaterialStateProperty<Icon?> thumbIcon = MaterialStateProperty.resolveWith<Icon?>((states) {
-  if (states.contains(MaterialState.selected)) return const Icon(Icons.check_rounded);
+final WidgetStateProperty<Icon?> thumbIcon = WidgetStateProperty.resolveWith<Icon?>((states) {
+  if (states.contains(WidgetState.selected)) return const Icon(Icons.check_rounded);
 
   return const Icon(Icons.close_rounded);
 });

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
@@ -91,13 +93,11 @@ class SettingsView extends StatelessWidget {
                     onTap: () async {
                       var scaffoldMessenger = ScaffoldMessenger.of(context); // Don't use Scaffold.of(context) across async gaps (according to flutter).
 
-                      // Clear map tile cache.
                       var mapTileCacheStoreReference = state.mapTileCacheStore;
                       if (mapTileCacheStoreReference != null) await mapTileCacheStoreReference.clean();
                       
                       debugPrint('Map tile cache cleared.');
 
-                      // Show snackbar.
                       scaffoldMessenger.showSnackBar(
                         SnackBar(
                           behavior: SnackBarBehavior.floating,

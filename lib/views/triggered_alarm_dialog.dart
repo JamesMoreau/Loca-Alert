@@ -6,7 +6,7 @@ import 'package:loca_alert/models/alarm.dart';
 import 'package:vibration/vibration.dart';
 
 void showAlarmDialog(BuildContext context, String alarmId) {
-	var state = June.getState(LocaAlertState());
+	var state = June.getState(() => LocaAlertState());
 	var alarm = getAlarmById(alarmId);
 
 	if (alarm == null) {
@@ -15,7 +15,6 @@ void showAlarmDialog(BuildContext context, String alarmId) {
 		return;
 	}
 
-	// Callback when the user presses the "Dismiss" button or alarm times out.
 	void deactivateAlarmAndCloseDialog(BuildContext context) {
 		var dismissedAlarm = Alarm(
 			name: alarm.name,
