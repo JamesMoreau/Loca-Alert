@@ -15,19 +15,23 @@ import 'package:loca_alert/views/settings.dart';
 import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
 
-/* TODO
-
-  if the closest alarm is deleted, is still shows up on the map.
+/* 
+  TODO
+  - if the closest alarm is deleted, is still shows up on the map.
+  - remove the hack for opening alarm at location.
+  - why is the app info list element in settings larger than the others.
+  - go to alarm button should look better.
 */
 
 void main() async {
-  // Check that we are on a supported platform
   if (!(Platform.isIOS || Platform.isAndroid)) {
     debugPrintError('This app is not supported on this platform. Supported platforms are iOS and Android.');
     return;
   }
 
   runApp(const MainApp());
+
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   var state = June.getState(() => LocaAlertState());
 
@@ -46,12 +50,13 @@ void main() async {
 
     await checkAlarms();
 
-    // Update the map camera position to the user's location
-    if (state.followUserLocation && state.currentView == ProximityAlarmViews.map) await moveMapToUserLocation();
+    var shouldMoveMapToUseLocation = state.followUserLocation && state.currentView == ProximityAlarmViews.map;
+    if (shouldMoveMapToUseLocation) await moveMapToUserLocation();
   });
 
   // Check periodically if the location permission has been denied. If so, cancel the location updates.
-  Timer.periodic(const Duration(seconds: 20), (timer) async {
+  var locationPermissionCheckInterval = const Duration(seconds: 20);
+  Timer.periodic(locationPermissionCheckInterval, (timer) async {
     var state = June.getState(() => LocaAlertState());
     var permission = await location.hasPermission();
 
@@ -81,9 +86,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       home: JuneBuilder(
         () => LocaAlertState(),
         builder: (state) {
@@ -130,11 +133,10 @@ class MainApp extends StatelessWidget {
                 child: NavigationBar(
                   elevation: 3,
                   onDestinationSelected: (int index) {
+                    debugPrintInfo('Navigating to ${state.currentView}.');
                     state.currentView = ProximityAlarmViews.values[index];
-                    debugPrint('Navigating to ${state.currentView}.');
-                    state.setState();
                     state.pageController.jumpToPage(index);
-                    // state.pageController.animateToPage(index, duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+                    state.setState();
                   },
                   selectedIndex: state.currentView.index,
                   destinations: const [

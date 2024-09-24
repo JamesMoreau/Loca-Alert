@@ -415,7 +415,7 @@ class MapView extends StatelessWidget {
     }
 
     var permission = await location.hasPermission();
-    debugPrint('Location permission status: $permission');
+    debugPrintInfo('Location permission status: $permission');
 
     // If the user has denied location permissions we can ask for them.
     // if (permission == PermissionStatus.denied) {
@@ -490,7 +490,7 @@ Future<void> moveMapToUserLocation() async {
   var currentZoom = state.mapController.camera.zoom;
   state.mapController.move(userPosition, currentZoom);
 
-  debugPrint('Moving map to user location.');
+  debugPrintInfo('Moving map to user location.');
 }
 
 double getAngleBetweenTwoPositions(LatLng from, LatLng to) => atan2(to.longitude - from.longitude, to.latitude - from.latitude);

@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
@@ -79,7 +77,7 @@ class SettingsView extends StatelessWidget {
                         return;
                       }
 
-                      debugPrint('Opening app store page for feedback.');
+                      debugPrintInfo('Opening app store page for feedback.');
                       await launchUrl(uri);
                     },
                   ),
@@ -96,7 +94,7 @@ class SettingsView extends StatelessWidget {
                       var mapTileCacheStoreReference = state.mapTileCacheStore;
                       if (mapTileCacheStoreReference != null) await mapTileCacheStoreReference.clean();
                       
-                      debugPrint('Map tile cache cleared.');
+                      debugPrintSuccess('Map tile cache cleared.');
 
                       scaffoldMessenger.showSnackBar(
                         SnackBar(
@@ -128,11 +126,11 @@ class SettingsView extends StatelessWidget {
 
                         var alarmJsons = await alarmsFile.readAsString();
                         if (alarmJsons.isEmpty) {
-                          debugPrint('No alarms found in storage.');
+                          debugPrintInfo('No alarms found in storage.');
                           return;
                         }
 
-                        debugPrint('Alarms found in storage: $alarmJsons');
+                        debugPrintInfo('Alarms found in storage: $alarmJsons');
                       },
                     ),
                   ),
@@ -144,9 +142,3 @@ class SettingsView extends StatelessWidget {
     );
   }
 }
-
-// for switch icons.
-final MaterialStateProperty<Icon?> thumbIcon = MaterialStateProperty.resolveWith<Icon?>((states) {
-  if (states.contains(MaterialState.selected)) return const Icon(Icons.check_rounded);
-  return const Icon(Icons.close_rounded);
-});

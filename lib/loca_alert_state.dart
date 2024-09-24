@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
@@ -148,7 +149,7 @@ Future<void> saveAlarmsToStorage() async {
 
 	var json = jsonEncode(alarmJsons);
 	await file.writeAsString(json);
-	debugPrint('Saved alarms to storage: $alarmJsons.');
+	debugPrintSuccess('Saved alarms to storage: $alarmJsons.');
 }
 
 Future<void> loadAlarmsFromStorage() async {
@@ -177,7 +178,7 @@ Future<void> loadAlarmsFromStorage() async {
 	}
 
 	state.setState();
-	debugPrint('Loaded alarms from storage.');
+	debugPrintSuccess('Loaded alarms from storage.');
 }
 
 Future<void> loadSettingsFromStorage() async {
@@ -201,7 +202,7 @@ Future<void> loadSettingsFromStorage() async {
 	var settingsMap = jsonDecode(settingsJson) as Map<String, dynamic>;
 	state.vibration = settingsMap[settingsAlarmVibrationKey] as bool;
 	state.showClosestOffScreenAlarm = settingsMap[settingsShowClosestOffScreenAlarmKey] as bool;
-	debugPrint('Loaded settings from storage.');
+	debugPrintSuccess('Loaded settings from storage.');
 }
 
 Future<void> clearAlarmsFromStorage() async {
@@ -215,7 +216,7 @@ Future<void> clearAlarmsFromStorage() async {
 	}
 
 	await alarmsFile.delete();
-	debugPrint('Cleared alarms from storage.');
+	debugPrintSuccess('Cleared alarms from storage.');
 }
 
 void resetAlarmPlacementUIState() {
@@ -252,7 +253,7 @@ Future<void> saveSettingsToStorage() async {
 	var settingsJson = jsonEncode(settingsMap);
 	await settingsFile.writeAsString(settingsJson);
 
-	debugPrint('Saved settings to storage.');
+	debugPrintSuccess('Saved settings to storage.');
 }
 
 Future<void> checkAlarms() async {
@@ -261,23 +262,23 @@ Future<void> checkAlarms() async {
 
   var permission = await location.hasPermission();
   if (permission == PermissionStatus.denied || permission == PermissionStatus.deniedForever) {
-    debugPrint('Alarm Check: Location permission denied. Cannot check for triggered alarms.');
+    debugPrintError('Alarm Check: Location permission denied. Cannot check for triggered alarms.');
     return;
   }
 
   var userPositionReference = state.userLocation;
   if (userPositionReference == null) {
-    debugPrint('Alarm Check: No user position found.');
+    debugPrintWarning('Alarm Check: No user position found.');
     return;
   }
 
   var triggeredAlarms = checkIfUserTriggersAlarms(userPositionReference, activeAlarms);
   if (triggeredAlarms.isEmpty) {
-    debugPrint('Alarm Check: No alarms triggered.');
+    debugPrintInfo('Alarm Check: No alarms triggered.');
     return;
   }
 
-  for (var alarm in triggeredAlarms) debugPrint('Alarm Check: Triggered alarm ${alarm.name} at timestamp ${DateTime.now()}.');
+  for (var alarm in triggeredAlarms) debugPrintInfo('Alarm Check: Triggered alarm ${alarm.name} at timestamp ${DateTime.now()}.');
 
   // If another alarm is already triggered, ignore the new alarm.
   if (state.alarmIsCurrentlyTriggered) return;
@@ -285,7 +286,7 @@ Future<void> checkAlarms() async {
   var triggeredAlarm = triggeredAlarms[0]; // For now, we only handle one triggered alarm at a time. Although it is possible to have multiple alarms triggered at the same time.
   triggeredAlarm.active = false; // Deactivate the alarm so it doesn't trigger again upon user location changing.
 
-  debugPrint('Alarm Check: Sending the user a notification for alarm ${triggeredAlarm.name}.');
+  debugPrintInfo('Alarm Check: Sending the user a notification for alarm ${triggeredAlarm.name}.');
   var notificationDetails = const NotificationDetails(
     iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentBanner: true, presentSound: true),
   );
@@ -303,7 +304,6 @@ Future<void> checkAlarms() async {
   }
 }
 
-// This function returns the alarms that the user's position is currently intersected with.
 List<Alarm> checkIfUserTriggersAlarms(LatLng userPosition, List<Alarm> alarms) {
 	var triggeredAlarms = <Alarm>[];
 
@@ -330,4 +330,20 @@ Alarm? getClosestAlarmToPosition(LatLng position, List<Alarm> alarms) {
 	}
 
 	return closestAlarm;
+}
+
+// Calculates the distance between two points on the Earth's surface using the Haversine formula.
+double distanceBetween(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
+  var earthRadius = 6378137.0;
+  var dLat = toRadians(endLatitude - startLatitude);
+  var dLon = toRadians(endLongitude - startLongitude);
+
+  var a = math.pow(math.sin(dLat / 2), 2) + math.pow(math.sin(dLon / 2), 2) * math.cos(toRadians(startLatitude)) * math.cos(toRadians(endLatitude));
+  var c = 2 * math.asin(math.sqrt(a));
+
+  return earthRadius * c;
+}
+
+double toRadians(double degree) {
+  return degree * pi / 180;
 }
