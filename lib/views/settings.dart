@@ -93,7 +93,7 @@ class SettingsView extends StatelessWidget {
 
                       var mapTileCacheStoreReference = state.mapTileCacheStore;
                       if (mapTileCacheStoreReference != null) await mapTileCacheStoreReference.clean();
-                      
+
                       debugPrintSuccess('Map tile cache cleared.');
 
                       scaffoldMessenger.showSnackBar(
@@ -104,7 +104,6 @@ class SettingsView extends StatelessWidget {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                       );
-
                     },
                   ),
                 ),
