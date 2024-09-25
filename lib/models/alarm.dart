@@ -4,49 +4,49 @@ import 'package:loca_alert/globals_constants_and_utility.dart';
 import 'package:loca_alert/loca_alert_state.dart';
 
 class Alarm {
-	String id;
-	String name;
-	Color color;
-	LatLng position;
-	double radius; // Meters
-	bool active;
+  String id;
+  String name;
+  Color color;
+  LatLng position;
+  double radius; // Meters
+  bool active;
 
   Alarm({
-    required this.name, 
-    required this.position, 
-    required this.radius, 
-    String? id, 
-    Color? color, 
+    required this.name,
+    required this.position,
+    required this.radius,
+    String? id,
+    Color? color,
     this.active = true,
-  }) : assert(radius > 0),
-       id = id ?? idGenerator.v1(),
-       color = color ?? availableAlarmColors.redAccent;
+  })  : assert(radius > 0),
+        id = id ?? idGenerator.v1(),
+        color = color ?? AvailableAlarmColors.redAccent;
 }
 
 Map<String, dynamic> alarmToMap(Alarm alarm) {
-	return {
+  return {
     'id': alarm.id,
-		'name': alarm.name,
-		'color': alarm.color.value,
-		'position': {
-			'latitude': alarm.position.latitude,
-			'longitude': alarm.position.longitude,
-		},
-		'radius': alarm.radius,
-		'active': alarm.active,
-	};
+    'name': alarm.name,
+    'color': alarm.color.value,
+    'position': {
+      'latitude': alarm.position.latitude,
+      'longitude': alarm.position.longitude,
+    },
+    'radius': alarm.radius,
+    'active': alarm.active,
+  };
 }
 
 Alarm alarmFromMap(Map<String, dynamic> alarmJson) {
-	return Alarm(
+  return Alarm(
     id: alarmJson['id'] as String,
-		name: alarmJson['name'] as String,
-		color: Color(alarmJson['color'] as int),
-		position: LatLng(
-			(alarmJson['position'] as Map<String, dynamic>)['latitude'] as double,
-			(alarmJson['position'] as Map<String, dynamic>)['longitude'] as double,
-		),
-		radius: alarmJson['radius'] as double,
-		active: alarmJson['active'] as bool,
-	);
+    name: alarmJson['name'] as String,
+    color: Color(alarmJson['color'] as int),
+    position: LatLng(
+      (alarmJson['position'] as Map<String, dynamic>)['latitude'] as double,
+      (alarmJson['position'] as Map<String, dynamic>)['longitude'] as double,
+    ),
+    radius: alarmJson['radius'] as double,
+    active: alarmJson['active'] as bool,
+  );
 }

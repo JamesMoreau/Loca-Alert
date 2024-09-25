@@ -20,7 +20,6 @@ import 'package:path_provider/path_provider.dart';
   - if the closest alarm is deleted, is still shows up on the map.
   - remove the hack for opening alarm at location.
   - why is the app info list element in settings larger than the others.
-  - go to alarm button should look better.
 */
 
 void main() async {

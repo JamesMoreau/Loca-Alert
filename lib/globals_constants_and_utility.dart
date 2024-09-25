@@ -26,20 +26,40 @@ const settingsShowClosestOffScreenAlarmKey = 'showClosestOffScreenAlarm';
 const settingsFilename = 'settings.json';
 const alarmsFilename = 'alarms.json';
 
-const availableAlarmColors = (
-  blue: Colors.blue,
-  green: Colors.green,
-  orange: Colors.orange,
-  redAccent: Colors.redAccent,
-  purple: Colors.purple,
-  pink: Colors.pink,
-  teal: Colors.teal,
-  brown: Colors.brown,
-  indigo: Colors.indigo,
-  amber: Colors.amber,
-  grey: Colors.grey,
-  black: Colors.black
-);
+class AvailableAlarmColors {
+  static const Color blue = Colors.blue;
+  static const Color green = Colors.green;
+  static const Color orange = Colors.orange;
+  static const Color redAccent = Colors.redAccent;
+  static const Color purple = Colors.purple;
+  static const Color pink = Colors.pink;
+  static const Color teal = Colors.teal;
+  static const Color brown = Colors.brown;
+  static const Color indigo = Colors.indigo;
+  static const Color amber = Colors.amber;
+  static const Color grey = Colors.grey;
+  static const Color black = Colors.black;
+
+  static final Map<String, Color> allColors = {
+    'blue': blue,
+    'green': green,
+    'orange': orange,
+    'redAccent': redAccent,
+    'purple': purple,
+    'pink': pink,
+    'teal': teal,
+    'brown': brown,
+    'indigo': indigo,
+    'amber': amber,
+    'grey': grey,
+    'black': black,
+  };
+
+  // Method to get a color by its name
+  static Color? getColorByName(String name) {
+    return allColors[name];
+  }
+}
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 int id = 0;
