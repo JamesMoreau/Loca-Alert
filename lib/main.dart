@@ -15,11 +15,6 @@ import 'package:loca_alert/views/settings.dart';
 import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
 
-/* 
-  TODO
-  - if the closest alarm is deleted, is still shows up on the map.
-*/
-
 void main() async {
   if (!(Platform.isIOS || Platform.isAndroid)) {
     debugPrintError('This app is not supported on this platform. Supported platforms are iOS and Android.');

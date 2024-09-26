@@ -91,7 +91,6 @@ bool deleteAlarmById(String id) {
 		}
 	}
 
-	debugPrintError('no alarm $id found to be deleted.');
 	return false;
 }
 
