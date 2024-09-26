@@ -130,9 +130,9 @@ void debugPrintInfo(String message) {
   if (kDebugMode) debugPrint(message);
 }
 
-void debugPrintWarning(String message) => debugPrintInfo('📙: $message');
-void debugPrintError(String message) => debugPrintInfo('📕: $message');
-void debugPrintSuccess(String message) => debugPrintInfo('📗: $message');
+void debugPrintWarning(String message) => debugPrintInfo('📙 $message');
+void debugPrintError(String message) => debugPrintInfo('📕 $message');
+void debugPrintSuccess(String message) => debugPrintInfo('📗 $message');
 
 // for switch icons.
 final WidgetStateProperty<Icon?> thumbIcon = WidgetStateProperty.resolveWith<Icon?>((states) {

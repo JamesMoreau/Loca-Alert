@@ -18,7 +18,6 @@ import 'package:path_provider/path_provider.dart';
 /* 
   TODO
   - if the closest alarm is deleted, is still shows up on the map.
-  - flutter: 📕: Buffer alarm is null.
 */
 
 void main() async {

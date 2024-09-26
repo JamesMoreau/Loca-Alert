@@ -23,7 +23,7 @@ class AlarmsView extends StatelessWidget {
       builder: (context) {
         return EditAlarmDialog(alarmId: alarm.id);
       },
-    );
+    ).whenComplete(resetEditAlarmState);
   }
 
   @override
@@ -97,13 +97,13 @@ class EditAlarmDialog extends StatelessWidget {
     // Replace the actual alarm data with the buffer alarm.
     var alarm = getAlarmById(alarmId);
     if (alarm == null) {
-      debugPrintError('Unable to save alarm changes.');
+      debugPrintError('Cannot save alarm since no alarm exists with id $alarmId');
       return;
     }
 
     var bufferAlarmReference = state.bufferAlarm;
     if (bufferAlarmReference == null) {
-      debugPrintError('Buffer alarm is null.');
+      debugPrintError('Cannot save buffer alarm since it is null.');
       return;
     }
 
@@ -118,7 +118,6 @@ class EditAlarmDialog extends StatelessWidget {
       builder: (state) {
         var bufferAlarmReference = state.bufferAlarm;
         if (bufferAlarmReference == null) {
-          debugPrintError('Buffer alarm is null.');
           return const SizedBox.shrink();
         }
 
@@ -126,7 +125,7 @@ class EditAlarmDialog extends StatelessWidget {
           height: MediaQuery.of(context).size.height * 0.9,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            child: ListView(
+            child: Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -135,7 +134,6 @@ class EditAlarmDialog extends StatelessWidget {
                       child: const Text('Cancel'),
                       onPressed: () {
                         Navigator.pop(context);
-                        resetEditAlarmState();
                       },
                     ),
                     const Text(
@@ -147,101 +145,104 @@ class EditAlarmDialog extends StatelessWidget {
                       onPressed: () {
                         saveBufferToAlarm();
                         Navigator.pop(context);
-                        resetEditAlarmState();
                       },
                     ),
                   ],
                 ),
                 const SizedBox(height: 30),
-                Text('Name', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
-                TextFormField(
-                  textAlign: TextAlign.center,
-                  controller: state.nameInputController,
-                  onChanged: (value) => state.setState(),
-                  decoration: InputDecoration(
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear_rounded),
-                      onPressed: () {
-                        state.nameInputController.clear();
-                        state.setState();
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                Text('Color', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
+                Expanded(
+                  child: ListView(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: CircleAvatar(
-                          backgroundColor: bufferAlarmReference.color,
-                          radius: 20,
-                          child: const Icon(Icons.pin_drop_rounded, color: Colors.white),
-                        ),
-                      ),
-                      for (var color in AvailableAlarmColors.allColors.values) ...[
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: GestureDetector(
-                            onTap: () {
-                              bufferAlarmReference.color = color;
+                      Text('Name', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
+                      TextFormField(
+                        textAlign: TextAlign.center,
+                        controller: state.nameInputController,
+                        onChanged: (value) => state.setState(),
+                        decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.clear_rounded),
+                            onPressed: () {
+                              state.nameInputController.clear();
                               state.setState();
                             },
-                            child: CircleAvatar(
-                              backgroundColor: color,
-                              radius: 20,
-                              child: color.value == bufferAlarmReference.color.value ? const Icon(Icons.check_rounded, color: Colors.white) : null,
-                            ),
                           ),
                         ),
-                      ],
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 30),
-                Text('Position', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
-                Text(bufferAlarmReference.position.toSexagesimal(), style: const TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 10),
-                Align(
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                    ),
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      await navigateToAlarm(bufferAlarmReference);
-                      resetEditAlarmState();
-                    },
-                    icon: const Icon(Icons.navigate_next_rounded, color: Colors.white),
-                    label: const Text('Go To Alarm', style: TextStyle(color: Colors.white)),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                Text('Radius / Size (in meters)', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
-                Text(bufferAlarmReference.radius.toInt().toString(), style: const TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: const BorderSide(color: Colors.redAccent, width: 2),
+                      ),
+                      const SizedBox(height: 30),
+                      Text('Color', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: CircleAvatar(
+                                backgroundColor: bufferAlarmReference.color,
+                                radius: 20,
+                                child: const Icon(Icons.pin_drop_rounded, color: Colors.white),
+                              ),
+                            ),
+                            for (var color in AvailableAlarmColors.allColors.values) ...[
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    bufferAlarmReference.color = color;
+                                    state.setState();
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundColor: color,
+                                    radius: 20,
+                                    child: color.value == bufferAlarmReference.color.value ? const Icon(Icons.check_rounded, color: Colors.white) : null,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
-                      onPressed: () {
-                        deleteAlarmById(alarmId);
-                        Navigator.pop(context);
-                        resetEditAlarmState();
-                      },
-                      child: const Text('Delete Alarm', style: TextStyle(color: Colors.redAccent)),
-                    ),
-                  ],
+                      const SizedBox(height: 30),
+                      Text('Position', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
+                      Text(bufferAlarmReference.position.toSexagesimal(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 10),
+                      Align(
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                          ),
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            await navigateToAlarm(bufferAlarmReference);
+                          },
+                          icon: const Icon(Icons.navigate_next_rounded, color: Colors.white),
+                          label: const Text('Go To Alarm', style: TextStyle(color: Colors.white)),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      Text('Radius / Size (in meters)', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
+                      Text(bufferAlarmReference.radius.toInt().toString(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                side: const BorderSide(color: Colors.redAccent, width: 2),
+                              ),
+                            ),
+                            onPressed: () {
+                              deleteAlarmById(alarmId);
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Delete Alarm', style: TextStyle(color: Colors.redAccent)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -250,11 +251,11 @@ class EditAlarmDialog extends StatelessWidget {
       },
     );
   }
+}
 
-  void resetEditAlarmState() {
-    var state = June.getState(() => LocaAlertState());
-    state.bufferAlarm = null;
-    state.nameInputController.clear();
-    state.setState();
-  }
+void resetEditAlarmState() {
+  var state = June.getState(() => LocaAlertState());
+  state.bufferAlarm = null;
+  state.nameInputController.clear();
+  state.setState();
 }
