@@ -20,7 +20,7 @@ class Alarm {
     this.active = true,
   })  : assert(radius > 0),
         id = id ?? idGenerator.v1(),
-        color = color ?? AvailableAlarmColors.redAccent;
+        color = color ?? AvailableAlarmColors.redAccent.value;
 }
 
 Map<String, dynamic> alarmToMap(Alarm alarm) {

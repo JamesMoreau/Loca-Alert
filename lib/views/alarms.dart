@@ -40,11 +40,11 @@ class AlarmsView extends StatelessWidget {
                 ElevatedButton(
                   child: const Text('Add Some Alarms'),
                   onPressed: () {
-                    addAlarm(Alarm(name: 'Dublin', position: const LatLng(53.3498, -6.2603), radius: 2000, color: AvailableAlarmColors.green));
-                    addAlarm(Alarm(name: 'Montreal', position: const LatLng(45.5017, -73.5673), radius: 2000, color: AvailableAlarmColors.blue));
-                    addAlarm(Alarm(name: 'Osaka', position: const LatLng(34.6937, 135.5023), radius: 2000, color: AvailableAlarmColors.purple));
-                    addAlarm(Alarm(name: 'Saint Petersburg', position: const LatLng(59.9310, 30.3609), radius: 2000, color: AvailableAlarmColors.redAccent));
-                    addAlarm(Alarm(name: 'San Antonio', position: const LatLng(29.4241, -98.4936), radius: 2000, color: AvailableAlarmColors.orange));
+                    addAlarm(Alarm(name: 'Dublin', position: const LatLng(53.3498, -6.2603), radius: 2000, color: AvailableAlarmColors.green.value));
+                    addAlarm(Alarm(name: 'Montreal', position: const LatLng(45.5017, -73.5673), radius: 2000, color: AvailableAlarmColors.blue.value));
+                    addAlarm(Alarm(name: 'Osaka', position: const LatLng(34.6937, 135.5023), radius: 2000, color: AvailableAlarmColors.purple.value));
+                    addAlarm(Alarm(name: 'Saint Petersburg', position: const LatLng(59.9310, 30.3609), radius: 2000, color: AvailableAlarmColors.redAccent.value));
+                    addAlarm(Alarm(name: 'San Antonio', position: const LatLng(29.4241, -98.4936), radius: 2000, color: AvailableAlarmColors.orange.value));
                   },
                 ),
               ],
@@ -182,18 +182,18 @@ class EditAlarmDialog extends StatelessWidget {
                                 child: const Icon(Icons.pin_drop_rounded, color: Colors.white),
                               ),
                             ),
-                            for (var color in AvailableAlarmColors.allColors.values) ...[
+                            for (var color in AvailableAlarmColors.values) ...[
                               Padding(
                                 padding: const EdgeInsets.all(8),
                                 child: GestureDetector(
                                   onTap: () {
-                                    bufferAlarmReference.color = color;
+                                    bufferAlarmReference.color = color.value;
                                     state.setState();
                                   },
                                   child: CircleAvatar(
-                                    backgroundColor: color,
+                                    backgroundColor: color.value,
                                     radius: 20,
-                                    child: color.value == bufferAlarmReference.color.value ? const Icon(Icons.check_rounded, color: Colors.white) : null,
+                                    child: color.value == bufferAlarmReference.color ? const Icon(Icons.check_rounded, color: Colors.white) : null,
                                   ),
                                 ),
                               ),
