@@ -35,6 +35,7 @@ class LocaAlertState extends JuneState {
 	// MapView stuff. The booleans such as showMarkersInsteadOfCircles and closestAlarmIsInView are necessary because mapController
   // cannot be accessed within the build method of the map view. So instead we update these booleans using myOnMapEvent.
 	MapController mapController = MapController();
+  LatLng? initialCenter = const LatLng(0, 0);
 	bool isPlacingAlarm = false;
 	double alarmPlacementRadius = 100;
 	bool showMarkersInsteadOfCircles = false; 

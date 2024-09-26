@@ -18,8 +18,7 @@ import 'package:path_provider/path_provider.dart';
 /* 
   TODO
   - if the closest alarm is deleted, is still shows up on the map.
-  - remove the hack for opening alarm at location.
-  - why is the app info list element in settings larger than the others.
+  - flutter: 📕: Buffer alarm is null.
 */
 
 void main() async {
@@ -49,8 +48,8 @@ void main() async {
 
     await checkAlarms();
 
-    var shouldMoveMapToUseLocation = state.followUserLocation && state.currentView == ProximityAlarmViews.map;
-    if (shouldMoveMapToUseLocation) await moveMapToUserLocation();
+    var shouldMoveMapToUserLocation = state.followUserLocation && state.currentView == ProximityAlarmViews.map;
+    if (shouldMoveMapToUserLocation) await moveMapToUserLocation();
   });
 
   // Check periodically if the location permission has been denied. If so, cancel the location updates.
@@ -132,10 +131,8 @@ class MainApp extends StatelessWidget {
                 child: NavigationBar(
                   elevation: 3,
                   onDestinationSelected: (int index) {
-                    debugPrintInfo('Navigating to ${state.currentView}.');
-                    state.currentView = ProximityAlarmViews.values[index];
-                    state.pageController.jumpToPage(index);
-                    state.setState();
+                    var newView = ProximityAlarmViews.values[index];
+                    navigateToView(newView);
                   },
                   selectedIndex: state.currentView.index,
                   destinations: const [
@@ -162,4 +159,14 @@ class MainApp extends StatelessWidget {
       navigatorKey: NavigationService.navigatorKey,
     );
   }
+}
+
+void navigateToView(ProximityAlarmViews view) {
+  var state = June.getState(() => LocaAlertState());
+  
+  state.currentView = view;
+  state.pageController.jumpToPage(view.index);
+  state.setState();
+  
+  debugPrintInfo('Navigating to $view.');
 }

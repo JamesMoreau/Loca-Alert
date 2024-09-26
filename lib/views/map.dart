@@ -27,8 +27,6 @@ class MapView extends StatelessWidget {
           );
         }
 
-        var initalCenter = state.userLocation ?? const LatLng(0, 0);
-
         var statusBarHeight = MediaQuery.of(context).padding.top;
         var screenSize = MediaQuery.of(context).size;
 
@@ -148,7 +146,7 @@ class MapView extends StatelessWidget {
             FlutterMap(
               mapController: state.mapController,
               options: MapOptions(
-                initialCenter: initalCenter,
+                initialCenter: state.initialCenter ?? const LatLng(0,0),
                 initialZoom: initialZoom,
                 interactionOptions: InteractionOptions(flags: myInteractiveFlags),
                 // keepAlive: true, // Keep the map alive when it is not visible. This uses more battery.
@@ -405,6 +403,17 @@ class MapView extends StatelessWidget {
   }
 
   Future<void> myOnMapReady() async {
+    var state = June.getState(() => LocaAlertState());
+    
+    var initialCenterReference = state.initialCenter;
+    var shouldMoveToInitialCenter = initialCenterReference != null;
+    if (shouldMoveToInitialCenter) {
+      state.followUserLocation = false;
+      state.mapController.move(initialCenterReference, state.mapController.camera.zoom);
+      state.initialCenter = null;
+      state.setState();
+    }
+
     var serviceIsEnabled = await location.serviceEnabled();
     if (!serviceIsEnabled) {
       var newIsServiceEnabled = await location.requestService();
@@ -416,16 +425,6 @@ class MapView extends StatelessWidget {
 
     var permission = await location.hasPermission();
     debugPrintInfo('Location permission status: $permission');
-
-    // If the user has denied location permissions we can ask for them.
-    // if (permission == PermissionStatus.denied) {
-    //   var newPermission = await location.requestPermission();
-    //   if (newPermission == PermissionStatus.granted || newPermission == PermissionStatus.grantedLimited) {
-    //     debugPrint('Location permissions granted.');
-    //   }
-
-    //   return;
-    // }
 
     // If the user has denied location permissions forever, we can't request them, so we show a snackbar.
     if (permission == PermissionStatus.denied || permission == PermissionStatus.deniedForever) {
@@ -481,6 +480,11 @@ class MapView extends StatelessWidget {
 Future<void> moveMapToUserLocation() async {
   var state = June.getState(() => LocaAlertState());
 
+  var currentViewIsMap = state.currentView != ProximityAlarmViews.map;
+  if (currentViewIsMap) {
+    return;
+  }
+
   var userPosition = state.userLocation;
   if (userPosition == null) {
     debugPrintError('Unable to move map to user location.');
@@ -497,17 +501,6 @@ double getAngleBetweenTwoPositions(LatLng from, LatLng to) => atan2(to.longitude
 
 Future<void> navigateToAlarm(Alarm alarm) async {
   var state = June.getState(() => LocaAlertState());
-
-  state.followUserLocation = false; // Stop following the user's location before moving the map.
-
-  if (state.currentView != ProximityAlarmViews.map) {
-    state.currentView = ProximityAlarmViews.map;
-
-    // @Hack: This works for now. We need to wait for the map widget to load before we can move the map.
-    await state.pageController.animateToPage(state.currentView.index, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
-  }
-
-  state.setState();
-
-  state.mapController.move(alarm.position, initialZoom);
+  state.initialCenter = alarm.position;
+  navigateToView(ProximityAlarmViews.map);
 }
