@@ -18,7 +18,7 @@ import 'package:path_provider/path_provider.dart';
 /*
 TODO
 remove haversine
-test cache clean!
+make add alarms button looks like goto alarm.
 */
 
 void main() async {

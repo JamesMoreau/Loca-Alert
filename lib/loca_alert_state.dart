@@ -305,7 +305,7 @@ List<Alarm> checkIfUserTriggersAlarms(LatLng userPosition, List<Alarm> alarms) {
 	var triggeredAlarms = <Alarm>[];
 
 	for (var alarm in alarms) {
-		var distance = distanceBetween(alarm.position.latitude, alarm.position.longitude, userPosition.latitude, userPosition.longitude);
+    var distance = const Distance().as(LengthUnit.Meter, alarm.position, userPosition);
 		if (distance <= alarm.radius) triggeredAlarms.add(alarm);
 	}
 
@@ -319,7 +319,7 @@ Alarm? getClosestAlarmToPosition(LatLng position, List<Alarm> alarms) {
 	if (alarms.isEmpty) return null;
 
 	for (var alarm in alarms) {
-		var distance = distanceBetween(alarm.position.latitude, alarm.position.longitude, position.latitude, position.longitude);
+    var distance = const Distance().as(LengthUnit.Meter, alarm.position, position);
 		if (distance < closestDistance) {
 			closestAlarm = alarm;
 			closestDistance = distance;
@@ -327,20 +327,4 @@ Alarm? getClosestAlarmToPosition(LatLng position, List<Alarm> alarms) {
 	}
 
 	return closestAlarm;
-}
-
-// Calculates the distance between two points on the Earth's surface using the Haversine formula.
-double distanceBetween(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
-  var earthRadius = 6378137.0;
-  var dLat = toRadians(endLatitude - startLatitude);
-  var dLon = toRadians(endLongitude - startLongitude);
-
-  var a = math.pow(math.sin(dLat / 2), 2) + math.pow(math.sin(dLon / 2), 2) * math.cos(toRadians(startLatitude)) * math.cos(toRadians(endLatitude));
-  var c = 2 * math.asin(math.sqrt(a));
-
-  return earthRadius * c;
-}
-
-double toRadians(double degree) {
-  return degree * pi / 180;
 }
