@@ -17,6 +17,8 @@ import 'package:path_provider/path_provider.dart';
 
 /*
 TODO
+remove haversine
+test cache clean!
 */
 
 void main() async {

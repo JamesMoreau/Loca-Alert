@@ -91,9 +91,7 @@ class SettingsView extends StatelessWidget {
                     onTap: () async {
                       var scaffoldMessenger = ScaffoldMessenger.of(context); // Don't use Scaffold.of(context) across async gaps (according to flutter).
 
-                      var mapTileCacheStoreReference = state.mapTileCacheStore;
-                      if (mapTileCacheStoreReference != null) await mapTileCacheStoreReference.clean();
-
+                      await state.mapTileCacheStore?.clean();
                       debugPrintSuccess('Map tile cache cleared.');
 
                       scaffoldMessenger.showSnackBar(
