@@ -38,7 +38,9 @@ class AlarmsView extends StatelessWidget {
               children: [
                 const Text('No alarms.'),
                 ElevatedButton(
-                  child: const Text('Add Some Alarms'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
                   onPressed: () {
                     addAlarm(Alarm(name: 'Dublin', position: const LatLng(53.3498, -6.2603), radius: 2000, color: AvailableAlarmColors.green.value));
                     addAlarm(Alarm(name: 'Montreal', position: const LatLng(45.5017, -73.5673), radius: 2000, color: AvailableAlarmColors.blue.value));
@@ -46,6 +48,7 @@ class AlarmsView extends StatelessWidget {
                     addAlarm(Alarm(name: 'Saint Petersburg', position: const LatLng(59.9310, 30.3609), radius: 2000, color: AvailableAlarmColors.redAccent.value));
                     addAlarm(Alarm(name: 'San Antonio', position: const LatLng(29.4241, -98.4936), radius: 2000, color: AvailableAlarmColors.orange.value));
                   },
+                  child: const Text('Add Some Alarms', style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -222,29 +225,26 @@ class EditAlarmDialog extends StatelessWidget {
                       Text('Radius / Size (in meters)', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
                       Text(bufferAlarmReference.radius.toInt().toString(), style: const TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                side: const BorderSide(color: Colors.redAccent, width: 2),
-                              ),
+                      Align(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: const BorderSide(color: Colors.redAccent, width: 2),
                             ),
-                            onPressed: () {
-                              var ok = deleteAlarmById(alarmId);
-                              if (!ok) {
-                                debugPrintError('Alarm $id could not be deleted.');
-                              }
-                              // In case this alarm we just deleted happens to be the closest alarm, we need to make sure it doesn't show up.
-                              state.closestAlarm = null;
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Delete Alarm', style: TextStyle(color: Colors.redAccent)),
                           ),
-                        ],
+                          onPressed: () {
+                            var ok = deleteAlarmById(alarmId);
+                            if (!ok) {
+                              debugPrintError('Alarm $id could not be deleted.');
+                            }
+                            // In case this alarm we just deleted happens to be the closest alarm, we need to make sure it doesn't show up.
+                            state.closestAlarm = null;
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Delete Alarm', style: TextStyle(color: Colors.redAccent)),
+                        ),
                       ),
                     ],
                   ),
